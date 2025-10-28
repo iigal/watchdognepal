@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+
+# SQLite database
+db.sqlite3
+
+# Django collected static
+staticfiles/
+
+# Environment variables file
+.env
+
+# Byte-compiled / distribution
+dist/
+build/
+
+# macOS
+.DS_Store
+
+# Editor directories and files
+.vscode/
+*.swp
+

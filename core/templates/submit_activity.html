@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row g-4">
+
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title fw-bold mb-3">Filters</h5>
+          <form method="GET" class="d-flex flex-column gap-3">
+            <div>
+              <label for="id_level" class="form-label fw-bold">Level:</label>
+              <select name="level" id="id_level" class="form-select">
+                <option>All</option>
+                <option>Federal</option>
+                <option>Provincial</option>
+                <option>Local</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="id_status" class="form-label fw-bold">Status:</label>
+              <select name="status" id="id_status" class="form-select">
+                <option>All</option>
+                <option>Verified</option>
+                <option>Unverified</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="id_sort" class="form-label fw-bold">Sort by:</label>
+              <select name="sort" id="id_sort" class="form-select">
+                <option>Newest</option>
+                <option>Oldest</option>
+                <option>Most Positive</option>
+                <option>Most Negative</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+              Apply
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h2 class="h3 fw-bold mb-4">Submit Government Activity</h2>
+
+          <form method="POST" novalidate>
+            {% csrf_token %}
+            
+            {% bootstrap_form form %}
+
+            {% bootstrap_button button_type="submit" content="Submit" class="btn-primary" %}
+          </form>
+
+          <p class="mt-4 text-center text-muted small">
+            <a href="{% url 'home' %}">Back to Home</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

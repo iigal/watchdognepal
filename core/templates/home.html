@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container">
+
+  <div class="bg-white shadow-sm mt-4 rounded-3 p-4">
+    <form method="GET" class="d-flex flex-wrap align-items-center gap-3">
+      
+      <label for="level-select" class="form-label fw-bold mb-0">Level:</label>
+      <select name="level" id="level-select" class="form-select form-select-sm w-auto">
+        <option>All</option>
+        <option>Federal</option>
+        <option>Provincial</option>
+        <option>Local</option>
+      </select>
+
+      <label for="status-select" class="form-label fw-bold mb-0 ms-2">Status:</label>
+      <select name="status" id="status-select" class="form-select form-select-sm w-auto">
+        <option>All</option>
+        <option>Verified</option>
+        <option>Unverified</option>
+      </select>
+
+      <label for="sort-select" class="form-label fw-bold mb-0 ms-2">Sort by:</label>
+      <select name="sort" id="sort-select" class="form-select form-select-sm w-auto">
+        <option>Newest</option>
+        <option>Oldest</option>
+        <option>Most Positive</option>
+        <option>Most Negative</option>
+      </select>
+
+      <button type="submit" class="btn btn-primary btn-sm ms-3">
+        Apply
+      </button>
+    </form>
+  </div>
+
+  <div class="mt-4">
+    {% for activity in activitys %}
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <h5 class="card-title fw-bold">{{ activity.title }}</h5>
+        <p class="card-text mt-2">{{ activity.description }}</p>
+
+        <p class="card-text small text-muted mt-3 mb-1">
+          <span class="fw-bold">Level:</span> {{ activity.level }} |
+          <span class="fw-bold">Status:</span> 
+          {% if activity.status == "verified" %}
+            <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Source Verified</span>
+          {% else %}
+            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">Source yet to verify</span>
+          {% endif %}
+        </p>
+
+        <p class="card-text small text-muted">
+          By: <span class="fw-medium">{{ activity.created_by }}</span> |
+          {{ activity.created_at|date:"M d, Y" }}
+        </p>
+
+        <div class="d-flex align-items-center gap-4 mt-3">
+          <div class="d-flex align-items-center gap-1">
+            <span class="fs-5">👍</span> <span>{{ activity.positive_votes }}</span>
+          </div>
+          <div class="d-flex align-items-center gap-1">
+            <span class="fs-5">👎</span> <span>{{ activity.negative_votes }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center text-muted mt-5 p-4 bg-white rounded-3 shadow-sm">
+      <p class="mb-0">No activities found.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

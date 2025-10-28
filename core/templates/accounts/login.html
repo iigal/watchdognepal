@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-8 col-sm-10">
+      
+      <div class="card shadow-sm mt-4">
+        <div class="card-body p-4 p-md-5">
+          <h2 class="card-title h3 fw-bold text-center mb-4">Login</h2>
+
+          {% if form %}
+            <form method="POST" novalidate>
+              {% csrf_token %}
+              
+              {% bootstrap_form form %}
+              
+              {% bootstrap_button button_type="submit" content="Login" class="btn-primary w-100" %}
+            </form>
+          {% else %}
+            <form method="POST">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="id_username" class="form-label fw-medium">Username</label>
+                <input type="text" name="username" id="id_username" class="form-control" />
+              </div>
+              <div class="mb-3">
+                <label for="id_password" class="form-label fw-medium">Password</label>
+                <input type="password" name="password" id="id_password" class="form-control" />
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+          {% endif %}
+
+          <p class="mt-4 text-center text-muted small">
+            Don't have an account? <a href="{% url 'register' %}">Register here</a>
+          </p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock %}
