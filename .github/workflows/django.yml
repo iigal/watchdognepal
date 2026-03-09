@@ -35,7 +35,7 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
         REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        REMOTE_PORT: "21098" # Check with your host; cPanel often uses 21098 instead of 22
+        REMOTE_PORT: "22" # Check with your host; cPanel often uses 21098 instead of 22
         SOURCE: "./"
         TARGET: "/home/neupanecom/watchdognepal.com/"
         # Prevent overwriting your production environment variables or syncing git data
