@@ -1,0 +1,66 @@
+name: Django CI/CD Deployment
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout the code from your repository
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. Setup Python 3.11 (Matching your cPanel app version)
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: 'pip'
+
+    # 3. Install dependencies and run your tests
+    - name: Install Dependencies & Run Tests
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Optional: Add a dummy .env here if your tests require it
+        python manage.py test
+
+    # 4. Sync the new files to your cPanel server using rsync
+    - name: Deploy files to cPanel
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+        REMOTE_PORT: "21098" # Check with your host; cPanel often uses 21098 instead of 22
+        SOURCE: "./"
+        TARGET: "/home/neupanecom/watchdognepal.com/"
+        # Prevent overwriting your production environment variables or syncing git data
+        EXCLUDE: "/.git/, /.github/, /venv/, /.env"
+
+    # 5. Connect to the server, activate the environment, and restart the app
+    - name: Execute Server Commands
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        port: 21098 # Match the port from step 4
+        script: |
+          cd /home/neupanecom/watchdognepal.com
+          
+          # Activate the cPanel virtual environment
+          source /home/neupanecom/virtualenv/watchdognepal.com/3.11/bin/activate
+          
+          # Install any newly added packages
+          pip install -r requirements.txt
+          
+          # Apply database changes and update static files
+          python manage.py migrate
+          python manage.py collectstatic --noinput
+          
+          # Trigger Phusion Passenger to restart the app (I see you already have a 'tmp' folder)
+          touch tmp/restart.txt
