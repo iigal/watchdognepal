@@ -50,7 +50,7 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        port: 21098 # Match the port from step 4
+        port: 22
         script: |
           cd /home/neupanecom/watchdognepal.com
           
