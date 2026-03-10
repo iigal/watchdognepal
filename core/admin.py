@@ -5,13 +5,13 @@ from .widgets import NepaliDatePickerWidget
 
 @admin.register(PoliticalParty)
 class PoliticalPartyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'in_government')
+    list_display = ('name', 'in_government', 'oath_date')
     list_filter = ('in_government',)
     search_fields = ('name',)
 
 @admin.register(ElectedMember)
 class ElectedMemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'constituency', 'party')
+    list_display = ('name', 'constituency', 'party', 'oath_date')
     list_filter = ('party',)
     search_fields = ('name', 'constituency')
 
@@ -28,8 +28,8 @@ class ManifestoPointAdminForm(forms.ModelForm):
 @admin.register(ManifestoPoint)
 class ManifestoPointAdmin(admin.ModelAdmin):
     form = ManifestoPointAdminForm
-    list_display = ('title', 'party', 'elected_member', 'deadline')
-    list_filter = ('party', 'elected_member', 'deadline')
+    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'completion_years', 'completion_months', 'completion_days', 'deadline')
+    list_filter = ('party', 'elected_member')
     search_fields = ('title', 'description')
 
 @admin.register(Activity)

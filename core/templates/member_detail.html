@@ -49,9 +49,9 @@
                     data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
                     aria-controls="collapse{{ point.id }}">
                     <span>{{ point.title }}</span>
-                    {% if point.deadline %}
+                    {% if point.calculated_deadline %}
                     <span class="wn-deadline-badge ms-3">
-                        <i class="bi bi-calendar-event me-1"></i>{{ point.deadline|to_bs }}
+                        <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
                     </span>
                     {% endif %}
                 </button>

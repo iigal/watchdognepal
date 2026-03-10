@@ -7,6 +7,7 @@ class PoliticalParty(models.Model):
     in_government = models.BooleanField(default=False, help_text="Is this party currently in government?")
     description = models.TextField(blank=True, null=True)
     logo = models.ImageField(upload_to='party_logos/', blank=True, null=True)
+    oath_date = models.DateField(blank=True, null=True, help_text="Date the party/government took oath")
 
     def __str__(self):
         return self.name
@@ -16,6 +17,7 @@ class ElectedMember(models.Model):
     constituency = models.CharField(max_length=200, help_text="e.g., Kathmandu-1")
     party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, related_name='members')
     image = models.ImageField(upload_to='member_images/', blank=True, null=True)
+    oath_date = models.DateField(blank=True, null=True, help_text="Date the member took oath")
 
     def __str__(self):
         return f"{self.name} ({self.constituency})"
@@ -26,11 +28,37 @@ class ManifestoPoint(models.Model):
     party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
     elected_member = models.ForeignKey(ElectedMember, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
     deadline = models.DateField(blank=True, null=True)
+    completion_days = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in days from oath")
+    completion_months = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in months from oath")
+    completion_years = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in years from oath")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
         if not self.party and not self.elected_member:
             raise ValidationError("A manifesto point must be linked to either a party or an elected member.")
+
+    @property
+    def calculated_deadline(self):
+        if self.deadline:
+            return self.deadline
+            
+        base_date = None
+        if self.elected_member and self.elected_member.oath_date:
+            base_date = self.elected_member.oath_date
+        elif self.party and self.party.oath_date:
+            base_date = self.party.oath_date
+            
+        if base_date:
+            from dateutil.relativedelta import relativedelta
+            
+            years = self.completion_years or 0
+            months = self.completion_months or 0
+            days = self.completion_days or 0
+            
+            if years > 0 or months > 0 or days > 0:
+                return base_date + relativedelta(years=years, months=months, days=days)
+                
+        return None
 
     def __str__(self):
         return self.title

@@ -9,12 +9,21 @@ def home(request):
     # Fetch all parties that are in government
     government_parties = PoliticalParty.objects.filter(in_government=True).prefetch_related('manifesto_points__activities')
     
-    # Optional: Still fetch upcoming deadlines for the top banner
     today = timezone.now().date()
-    upcoming_deadlines = ManifestoPoint.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-        deadline__gte=today
-    ).order_by('deadline')[:5]
+    
+    # Fetch all relevant manifesto points and filter/sort in Python because calculated_deadline is a property
+    manifesto_points = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).select_related('party', 'elected_member', 'elected_member__party')
+    
+    upcoming_deadlines = []
+    for point in manifesto_points:
+        calc_deadline = point.calculated_deadline
+        if calc_deadline and calc_deadline >= today:
+            upcoming_deadlines.append(point)
+            
+    upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
+    upcoming_deadlines = upcoming_deadlines[:5]
 
     context = {
         'government_parties': government_parties,

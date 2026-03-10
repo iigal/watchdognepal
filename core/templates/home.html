@@ -57,9 +57,12 @@
                     {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
                 </div>
                 <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <span class="wn-countdown-badge live-countdown"
-                        data-deadline="{{ point.deadline|date:'c' }}">Loading...</span>
-                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.deadline|to_bs }}</small>
+                    <div class="deadline-meta">
+                        <i class="bi bi-clock-history me-1"></i>
+                        <span class="deadline-countdown" id="countdown-{{ point.id }}"
+                        data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
+                    </div>
+                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
                 </div>
             </div>
         </div>
@@ -95,9 +98,9 @@
                 <div class="wn-manifesto-card">
                     <div class="d-flex justify-content-between align-items-start mb-2">
                         <div class="manifesto-title">{{ point.title }}</div>
-                        {% if point.deadline %}
+                        {% if point.calculated_deadline %}
                         <span class="wn-deadline-badge ms-2">
-                            <i class="bi bi-calendar-event me-1"></i>{{ point.deadline|to_bs }}
+                            <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
                         </span>
                         {% endif %}
                     </div>
