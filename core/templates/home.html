@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% load nepali_dates %}
+{% load nepali_dates i18n %}
 
-{% block title %}Watchdog Nepal — Government Manifestos Tracker{% endblock %}
+{% block title %}Watchdog Nepal — {% trans "Government Manifestos Tracker" %}{% endblock %}
 
 {% block content %}
 
@@ -11,25 +11,25 @@
         <div class="row align-items-center">
             <div class="col-lg-7 animate-fade-in-up">
                 <h1>
-                    Track Government<br>
-                    <span class="hero-gradient-text">Promises & Actions</span>
+                    {% trans "Track Government" %}<br>
+                    <span class="hero-gradient-text">{% trans "Promises & Actions" %}</span>
                 </h1>
                 <p class="mt-3 mb-0">
-                    Monitor manifesto commitments, verified activities, and approaching deadlines.
-                    Hold your government accountable with data-driven transparency.
+                    {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
+                    Hold your government accountable with data-driven transparency.{% endblocktrans %}
                 </p>
                 <div class="hero-stats">
                     <div class="stat-item">
                         <div class="stat-number">{{ government_parties|length }}</div>
-                        <div class="stat-label">Gov. Parties</div>
+                        <div class="stat-label">{% trans "Gov. Parties" %}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number" id="hero-manifesto-count">0</div>
-                        <div class="stat-label">Manifesto Points</div>
+                        <div class="stat-label">{% trans "Manifesto Points" %}</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-number">{{ upcoming_deadlines|length }}</div>
-                        <div class="stat-label">Upcoming Deadlines</div>
+                        <div class="stat-label">{% trans "Upcoming Deadlines" %}</div>
                     </div>
                 </div>
             </div>
@@ -44,8 +44,8 @@
         <div class="section-icon amber">
             <i class="bi bi-clock-history"></i>
         </div>
-        <h3>Approaching Deadlines</h3>
-        <span class="section-count">{{ upcoming_deadlines|length }} upcoming</span>
+        <h3>{% trans "Approaching Deadlines" %}</h3>
+        <span class="section-count">{{ upcoming_deadlines|length }} {% trans "upcoming" %}</span>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
@@ -83,7 +83,7 @@
             <div>
                 <h4 class="fw-bold mb-1" style="font-size: 1.25rem;">
                     {{ party.name }}
-                    <span class="wn-badge-gov ms-2">In Government</span>
+                    <span class="wn-badge-gov ms-2">{% trans "In Government" %}</span>
                 </h4>
                 <p class="mb-0" style="font-size: 0.85rem; color: var(--wn-text-muted);">{{ party.description }}</p>
             </div>
@@ -106,7 +106,7 @@
                     <div class="mt-auto pt-2">
                         <div class="d-flex align-items-center gap-1 mb-2"
                             style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
-                            <i class="bi bi-patch-check-fill"></i> Verified Activities
+                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
                         </div>
                         {% for activity in point.activities.all %}
                         {% if activity.status == 'verified' %}
@@ -116,7 +116,7 @@
                                 <div class="vi-date">{{ activity.created_at|to_bs }}</div>
                             </div>
                             <a href="{{ activity.source_link }}" target="_blank" class="wn-source-link">
-                                Source <i class="bi bi-box-arrow-up-right"></i>
+                                {% trans "Source" %} <i class="bi bi-box-arrow-up-right"></i>
                             </a>
                         </div>
                         {% endif %}
@@ -131,7 +131,7 @@
             {% empty %}
             <div class="col-12">
                 <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
-                    This party has not added any manifesto points yet.
+                    {% trans "This party has not added any manifesto points yet." %}
                 </p>
             </div>
             {% endfor %}
@@ -140,8 +140,8 @@
     {% empty %}
     <div class="wn-empty-state">
         <div class="empty-icon"><i class="bi bi-inbox"></i></div>
-        <h4>No parties in government</h4>
-        <p class="mb-0">Please mark parties as "In Government" via the Admin panel.</p>
+        <h4>{% trans "No parties in government" %}</h4>
+        <p class="mb-0">{% trans "Please mark parties as 'In Government' via the Admin panel." %}</p>
     </div>
     {% endfor %}
 </section>

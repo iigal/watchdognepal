@@ -1,5 +1,6 @@
 {% load django_bootstrap5 %}
 {% load static %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -27,7 +28,7 @@
     <div class="container">
       <a class="navbar-brand" href="/">
         <span class="brand-icon">🇳🇵</span>
-        Watchdog Nepal
+        {% trans "Watchdog Nepal" %}
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -39,41 +40,58 @@
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
               href="{% url 'home' %}">
-              <i class="bi bi-house-door me-1"></i> Home
+              <i class="bi bi-house-door me-1"></i> {% trans "Home" %}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if 'party' in request.resolver_match.url_name %}active{% endif %}"
               href="{% url 'party_list' %}">
-              <i class="bi bi-flag me-1"></i> Parties
+              <i class="bi bi-flag me-1"></i> {% trans "Parties" %}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if 'member' in request.resolver_match.url_name %}active{% endif %}"
               href="{% url 'elected_member_list' %}">
-              <i class="bi bi-people me-1"></i> Members
+              <i class="bi bi-people me-1"></i> {% trans "Members" %}
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'activities_list' %}active{% endif %}"
               href="{% url 'activities_list' %}">
-              <i class="bi bi-activity me-1"></i> Activities
+              <i class="bi bi-activity me-1"></i> {% trans "Activities" %}
             </a>
           </li>
         </ul>
 
         <div class="d-flex align-items-center gap-2">
+          <!-- Language Switcher -->
+          <form action="{% url 'set_language' %}" method="post" class="d-inline-flex m-0 align-items-center me-2">
+            {% csrf_token %}
+            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+            <select name="language" onchange="this.form.submit()"
+              class="form-select form-select-sm wn-lang-select bg-dark text-white border-secondary shadow-none"
+              style="min-width: 100px;">
+              {% get_current_language as LANGUAGE_CODE %}
+              {% get_available_languages as LANGUAGES %}
+              {% for lang in LANGUAGES %}
+              <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                {{ lang.1 }}
+              </option>
+              {% endfor %}
+            </select>
+          </form>
+
           {% if user.is_authenticated %}
           <span class="navbar-text me-1">
             <i class="bi bi-person-circle me-1"></i> {{ user.username }}
           </span>
           <a href="{% url 'submit_activity' %}" class="btn btn-nav-success">
-            <i class="bi bi-plus-lg me-1"></i> Submit
+            <i class="bi bi-plus-lg me-1"></i> {% trans "Submit" %}
           </a>
-          <a href="{% url 'logout' %}" class="btn btn-nav-danger">Logout</a>
+          <a href="{% url 'logout' %}" class="btn btn-nav-danger">{% trans "Logout" %}</a>
           {% else %}
-          <a href="{% url 'login' %}" class="btn btn-nav-outline">Login</a>
-          <a href="{% url 'register' %}" class="btn btn-nav-primary">Register</a>
+          <a href="{% url 'login' %}" class="btn btn-nav-outline">{% trans "Login" %}</a>
+          <a href="{% url 'register' %}" class="btn btn-nav-primary">{% trans "Register" %}</a>
           {% endif %}
         </div>
       </div>
@@ -108,19 +126,19 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-md-4 mb-3 mb-md-0">
-          <div class="footer-brand">🇳🇵 Watchdog Nepal</div>
-          <div class="footer-tagline mt-1">Holding government accountable.</div>
+          <div class="footer-brand">🇳🇵 {% trans "Watchdog Nepal" %}</div>
+          <div class="footer-tagline mt-1">{% trans "Holding government accountable." %}</div>
         </div>
         <div class="col-md-4 mb-3 mb-md-0">
           <div class="footer-links d-flex justify-content-center gap-3">
-            <a href="{% url 'party_list' %}">Parties</a>
-            <a href="{% url 'elected_member_list' %}">Members</a>
-            <a href="{% url 'activities_list' %}">Activities</a>
+            <a href="{% url 'party_list' %}">{% trans "Parties" %}</a>
+            <a href="{% url 'elected_member_list' %}">{% trans "Members" %}</a>
+            <a href="{% url 'activities_list' %}">{% trans "Activities" %}</a>
           </div>
         </div>
         <div class="col-md-4 text-md-end">
           <div class="footer-copy">
-            Built with <span style="color: var(--wn-rose);">❤</span> for transparency
+            {% trans "Built with" %} <span style="color: var(--wn-rose);">❤</span> {% trans "for transparency" %}
           </div>
         </div>
       </div>

@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 from core.views import home, submit_activity, vote_activity, party_list, party_detail, elected_member_list, elected_member_detail, activities_list
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('activities/', activities_list, name='activities_list'),
