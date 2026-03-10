@@ -40,6 +40,7 @@ pymysql.install_as_MySQLdb()
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -161,3 +162,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# Jazzmin Configuration
+JAZZMIN_SETTINGS = {
+    "site_title": "Watchdog Nepal Admin",
+    "site_header": "Watchdog Nepal",
+    "site_brand": "Watchdog Nepal",
+    "welcome_sign": "Welcome back to Watchdog Nepal Admin",
+    "copyright": "Iigal / Watchdog Nepal",
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "darkly",
+    "dark_mode_theme": "darkly",
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+    "accent": "accent-primary",
+    "button_classes": {
+        "primary": "btn-primary",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success"
+    }
+}
