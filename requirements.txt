@@ -7,6 +7,5 @@ django-widget-tweaks
 mysql-connector-python
 PyMySQL
 django_bootstrap5
-
-
+nepali-datetime
 

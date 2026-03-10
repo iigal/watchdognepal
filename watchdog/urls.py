@@ -16,12 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from core.views import home, submit_activity, vote_activity
+from django.conf import settings
+from django.conf.urls.static import static
+from core.views import home, submit_activity, vote_activity, party_list, party_detail, elected_member_list, elected_member_detail, activities_list
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
+    path('activities/', activities_list, name='activities_list'),
     path('submit/', submit_activity, name='submit_activity'),
     path('vote/<int:activity_id>/', vote_activity, name='vote_activity'),
+    path('parties/', party_list, name='party_list'),
+    path('parties/<int:party_id>/', party_detail, name='party_detail'),
+    path('members/', elected_member_list, name='elected_member_list'),
+    path('members/<int:member_id>/', elected_member_detail, name='elected_member_detail'),
     path('accounts/', include('accounts.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Elected Members — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+
+    <!-- Page Header -->
+    <div class="wn-section-header animate-fade-in-up">
+        <div class="section-icon blue">
+            <i class="bi bi-people"></i>
+        </div>
+        <div>
+            <h2 class="mb-0">Elected Constituency Members</h2>
+            <p class="mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
+                Representatives elected from constituencies across Nepal
+            </p>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {% for member in members %}
+        <div class="col animate-fade-in-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
+            <div class="wn-member-card">
+                <div class="member-img-area">
+                    {% if member.image %}
+                    <img src="{{ member.image.url }}" alt="{{ member.name }}">
+                    {% else %}
+                    <div class="d-flex align-items-center justify-content-center h-100">
+                        <i class="bi bi-person-bounding-box"
+                            style="font-size: 3.5rem; color: var(--wn-text-light);"></i>
+                    </div>
+                    {% endif %}
+                    <div class="member-overlay"></div>
+                </div>
+                <div class="card-body">
+                    <h5>{{ member.name }}</h5>
+                    <div class="constituency">{{ member.constituency }}</div>
+                    <div class="party-name">{{ member.party.name }}</div>
+                    <div class="mt-auto pt-2">
+                        <a href="{% url 'elected_member_detail' member.id %}"
+                            class="wn-btn-view w-100 justify-content-center">
+                            View Manifestos <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="wn-empty-state">
+                <div class="empty-icon"><i class="bi bi-people"></i></div>
+                <h4>No elected members found</h4>
+                <p class="mb-0">Members will appear here once added via the admin panel.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

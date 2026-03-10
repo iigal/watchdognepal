@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load nepali_dates %}
+
+{% block title %}{{ party.name }} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+
+    <!-- Breadcrumb -->
+    <div class="wn-breadcrumb animate-fade-in-up">
+        <a href="{% url 'party_list' %}"><i class="bi bi-arrow-left me-1"></i>All Parties</a>
+    </div>
+
+    <!-- Party Header -->
+    <div class="wn-detail-header mb-4 animate-fade-in-up animate-delay-1">
+        {% if party.logo %}
+        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="detail-img">
+        {% else %}
+        <div class="detail-img-placeholder">
+            <i class="bi bi-building"></i>
+        </div>
+        {% endif %}
+        <div>
+            <h2 class="fw-bold mb-1" style="font-size: 1.5rem;">{{ party.name }}</h2>
+            {% if party.in_government %}
+            <span class="wn-badge-gov mb-2 d-inline-block">In Government</span>
+            {% endif %}
+            <p class="mb-0" style="font-size: 0.88rem; color: var(--wn-text-muted);">{{ party.description }}</p>
+        </div>
+    </div>
+
+    <!-- Manifesto Points -->
+    <div class="wn-section-header animate-fade-in-up animate-delay-2">
+        <div class="section-icon emerald">
+            <i class="bi bi-clipboard-check"></i>
+        </div>
+        <h4 class="mb-0">Manifesto Points</h4>
+    </div>
+
+    <div class="wn-accordion accordion animate-fade-in-up animate-delay-3" id="manifestoAccordion">
+        {% for point in manifesto_points %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ point.id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
+                    aria-controls="collapse{{ point.id }}">
+                    <span>{{ point.title }}</span>
+                    {% if point.deadline %}
+                    <span class="wn-deadline-badge ms-3">
+                        <i class="bi bi-calendar-event me-1"></i>{{ point.deadline|to_bs }}
+                    </span>
+                    {% endif %}
+                </button>
+            </h2>
+            <div id="collapse{{ point.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ point.id }}"
+                data-bs-parent="#manifestoAccordion">
+                <div class="accordion-body">
+                    <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
+                        {{ point.description }}
+                    </p>
+
+                    <div class="d-flex align-items-center gap-1 mb-2"
+                        style="font-size: 0.78rem; font-weight: 700; color: var(--wn-emerald);">
+                        <i class="bi bi-patch-check-fill"></i> Verified Activities
+                    </div>
+
+                    {% for activity in point.activities.all %}
+                    {% if activity.status == 'verified' %}
+                    <div class="wn-activity-item">
+                        <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                            <h6 class="mb-0 fw-bold" style="font-size: 0.88rem;">{{ activity.title }}</h6>
+                            <small style="font-size: 0.72rem; color: var(--wn-text-light);">
+                                {{ activity.created_at|to_bs }}
+                            </small>
+                        </div>
+                        <p class="mb-1" style="font-size: 0.82rem; color: var(--wn-text-muted);">
+                            {{ activity.description }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-end mt-2">
+                            <span class="wn-badge-level">{{ activity.get_level_display }}</span>
+                            <a href="{{ activity.source_link }}" target="_blank" class="wn-source-link">
+                                Source <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% empty %}
+                    <p style="font-size: 0.82rem; color: var(--wn-text-light); font-style: italic;">
+                        No verified activities for this point yet.
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="wn-empty-state">
+            <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
+            <h4>No manifesto points</h4>
+            <p class="mb-0">No manifesto points found for this party.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

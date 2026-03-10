@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load nepali_dates %}
+
+{% block title %}Activities Feed — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+
+  <!-- Page Header -->
+  <div class="wn-section-header animate-fade-in-up">
+    <div class="section-icon blue">
+      <i class="bi bi-activity"></i>
+    </div>
+    <div>
+      <h2 class="mb-0">Government Activities</h2>
+      <p class="mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
+        Track and verify government actions across all levels
+      </p>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="wn-filter-bar mb-4 animate-fade-in-up animate-delay-1">
+    <form method="GET" class="d-flex flex-wrap align-items-end gap-3">
+
+      <div>
+        <label for="level-select" class="form-label mb-1">Level</label>
+        <select name="level" id="level-select" class="form-select form-select-sm" style="min-width: 130px;">
+          <option>All</option>
+          <option {% if request.GET.level == 'Federal' %}selected{% endif %}>Federal</option>
+          <option {% if request.GET.level == 'Provincial' %}selected{% endif %}>Provincial</option>
+          <option {% if request.GET.level == 'Local' %}selected{% endif %}>Local</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="status-select" class="form-label mb-1">Status</label>
+        <select name="status" id="status-select" class="form-select form-select-sm" style="min-width: 130px;">
+          <option>All</option>
+          <option {% if request.GET.status == 'Verified' %}selected{% endif %}>Verified</option>
+          <option {% if request.GET.status == 'Unverified' %}selected{% endif %}>Unverified</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="sort-select" class="form-label mb-1">Sort by</label>
+        <select name="sort" id="sort-select" class="form-select form-select-sm" style="min-width: 150px;">
+          <option {% if request.GET.sort == 'Newest' or not request.GET.sort %}selected{% endif %}>Newest</option>
+          <option {% if request.GET.sort == 'Oldest' %}selected{% endif %}>Oldest</option>
+          <option {% if request.GET.sort == 'Most Positive' %}selected{% endif %}>Most Positive</option>
+          <option {% if request.GET.sort == 'Most Negative' %}selected{% endif %}>Most Negative</option>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-apply">
+        <i class="bi bi-funnel me-1"></i> Apply
+      </button>
+    </form>
+  </div>
+
+  <!-- Activities -->
+  <div>
+    {% for activity in activities %}
+    <div
+      class="wn-activity-card {% if activity.status == 'verified' %}verified{% else %}unverified{% endif %} animate-fade-in-up"
+      style="animation-delay: {{ forloop.counter0 }}00ms;">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+        <h5 class="activity-title mb-0">{{ activity.title }}</h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="wn-badge-level">
+            <i class="bi bi-geo-alt me-1"></i>{{ activity.get_level_display }}
+          </span>
+          {% if activity.status == "verified" %}
+          <span class="wn-badge-verified">
+            <i class="bi bi-patch-check-fill"></i> Verified
+          </span>
+          {% else %}
+          <span class="wn-badge-unverified">
+            <i class="bi bi-clock"></i> Unverified
+          </span>
+          {% endif %}
+        </div>
+      </div>
+
+      <p class="activity-desc mb-2">{{ activity.description }}</p>
+
+      <div class="d-flex align-items-center gap-2 flex-wrap mb-3"
+        style="font-size: 0.78rem; color: var(--wn-text-light);">
+        <span><i class="bi bi-person me-1"></i>{{ activity.created_by }}</span>
+        <span>·</span>
+        <span><i class="bi bi-calendar3 me-1"></i>{{ activity.created_at|to_bs }}</span>
+      </div>
+
+      {% if activity.manifesto_point %}
+      <div class="mb-3">
+        {% if activity.manifesto_point.party %}
+        <a href="{% url 'party_detail' activity.manifesto_point.party.id %}#heading{{ activity.manifesto_point.id }}"
+          class="wn-manifesto-chip">
+          <i class="bi bi-link-45deg"></i>
+          {{ activity.manifesto_point.title }} — {{ activity.manifesto_point.party.name }}
+        </a>
+        {% else %}
+        <a href="{% url 'elected_member_detail' activity.manifesto_point.elected_member.id %}#heading{{ activity.manifesto_point.id }}"
+          class="wn-manifesto-chip">
+          <i class="bi bi-link-45deg"></i>
+          {{ activity.manifesto_point.title }} — {{ activity.manifesto_point.elected_member.name }}
+        </a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="wn-vote-btn up">
+          <i class="bi bi-hand-thumbs-up"></i>
+          <span>{{ activity.positive_votes }}</span>
+        </div>
+        <div class="wn-vote-btn down">
+          <i class="bi bi-hand-thumbs-down"></i>
+          <span>{{ activity.negative_votes }}</span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="wn-empty-state">
+      <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
+      <h4>No activities found</h4>
+      <p class="mb-0">Try adjusting the filters or check back later.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

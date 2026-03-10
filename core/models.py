@@ -1,5 +1,39 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+class PoliticalParty(models.Model):
+    name = models.CharField(max_length=200)
+    in_government = models.BooleanField(default=False, help_text="Is this party currently in government?")
+    description = models.TextField(blank=True, null=True)
+    logo = models.ImageField(upload_to='party_logos/', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class ElectedMember(models.Model):
+    name = models.CharField(max_length=200)
+    constituency = models.CharField(max_length=200, help_text="e.g., Kathmandu-1")
+    party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, related_name='members')
+    image = models.ImageField(upload_to='member_images/', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.constituency})"
+
+class ManifestoPoint(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
+    elected_member = models.ForeignKey(ElectedMember, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
+    deadline = models.DateField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        if not self.party and not self.elected_member:
+            raise ValidationError("A manifesto point must be linked to either a party or an elected member.")
+
+    def __str__(self):
+        return self.title
 
 class Activity(models.Model):
     LEVEL_CHOICES = [
@@ -19,6 +53,7 @@ class Activity(models.Model):
     province = models.CharField(max_length=50, blank=True, null=True)
     source_link = models.URLField()
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='unverified')
+    manifesto_point = models.ForeignKey(ManifestoPoint, on_delete=models.SET_NULL, blank=True, null=True, related_name='activities')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

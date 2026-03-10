@@ -1,79 +1,188 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load nepali_dates %}
+
+{% block title %}Watchdog Nepal — Government Manifestos Tracker{% endblock %}
 
 {% block content %}
-<div class="container">
 
-  <div class="bg-white shadow-sm mt-4 rounded-3 p-4">
-    <form method="GET" class="d-flex flex-wrap align-items-center gap-3">
-      
-      <label for="level-select" class="form-label fw-bold mb-0">Level:</label>
-      <select name="level" id="level-select" class="form-select form-select-sm w-auto">
-        <option>All</option>
-        <option>Federal</option>
-        <option>Provincial</option>
-        <option>Local</option>
-      </select>
-
-      <label for="status-select" class="form-label fw-bold mb-0 ms-2">Status:</label>
-      <select name="status" id="status-select" class="form-select form-select-sm w-auto">
-        <option>All</option>
-        <option>Verified</option>
-        <option>Unverified</option>
-      </select>
-
-      <label for="sort-select" class="form-label fw-bold mb-0 ms-2">Sort by:</label>
-      <select name="sort" id="sort-select" class="form-select form-select-sm w-auto">
-        <option>Newest</option>
-        <option>Oldest</option>
-        <option>Most Positive</option>
-        <option>Most Negative</option>
-      </select>
-
-      <button type="submit" class="btn btn-primary btn-sm ms-3">
-        Apply
-      </button>
-    </form>
-  </div>
-
-  <div class="mt-4">
-    {% for activity in activitys %}
-    <div class="card shadow-sm mb-3">
-      <div class="card-body">
-        <h5 class="card-title fw-bold">{{ activity.title }}</h5>
-        <p class="card-text mt-2">{{ activity.description }}</p>
-
-        <p class="card-text small text-muted mt-3 mb-1">
-          <span class="fw-bold">Level:</span> {{ activity.level }} |
-          <span class="fw-bold">Status:</span> 
-          {% if activity.status == "verified" %}
-            <span class="badge bg-success-subtle text-success-emphasis rounded-pill">Source Verified</span>
-          {% else %}
-            <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill">Source yet to verify</span>
-          {% endif %}
-        </p>
-
-        <p class="card-text small text-muted">
-          By: <span class="fw-medium">{{ activity.created_by }}</span> |
-          {{ activity.created_at|date:"M d, Y" }}
-        </p>
-
-        <div class="d-flex align-items-center gap-4 mt-3">
-          <div class="d-flex align-items-center gap-1">
-            <span class="fs-5">👍</span> <span>{{ activity.positive_votes }}</span>
-          </div>
-          <div class="d-flex align-items-center gap-1">
-            <span class="fs-5">👎</span> <span>{{ activity.negative_votes }}</span>
-          </div>
+<!-- Hero Section -->
+<section class="wn-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 animate-fade-in-up">
+                <h1>
+                    Track Government<br>
+                    <span class="hero-gradient-text">Promises & Actions</span>
+                </h1>
+                <p class="mt-3 mb-0">
+                    Monitor manifesto commitments, verified activities, and approaching deadlines.
+                    Hold your government accountable with data-driven transparency.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ government_parties|length }}</div>
+                        <div class="stat-label">Gov. Parties</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="hero-manifesto-count">0</div>
+                        <div class="stat-label">Manifesto Points</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ upcoming_deadlines|length }}</div>
+                        <div class="stat-label">Upcoming Deadlines</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </div>
+</section>
+
+<!-- Approaching Deadlines -->
+{% if upcoming_deadlines %}
+<section class="container mt-4 animate-fade-in-up animate-delay-1">
+    <div class="wn-section-header">
+        <div class="section-icon amber">
+            <i class="bi bi-clock-history"></i>
+        </div>
+        <h3>Approaching Deadlines</h3>
+        <span class="section-count">{{ upcoming_deadlines|length }} upcoming</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        {% for point in upcoming_deadlines %}
+        <div class="col">
+            <div class="wn-deadline-card">
+                <div class="deadline-title">{{ point.title }}</div>
+                <div class="deadline-party">
+                    {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
+                </div>
+                <div class="mt-2 d-flex align-items-center justify-content-between">
+                    <span class="wn-countdown-badge live-countdown"
+                        data-deadline="{{ point.deadline|date:'c' }}">Loading...</span>
+                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.deadline|to_bs }}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Government Parties & Manifesto Points -->
+<section class="container mt-5 mb-5">
+    {% for party in government_parties %}
+    <div class="wn-party-section animate-fade-in-up animate-delay-{{ forloop.counter }}">
+        <div class="wn-party-header">
+            {% if party.logo %}
+            <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="wn-party-logo">
+            {% else %}
+            <div class="wn-party-logo-placeholder">
+                <i class="bi bi-building"></i>
+            </div>
+            {% endif %}
+            <div>
+                <h4 class="fw-bold mb-1" style="font-size: 1.25rem;">
+                    {{ party.name }}
+                    <span class="wn-badge-gov ms-2">In Government</span>
+                </h4>
+                <p class="mb-0" style="font-size: 0.85rem; color: var(--wn-text-muted);">{{ party.description }}</p>
+            </div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-lg-2 g-3">
+            {% for point in party.manifesto_points.all %}
+            <div class="col manifesto-count-item">
+                <div class="wn-manifesto-card">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="manifesto-title">{{ point.title }}</div>
+                        {% if point.deadline %}
+                        <span class="wn-deadline-badge ms-2">
+                            <i class="bi bi-calendar-event me-1"></i>{{ point.deadline|to_bs }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    <p class="manifesto-desc">{{ point.description }}</p>
+
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
+                            <i class="bi bi-patch-check-fill"></i> Verified Activities
+                        </div>
+                        {% for activity in point.activities.all %}
+                        {% if activity.status == 'verified' %}
+                        <div class="wn-verified-item">
+                            <div>
+                                <div class="vi-title">{{ activity.title }}</div>
+                                <div class="vi-date">{{ activity.created_at|to_bs }}</div>
+                            </div>
+                            <a href="{{ activity.source_link }}" target="_blank" class="wn-source-link">
+                                Source <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); font-style: italic; margin: 0;">
+                            No verified activities yet.
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
+                    This party has not added any manifesto points yet.
+                </p>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     {% empty %}
-    <div class="text-center text-muted mt-5 p-4 bg-white rounded-3 shadow-sm">
-      <p class="mb-0">No activities found.</p>
+    <div class="wn-empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <h4>No parties in government</h4>
+        <p class="mb-0">Please mark parties as "In Government" via the Admin panel.</p>
     </div>
     {% endfor %}
-  </div>
+</section>
 
-</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Countdown timer
+        function updateCountdowns() {
+            const elements = document.querySelectorAll('.live-countdown');
+            const now = new Date().getTime();
+
+            elements.forEach(el => {
+                const deadlineDate = new Date(el.getAttribute('data-deadline'));
+                const deadlineTime = deadlineDate.getTime();
+                const distance = deadlineTime - now;
+
+                if (distance < 0) {
+                    el.innerHTML = "Deadline Passed";
+                    el.classList.add('passed');
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                let display = "";
+                if (days > 0) display += days + "d ";
+                display += hours + "h " + minutes + "m " + seconds + "s";
+                el.innerHTML = display;
+            });
+        }
+
+        updateCountdowns();
+        setInterval(updateCountdowns, 1000);
+
+        // Count manifesto points
+        const manifestoItems = document.querySelectorAll('.manifesto-count-item');
+        const counter = document.getElementById('hero-manifesto-count');
+        if (counter) counter.textContent = manifestoItems.length;
+    });
+</script>
 {% endblock %}

@@ -1,44 +1,61 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
+{% block title %}Login — Watchdog Nepal{% endblock %}
+
 {% block content %}
-<div class="container">
+<div class="container mt-5 mb-5">
   <div class="row justify-content-center">
-    <div class="col-lg-5 col-md-8 col-sm-10">
-      
-      <div class="card shadow-sm mt-4">
-        <div class="card-body p-4 p-md-5">
-          <h2 class="card-title h3 fw-bold text-center mb-4">Login</h2>
+    <div class="col-lg-5 col-md-7 col-sm-10">
+
+      <div class="text-center mb-4 animate-fade-in-up">
+        <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;">
+          Welcome Back
+        </h2>
+        <p style="font-size: 0.88rem; color: var(--wn-text-muted);">
+          Sign in to your Watchdog Nepal account
+        </p>
+      </div>
+
+      <div class="wn-auth-card animate-fade-in-up animate-delay-1">
+        <div class="card-body">
 
           {% if form %}
-            <form method="POST" novalidate>
-              {% csrf_token %}
-              
-              {% bootstrap_form form %}
-              
-              {% bootstrap_button button_type="submit" content="Login" class="btn-primary w-100" %}
-            </form>
+          <form method="POST" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="d-grid mt-4">
+              <button type="submit" class="wn-btn-primary justify-content-center">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+              </button>
+            </div>
+          </form>
           {% else %}
-            <form method="POST">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="id_username" class="form-label fw-medium">Username</label>
-                <input type="text" name="username" id="id_username" class="form-control" />
-              </div>
-              <div class="mb-3">
-                <label for="id_password" class="form-label fw-medium">Password</label>
-                <input type="password" name="password" id="id_password" class="form-control" />
-              </div>
-              <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_username" class="form-label fw-medium" style="font-size: 0.85rem;">Username</label>
+              <input type="text" name="username" id="id_username" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label for="id_password" class="form-label fw-medium" style="font-size: 0.85rem;">Password</label>
+              <input type="password" name="password" id="id_password" class="form-control" />
+            </div>
+            <div class="d-grid mt-4">
+              <button type="submit" class="wn-btn-primary justify-content-center">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Login
+              </button>
+            </div>
+          </form>
           {% endif %}
 
-          <p class="mt-4 text-center text-muted small">
-            Don't have an account? <a href="{% url 'register' %}">Register here</a>
+          <p class="mt-4 text-center mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
+            Don't have an account?
+            <a href="{% url 'register' %}" style="color: var(--wn-blue); font-weight: 600;">Register here</a>
           </p>
         </div>
       </div>
-      
+
     </div>
   </div>
 </div>

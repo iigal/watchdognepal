@@ -1,72 +1,48 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
+{% block title %}Submit Activity — Watchdog Nepal{% endblock %}
+
 {% block content %}
-<div class="container mt-4">
-  <div class="row g-4">
-
-    <div class="col-md-4">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <h5 class="card-title fw-bold mb-3">Filters</h5>
-          <form method="GET" class="d-flex flex-column gap-3">
-            <div>
-              <label for="id_level" class="form-label fw-bold">Level:</label>
-              <select name="level" id="id_level" class="form-select">
-                <option>All</option>
-                <option>Federal</option>
-                <option>Provincial</option>
-                <option>Local</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="id_status" class="form-label fw-bold">Status:</label>
-              <select name="status" id="id_status" class="form-select">
-                <option>All</option>
-                <option>Verified</option>
-                <option>Unverified</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="id_sort" class="form-label fw-bold">Sort by:</label>
-              <select name="sort" id="id_sort" class="form-select">
-                <option>Newest</option>
-                <option>Oldest</option>
-                <option>Most Positive</option>
-                <option>Most Negative</option>
-              </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">
-              Apply
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
     <div class="col-md-8">
-      <div class="card shadow-sm">
+
+      <div class="wn-breadcrumb animate-fade-in-up">
+        <a href="{% url 'home' %}"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+      </div>
+
+      <div class="wn-submit-card animate-fade-in-up animate-delay-1">
         <div class="card-body p-4 p-md-5">
-          <h2 class="h3 fw-bold mb-4">Submit Government Activity</h2>
+          <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem;" class="mb-4">
+            <i class="bi bi-send me-2" style="color: var(--wn-blue);"></i>
+            Submit Government Activity
+          </h2>
+
+          <div class="wn-info-alert mb-4">
+            <i class="bi bi-info-circle-fill me-2" style="color: var(--wn-blue);"></i>
+            <strong>Important:</strong>
+            Only activities with a verified government source will be approved. News articles or social
+            media links will not be accepted. Please ensure the source link is from a
+            <code style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">.gov</code>
+            or
+            <code style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">.gov.np</code>
+            domain.
+          </div>
 
           <form method="POST" novalidate>
             {% csrf_token %}
-            
             {% bootstrap_form form %}
-
-            {% bootstrap_button button_type="submit" content="Submit" class="btn-primary" %}
+            <div class="d-grid mt-4">
+              <button type="submit" class="wn-btn-primary justify-content-center">
+                <i class="bi bi-send me-1"></i> Submit Activity
+              </button>
+            </div>
           </form>
-
-          <p class="mt-4 text-center text-muted small">
-            <a href="{% url 'home' %}">Back to Home</a>
-          </p>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 </div>
 {% endblock %}

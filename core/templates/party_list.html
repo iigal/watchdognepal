@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Political Parties — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+
+    <!-- Page Header -->
+    <div class="wn-section-header animate-fade-in-up">
+        <div class="section-icon blue">
+            <i class="bi bi-flag"></i>
+        </div>
+        <div>
+            <h2 class="mb-0">Political Parties</h2>
+            <p class="mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
+                Parties represented in Parliament
+            </p>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for party in parties %}
+        <div class="col animate-fade-in-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
+            <div class="wn-party-card">
+                <div class="card-logo-area">
+                    {% if party.logo %}
+                    <img src="{{ party.logo.url }}" alt="{{ party.name }}">
+                    {% else %}
+                    <i class="bi bi-building" style="font-size: 3rem; color: var(--wn-text-light);"></i>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5>{{ party.name }}</h5>
+                    <p class="text-truncate">{{ party.description }}</p>
+                    <div class="mt-auto pt-2">
+                        <a href="{% url 'party_detail' party.id %}" class="wn-btn-view">
+                            View Manifestos <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="wn-empty-state">
+                <div class="empty-icon"><i class="bi bi-flag"></i></div>
+                <h4>No parties found</h4>
+                <p class="mb-0">Parties will appear here once added via the admin panel.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
