@@ -1448,3 +1448,691 @@ a {
     padding: 1.15rem;
   }
 }
+
+
+/* ============================================
+   Petition Styles
+   ============================================ */
+
+/* Petition Hero */
+.wn-petition-hero {
+  background: var(--wn-gradient-hero);
+  padding: 3rem 0 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.wn-petition-hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -8%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wn-petition-hero h1 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 2.2rem;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.wn-petition-hero p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.05rem;
+  margin-bottom: 0;
+}
+
+/* Buttons */
+.wn-btn-primary {
+  background: var(--wn-gradient-blue);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--wn-radius-full);
+  transition: var(--wn-transition);
+}
+
+.wn-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--wn-shadow-glow);
+  color: #fff;
+}
+
+.wn-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--wn-border);
+  color: var(--wn-text-muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--wn-radius-full);
+  transition: var(--wn-transition-fast);
+}
+
+.wn-btn-secondary:hover {
+  background: var(--wn-bg);
+  color: var(--wn-text);
+}
+
+.wn-btn-sign {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--wn-radius-full);
+  transition: var(--wn-transition);
+}
+
+.wn-btn-sign:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+  color: #fff;
+}
+
+/* Petition Cards */
+.wn-petition-card {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  overflow: hidden;
+  transition: var(--wn-transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.wn-petition-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--wn-shadow-xl);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.petition-card-image {
+  height: 180px;
+  overflow: hidden;
+}
+
+.petition-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.wn-petition-card:hover .petition-card-image img {
+  transform: scale(1.05);
+}
+
+.petition-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.petition-card-category {
+  margin-bottom: 0.75rem;
+}
+
+.petition-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--wn-text);
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.petition-card-target {
+  font-size: 0.78rem;
+  color: var(--wn-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.petition-card-desc {
+  font-size: 0.85rem;
+  color: var(--wn-text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* Category badges */
+.wn-category-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--wn-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: inline-block;
+}
+
+.cat-governance { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+.cat-infrastructure { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+.cat-education { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.cat-health { background: rgba(244, 63, 94, 0.1); color: #f43f5e; }
+.cat-environment { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.cat-rights { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
+.cat-other { background: rgba(100, 116, 139, 0.1); color: #64748b; }
+
+/* Progress bar */
+.petition-progress-section {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.petition-progress-bar {
+  height: 6px;
+  background: var(--wn-bg);
+  border-radius: var(--wn-radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.petition-progress-bar.large {
+  height: 10px;
+}
+
+.petition-progress-bar.small {
+  height: 4px;
+}
+
+.petition-progress-fill {
+  height: 100%;
+  background: var(--wn-gradient-blue);
+  border-radius: var(--wn-radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 2px;
+}
+
+.petition-progress-fill.achieved {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.petition-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+}
+
+.petition-signatures {
+  color: var(--wn-text);
+  font-weight: 500;
+}
+
+.petition-goal {
+  color: var(--wn-text-light);
+}
+
+.petition-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--wn-border-light);
+  font-size: 0.78rem;
+  color: var(--wn-text-light);
+}
+
+/* Petition Detail */
+.wn-petition-detail {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 2rem;
+}
+
+.petition-detail-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.petition-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.88rem;
+  color: var(--wn-text-muted);
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--wn-border-light);
+  margin-bottom: 1.5rem;
+}
+
+.petition-detail-image {
+  border-radius: var(--wn-radius-lg);
+  overflow: hidden;
+}
+
+.petition-detail-body {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--wn-text);
+}
+
+/* Sidebar */
+.wn-petition-sidebar {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 1.75rem;
+  position: sticky;
+  top: 90px;
+}
+
+.petition-sidebar-progress {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.petition-sidebar-count .big-number {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--wn-text);
+  line-height: 1;
+  display: block;
+}
+
+.petition-sidebar-count .goal-text {
+  font-size: 0.88rem;
+  color: var(--wn-text-muted);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.petition-sidebar-percentage {
+  font-size: 0.82rem;
+  color: var(--wn-text-muted);
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+/* Sign form & states */
+.petition-sign-form {
+  margin-top: 1rem;
+}
+
+.petition-sign-form .form-control {
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-md);
+  font-size: 0.88rem;
+}
+
+.petition-sign-form .form-control:focus {
+  border-color: var(--wn-blue);
+  box-shadow: 0 0 0 3px var(--wn-blue-glow);
+}
+
+.petition-signed-state,
+.petition-own-state,
+.petition-closed-state {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: var(--wn-radius-md);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.petition-signed-state {
+  background: var(--wn-emerald-bg);
+  color: var(--wn-emerald);
+}
+
+.petition-signed-state i { font-size: 1.3rem; }
+
+.petition-own-state {
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--wn-blue);
+}
+
+.petition-closed-state {
+  background: rgba(100, 116, 139, 0.08);
+  color: var(--wn-text-muted);
+}
+
+/* Share */
+.petition-share {
+  padding-top: 1rem;
+  border-top: 1px solid var(--wn-border-light);
+}
+
+.share-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--wn-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.wn-share-btn {
+  background: var(--wn-bg);
+  border: 1px solid var(--wn-border);
+  color: var(--wn-text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: var(--wn-radius-full);
+  padding: 0.35rem 0.85rem;
+  transition: var(--wn-transition-fast);
+}
+
+.wn-share-btn:hover {
+  background: var(--wn-blue);
+  color: #fff;
+  border-color: var(--wn-blue);
+}
+
+/* Signatures list */
+.wn-petition-signatures {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 1.75rem;
+}
+
+.signature-item {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--wn-border-light);
+}
+
+.signature-item:last-child {
+  border-bottom: none;
+}
+
+.signature-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.signature-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--wn-gradient-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.signature-name {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--wn-text);
+}
+
+.signature-time {
+  font-size: 0.75rem;
+  color: var(--wn-text-light);
+}
+
+.signature-comment {
+  font-size: 0.85rem;
+  color: var(--wn-text-muted);
+  font-style: italic;
+  margin: 0.4rem 0 0 2.75rem;
+}
+
+/* Empty State */
+.wn-empty-state {
+  padding: 3rem 1rem;
+}
+
+.wn-empty-state i {
+  font-size: 3.5rem;
+  color: var(--wn-text-light);
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.wn-empty-state h3 {
+  color: var(--wn-text);
+  margin-bottom: 0.5rem;
+}
+
+.wn-empty-state p {
+  color: var(--wn-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.wn-empty-state-sm {
+  text-align: center;
+  padding: 2rem 1rem;
+  background: var(--wn-bg);
+  border-radius: var(--wn-radius-lg);
+}
+
+.wn-empty-state-sm i {
+  font-size: 2rem;
+  color: var(--wn-text-light);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.wn-empty-state-sm p {
+  color: var(--wn-text-muted);
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+}
+
+/* Form Card */
+.wn-form-card {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 2rem;
+}
+
+.form-card-header {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--wn-border-light);
+}
+
+.form-card-header h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-card-header p {
+  color: var(--wn-text-muted);
+  margin-bottom: 0;
+  font-size: 0.92rem;
+}
+
+/* ============================================
+   Dashboard Styles
+   ============================================ */
+
+.wn-dashboard-header {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.dashboard-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--wn-gradient-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.wn-dashboard-header h1 {
+  font-size: 1.5rem;
+}
+
+.dashboard-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.dash-stat {
+  text-align: center;
+}
+
+.dash-stat-number {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--wn-text);
+  display: block;
+  line-height: 1;
+}
+
+.dash-stat-label {
+  font-size: 0.72rem;
+  color: var(--wn-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* Dashboard Tabs */
+.wn-dash-tabs {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-lg);
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.wn-dash-tab {
+  background: transparent;
+  border: none;
+  color: var(--wn-text-muted);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--wn-radius-sm);
+  transition: var(--wn-transition-fast);
+  cursor: pointer;
+}
+
+.wn-dash-tab:hover {
+  background: var(--wn-bg);
+  color: var(--wn-text);
+}
+
+.wn-dash-tab.active {
+  background: var(--wn-gradient-blue);
+  color: #fff;
+}
+
+/* Dashboard Cards */
+.wn-dash-card {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-lg);
+  padding: 1.25rem;
+  transition: var(--wn-transition);
+}
+
+.wn-dash-card:hover {
+  border-color: rgba(59, 130, 246, 0.2);
+  box-shadow: var(--wn-shadow-md);
+}
+
+.dash-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wn-text);
+  margin-bottom: 0;
+  line-height: 1.3;
+}
+
+/* Status badges */
+.wn-status-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--wn-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.status-active {
+  background: var(--wn-emerald-bg);
+  color: var(--wn-emerald);
+}
+
+.status-achieved {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--wn-blue);
+}
+
+.status-closed {
+  background: rgba(100, 116, 139, 0.1);
+  color: var(--wn-text-muted);
+}
+
+/* Mobile responsive for dashboard */
+@media (max-width: 768px) {
+  .wn-dashboard-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .dashboard-stats {
+    gap: 1.25rem;
+  }
+
+  .wn-dash-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .wn-dash-tab {
+    white-space: nowrap;
+    font-size: 0.82rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .petition-detail-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .petition-detail-title {
+    font-size: 1.5rem;
+  }
+}

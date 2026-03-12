@@ -18,7 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import home, submit_activity, vote_activity, party_list, party_detail, elected_member_list, elected_member_detail, activities_list
+from core.views import (
+    home, submit_activity, vote_activity,
+    party_list, party_detail,
+    elected_member_list, elected_member_detail,
+    activities_list,
+    petition_list, petition_detail, petition_create, petition_sign,
+    dashboard,
+)
 
 urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
@@ -32,6 +39,13 @@ urlpatterns = [
     path('members/', elected_member_list, name='elected_member_list'),
     path('members/<int:member_id>/', elected_member_detail, name='elected_member_detail'),
     path('accounts/', include('accounts.urls')),
+    # Petitions
+    path('petitions/', petition_list, name='petition_list'),
+    path('petitions/create/', petition_create, name='petition_create'),
+    path('petitions/<int:petition_id>/', petition_detail, name='petition_detail'),
+    path('petitions/<int:petition_id>/sign/', petition_sign, name='petition_sign'),
+    # Dashboard
+    path('dashboard/', dashboard, name='dashboard'),
 ]
 
 if settings.DEBUG:

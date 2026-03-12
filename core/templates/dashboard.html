@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Dashboard" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Dashboard Header -->
+    <div class="wn-dashboard-header animate-fade-in-up">
+        <div class="d-flex align-items-center gap-3">
+            <div class="dashboard-avatar">{{ user.username|first|upper }}</div>
+            <div>
+                <h1 class="mb-0">{% trans "Dashboard" %}</h1>
+                <p class="text-muted mb-0">{% trans "Welcome back," %} <strong>{{ user.username }}</strong></p>
+            </div>
+        </div>
+        <div class="dashboard-stats mt-3 mt-md-0">
+            <div class="dash-stat">
+                <span class="dash-stat-number">{{ my_petitions.count }}</span>
+                <span class="dash-stat-label">{% trans "Petitions Created" %}</span>
+            </div>
+            <div class="dash-stat">
+                <span class="dash-stat-number">{{ signed_petitions.count }}</span>
+                <span class="dash-stat-label">{% trans "Petitions Signed" %}</span>
+            </div>
+            <div class="dash-stat">
+                <span class="dash-stat-number">{{ my_activities.count }}</span>
+                <span class="dash-stat-label">{% trans "Activities Submitted" %}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav wn-dash-tabs mt-4 animate-fade-in-up animate-delay-1" id="dashTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="wn-dash-tab active" id="petitions-tab" data-bs-toggle="tab" data-bs-target="#petitions-pane"
+                type="button" role="tab">
+                <i class="bi bi-pencil-square me-1"></i> {% trans "My Petitions" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="wn-dash-tab" id="signed-tab" data-bs-toggle="tab" data-bs-target="#signed-pane" type="button"
+                role="tab">
+                <i class="bi bi-pen me-1"></i> {% trans "Signed Petitions" %}
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="wn-dash-tab" id="activities-tab" data-bs-toggle="tab" data-bs-target="#activities-pane"
+                type="button" role="tab">
+                <i class="bi bi-activity me-1"></i> {% trans "My Activities" %}
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3 animate-fade-in-up animate-delay-2" id="dashTabContent">
+
+        <!-- My Petitions -->
+        <div class="tab-pane fade show active" id="petitions-pane" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">{% trans "My Petitions" %}</h3>
+                <a href="{% url 'petition_create' %}" class="btn wn-btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i> {% trans "New Petition" %}
+                </a>
+            </div>
+            {% if my_petitions %}
+            <div class="row g-3">
+                {% for petition in my_petitions %}
+                <div class="col-md-6">
+                    <a href="{% url 'petition_detail' petition_id=petition.id %}" class="text-decoration-none">
+                        <div class="wn-dash-card">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="wn-category-badge cat-{{ petition.category }} small">{{
+                                    petition.get_category_display }}</span>
+                                {% if petition.status == 'active' %}
+                                <span class="wn-status-badge status-active">{% trans "Active" %}</span>
+                                {% elif petition.status == 'achieved' %}
+                                <span class="wn-status-badge status-achieved">{% trans "Achieved" %}</span>
+                                {% else %}
+                                <span class="wn-status-badge status-closed">{% trans "Closed" %}</span>
+                                {% endif %}
+                            </div>
+                            <h4 class="dash-card-title">{{ petition.title }}</h4>
+                            <div class="petition-progress-bar small mt-2">
+                                <div class="petition-progress-fill" style="width: {{ petition.progress_percentage }}%">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <span class="text-muted small">{{ petition.signature_count }} / {{ petition.goal }} {%
+                                    trans "signatures" %}</span>
+                                <span class="text-muted small">{{ petition.created_at|timesince }} {% trans "ago"
+                                    %}</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="wn-empty-state-sm">
+                <i class="bi bi-pencil-square"></i>
+                <p>{% trans "You haven't created any petitions yet." %}</p>
+                <a href="{% url 'petition_create' %}" class="btn wn-btn-primary btn-sm">{% trans "Start your first
+                    petition" %}</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Signed Petitions -->
+        <div class="tab-pane fade" id="signed-pane" role="tabpanel">
+            <h3 class="mb-3">{% trans "Petitions I Signed" %}</h3>
+            {% if signed_petitions %}
+            <div class="row g-3">
+                {% for petition in signed_petitions %}
+                <div class="col-md-6">
+                    <a href="{% url 'petition_detail' petition_id=petition.id %}" class="text-decoration-none">
+                        <div class="wn-dash-card">
+                            <span class="wn-category-badge cat-{{ petition.category }} small">{{
+                                petition.get_category_display }}</span>
+                            <h4 class="dash-card-title mt-2">{{ petition.title }}</h4>
+                            <p class="text-muted small mb-2"><i class="bi bi-person me-1"></i>{% trans "by" %} {{
+                                petition.created_by.username }}</p>
+                            <div class="petition-progress-bar small">
+                                <div class="petition-progress-fill" style="width: {{ petition.progress_percentage }}%">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <span class="text-muted small">{{ petition.signature_count }} / {{ petition.goal
+                                    }}</span>
+                                <span class="text-muted small">{{ petition.progress_percentage }}%</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="wn-empty-state-sm">
+                <i class="bi bi-pen"></i>
+                <p>{% trans "You haven't signed any petitions yet." %}</p>
+                <a href="{% url 'petition_list' %}" class="btn wn-btn-primary btn-sm">{% trans "Browse petitions" %}</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- My Activities -->
+        <div class="tab-pane fade" id="activities-pane" role="tabpanel">
+            <h3 class="mb-3">{% trans "My Activities" %}</h3>
+            {% if my_activities %}
+            <div class="row g-3">
+                {% for activity in my_activities %}
+                <div class="col-12">
+                    <div class="wn-dash-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h4 class="dash-card-title">{{ activity.title }}</h4>
+                                <p class="text-muted small mb-1">{{ activity.description|truncatewords:30 }}</p>
+                            </div>
+                            {% if activity.status == 'verified' %}
+                            <span class="wn-badge-verified"><i class="bi bi-check-circle-fill me-1"></i>{% trans
+                                "Verified" %}</span>
+                            {% else %}
+                            <span class="wn-badge-unverified"><i class="bi bi-clock me-1"></i>{% trans "Pending"
+                                %}</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex gap-3 mt-2 text-muted small">
+                            <span><i class="bi bi-geo-alt me-1"></i>{{ activity.get_level_display }}</span>
+                            <span><i class="bi bi-hand-thumbs-up me-1"></i>{{ activity.positive_votes }}</span>
+                            <span><i class="bi bi-hand-thumbs-down me-1"></i>{{ activity.negative_votes }}</span>
+                            <span><i class="bi bi-calendar me-1"></i>{{ activity.created_at|timesince }} {% trans "ago"
+                                %}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="wn-empty-state-sm">
+                <i class="bi bi-activity"></i>
+                <p>{% trans "You haven't submitted any activities yet." %}</p>
+                <a href="{% url 'submit_activity' %}" class="btn wn-btn-primary btn-sm">{% trans "Submit an activity"
+                    %}</a>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

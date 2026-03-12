@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint
+from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, Petition, PetitionSignature
 from .widgets import NepaliDatePickerWidget
 
 @admin.register(PoliticalParty)
@@ -49,4 +49,23 @@ class ActivityAdmin(admin.ModelAdmin):
 class VoteAdmin(admin.ModelAdmin):
     list_display = ('user', 'activity', 'vote_type', 'created_at')
 
-# Register your models here.
+
+class PetitionSignatureInline(admin.TabularInline):
+    model = PetitionSignature
+    extra = 0
+    readonly_fields = ('user', 'comment', 'signed_at')
+
+
+@admin.register(Petition)
+class PetitionAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'target', 'goal', 'signature_count', 'status', 'created_by', 'created_at')
+    list_filter = ('status', 'category', 'created_at')
+    search_fields = ('title', 'description', 'target')
+    inlines = [PetitionSignatureInline]
+
+
+@admin.register(PetitionSignature)
+class PetitionSignatureAdmin(admin.ModelAdmin):
+    list_display = ('user', 'petition', 'signed_at')
+    list_filter = ('signed_at',)
+    search_fields = ('user__username', 'petition__title')

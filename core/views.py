@@ -1,9 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.db import models
-from .models import Activity, ManifestoPoint, PoliticalParty
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Activity, ManifestoPoint, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
+from .forms import ActivityForm, PetitionForm
+
 
 def home(request):
     # Fetch all parties that are in government
@@ -31,6 +35,7 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
 def activities_list(request):
     level = request.GET.get('level')
     status = request.GET.get('status')
@@ -57,10 +62,6 @@ def activities_list(request):
     }
     return render(request, 'activities_list.html', context)
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
-from .forms import ActivityForm
-from .models import Activity
 
 @login_required
 def submit_activity(request):
@@ -75,10 +76,10 @@ def submit_activity(request):
         form = ActivityForm()
     return render(request, 'submit_activity.html', {'form': form})
 
+
 @require_POST
 @login_required
 def vote_activity(request, activity_id):
-    from .models import Vote, Activity
     activity = Activity.objects.get(id=activity_id)
     vote_type = request.POST.get('vote_type')
 
@@ -105,12 +106,10 @@ def vote_activity(request, activity_id):
     })
 
 
-from django.shortcuts import render, get_object_or_404
-from .models import PoliticalParty, ElectedMember
-
 def party_list(request):
     parties = PoliticalParty.objects.all()
     return render(request, 'party_list.html', {'parties': parties})
+
 
 def party_detail(request, party_id):
     party = get_object_or_404(PoliticalParty, id=party_id)
@@ -118,11 +117,134 @@ def party_detail(request, party_id):
     manifesto_points = party.manifesto_points.all().prefetch_related('activities')
     return render(request, 'party_detail.html', {'party': party, 'manifesto_points': manifesto_points})
 
+
 def elected_member_list(request):
     members = ElectedMember.objects.all().select_related('party')
     return render(request, 'member_list.html', {'members': members})
+
 
 def elected_member_detail(request, member_id):
     member = get_object_or_404(ElectedMember, id=member_id)
     manifesto_points = member.manifesto_points.all().prefetch_related('activities')
     return render(request, 'member_detail.html', {'member': member, 'manifesto_points': manifesto_points})
+
+
+# ─── Petition Views ───────────────────────────────────────────
+
+def petition_list(request):
+    petitions = Petition.objects.filter(status='active')
+    
+    # Search
+    q = request.GET.get('q', '').strip()
+    if q:
+        petitions = petitions.filter(
+            models.Q(title__icontains=q) | models.Q(description__icontains=q)
+        )
+    
+    # Category filter
+    category = request.GET.get('category', '')
+    if category:
+        petitions = petitions.filter(category=category)
+    
+    context = {
+        'petitions': petitions,
+        'search_query': q,
+        'selected_category': category,
+        'categories': Petition.CATEGORY_CHOICES,
+    }
+    return render(request, 'petition_list.html', context)
+
+
+def petition_detail(request, petition_id):
+    petition = get_object_or_404(Petition, id=petition_id)
+    signatures = petition.signatures.select_related('user').order_by('-signed_at')[:20]
+    has_signed = False
+    if request.user.is_authenticated:
+        has_signed = petition.signatures.filter(user=request.user).exists()
+    
+    context = {
+        'petition': petition,
+        'signatures': signatures,
+        'has_signed': has_signed,
+        'total_signatures': petition.signature_count,
+    }
+    return render(request, 'petition_detail.html', context)
+
+
+@login_required
+def petition_create(request):
+    if request.method == 'POST':
+        form = PetitionForm(request.POST, request.FILES)
+        if form.is_valid():
+            petition = form.save(commit=False)
+            petition.created_by = request.user
+            petition.save()
+            messages.success(request, 'Your petition has been created successfully!')
+            return redirect('petition_detail', petition_id=petition.id)
+    else:
+        form = PetitionForm()
+    return render(request, 'petition_create.html', {'form': form})
+
+
+@require_POST
+@login_required
+def petition_sign(request, petition_id):
+    petition = get_object_or_404(Petition, id=petition_id)
+    
+    if petition.status != 'active':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'This petition is no longer active.'}, status=400)
+        messages.error(request, 'This petition is no longer active.')
+        return redirect('petition_detail', petition_id=petition.id)
+    
+    if petition.created_by == request.user:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'You cannot sign your own petition.'}, status=400)
+        messages.error(request, 'You cannot sign your own petition.')
+        return redirect('petition_detail', petition_id=petition.id)
+    
+    # Check if already signed
+    if PetitionSignature.objects.filter(petition=petition, user=request.user).exists():
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'error': 'You have already signed this petition.'}, status=400)
+        messages.info(request, 'You have already signed this petition.')
+        return redirect('petition_detail', petition_id=petition.id)
+    
+    comment = request.POST.get('comment', '').strip()
+    PetitionSignature.objects.create(
+        petition=petition,
+        user=request.user,
+        comment=comment if comment else None,
+    )
+    
+    # Check if goal achieved
+    if petition.signature_count >= petition.goal:
+        petition.status = 'achieved'
+        petition.save()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'signature_count': petition.signature_count,
+            'progress': petition.progress_percentage,
+            'status': petition.status,
+        })
+    
+    messages.success(request, 'Thank you for signing this petition!')
+    return redirect('petition_detail', petition_id=petition.id)
+
+
+# ─── Dashboard View ───────────────────────────────────────────
+
+@login_required
+def dashboard(request):
+    my_petitions = Petition.objects.filter(created_by=request.user)
+    signed_petitions = Petition.objects.filter(signatures__user=request.user).distinct()
+    my_activities = Activity.objects.filter(created_by=request.user)
+    
+    context = {
+        'my_petitions': my_petitions,
+        'signed_petitions': signed_petitions,
+        'my_activities': my_activities,
+    }
+    return render(request, 'dashboard.html', context)

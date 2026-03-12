@@ -109,3 +109,62 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"{self.user.username} voted {self.vote_type} on {self.activity.title}"
+
+
+class Petition(models.Model):
+    CATEGORY_CHOICES = [
+        ('governance', 'Governance'),
+        ('infrastructure', 'Infrastructure'),
+        ('education', 'Education'),
+        ('health', 'Health'),
+        ('environment', 'Environment'),
+        ('rights', 'Rights'),
+        ('other', 'Other'),
+    ]
+
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('closed', 'Closed'),
+        ('achieved', 'Achieved'),
+    ]
+
+    title = models.CharField(max_length=300)
+    description = models.TextField()
+    target = models.CharField(max_length=300, help_text="Who is this petition addressed to? e.g., Ministry of Education")
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
+    goal = models.PositiveIntegerField(help_text="Target number of signatures")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='petitions')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
+    image = models.ImageField(upload_to='petition_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def signature_count(self):
+        return self.signatures.count()
+
+    @property
+    def progress_percentage(self):
+        if self.goal <= 0:
+            return 0
+        return min(100, int((self.signature_count / self.goal) * 100))
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-created_at']
+
+
+class PetitionSignature(models.Model):
+    petition = models.ForeignKey(Petition, on_delete=models.CASCADE, related_name='signatures')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='petition_signatures')
+    comment = models.TextField(blank=True, null=True, help_text="Optional: Why do you support this petition?")
+    signed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('petition', 'user')
+        ordering = ['-signed_at']
+
+    def __str__(self):
+        return f"{self.user.username} signed {self.petition.title}"

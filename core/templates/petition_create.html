@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Start a Petition" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="wn-form-card animate-fade-in-up">
+                <div class="form-card-header">
+                    <h1><i class="bi bi-pencil-square me-2"></i>{% trans "Start a Petition" %}</h1>
+                    <p>{% trans "Create a petition to rally support for a cause that matters to you." %}</p>
+                </div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn wn-btn-primary">
+                            <i class="bi bi-send me-1"></i> {% trans "Create Petition" %}
+                        </button>
+                        <a href="{% url 'petition_list' %}" class="btn wn-btn-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

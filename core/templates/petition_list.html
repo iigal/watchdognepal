@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Petitions" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="wn-petition-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="animate-fade-in-up">
+                    <i class="bi bi-pencil-square me-2"></i>{% trans "Signature Petitions" %}
+                </h1>
+                <p class="animate-fade-in-up animate-delay-1">
+                    {% trans "Start a petition or support causes that matter. Your voice counts." %}
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                {% if user.is_authenticated %}
+                <a href="{% url 'petition_create' %}" class="btn wn-btn-primary animate-fade-in-up animate-delay-2">
+                    <i class="bi bi-plus-lg me-1"></i> {% trans "Start a Petition" %}
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn wn-btn-primary animate-fade-in-up animate-delay-2">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Login to Start" %}
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container py-4">
+
+    <!-- Filters -->
+    <div class="wn-filter-bar mb-4 animate-fade-in-up animate-delay-2">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">{% trans "Search" %}</label>
+                <input type="text" name="q" class="form-control" placeholder="{% trans 'Search petitions...' %}"
+                    value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">{% trans "Category" %}</label>
+                <select name="category" class="form-select">
+                    <option value="">{% trans "All Categories" %}</option>
+                    {% for value, label in categories %}
+                    <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-apply w-100">
+                    <i class="bi bi-funnel me-1"></i> {% trans "Filter" %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Petition Grid -->
+    {% if petitions %}
+    <div class="row g-4">
+        {% for petition in petitions %}
+        <div class="col-md-6 col-lg-4 animate-fade-in-up animate-delay-{{ forloop.counter0|add:1 }}">
+            <a href="{% url 'petition_detail' petition_id=petition.id %}" class="text-decoration-none">
+                <div class="wn-petition-card h-100">
+                    {% if petition.image %}
+                    <div class="petition-card-image">
+                        <img src="{{ petition.image.url }}" alt="{{ petition.title }}">
+                    </div>
+                    {% endif %}
+                    <div class="petition-card-body">
+                        <div class="petition-card-category">
+                            <span class="wn-category-badge cat-{{ petition.category }}">
+                                {{ petition.get_category_display }}
+                            </span>
+                        </div>
+                        <h3 class="petition-card-title">{{ petition.title }}</h3>
+                        <p class="petition-card-target">
+                            <i class="bi bi-bullseye me-1"></i> {{ petition.target }}
+                        </p>
+                        <p class="petition-card-desc">{{ petition.description|truncatewords:25 }}</p>
+                        <div class="petition-progress-section">
+                            <div class="petition-progress-bar">
+                                <div class="petition-progress-fill" style="width: {{ petition.progress_percentage }}%">
+                                </div>
+                            </div>
+                            <div class="petition-progress-info">
+                                <span class="petition-signatures">
+                                    <i class="bi bi-pen me-1"></i>
+                                    <strong>{{ petition.signature_count }}</strong> {% trans "signatures" %}
+                                </span>
+                                <span class="petition-goal">
+                                    {% trans "Goal:" %} {{ petition.goal }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="petition-card-footer">
+                            <span class="petition-author">
+                                <i class="bi bi-person me-1"></i> {{ petition.created_by.username }}
+                            </span>
+                            <span class="petition-date">
+                                {{ petition.created_at|timesince }} {% trans "ago" %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <div class="wn-empty-state">
+            <i class="bi bi-pencil-square"></i>
+            <h3>{% trans "No petitions yet" %}</h3>
+            <p>{% trans "Be the first to start a petition and make your voice heard!" %}</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'petition_create' %}" class="btn wn-btn-primary">
+                <i class="bi bi-plus-lg me-1"></i> {% trans "Start a Petition" %}
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

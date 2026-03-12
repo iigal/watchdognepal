@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ petition.title }} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="wn-petition-detail animate-fade-in-up">
+                <!-- Status badge -->
+                <div class="mb-3">
+                    <span class="wn-category-badge cat-{{ petition.category }}">
+                        {{ petition.get_category_display }}
+                    </span>
+                    {% if petition.status == 'achieved' %}
+                    <span class="wn-badge-verified ms-2"><i class="bi bi-trophy-fill me-1"></i> {% trans "Goal
+                        Achieved!" %}</span>
+                    {% elif petition.status == 'closed' %}
+                    <span class="wn-badge-unverified ms-2"><i class="bi bi-x-circle me-1"></i> {% trans "Closed"
+                        %}</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="petition-detail-title">{{ petition.title }}</h1>
+
+                <div class="petition-detail-meta">
+                    <span><i class="bi bi-person me-1"></i> {% trans "Started by" %} <strong>{{ petition.created_by.username }}</strong></span>
+                    <span><i class="bi bi-calendar me-1"></i> {{ petition.created_at|date:"M d, Y" }}</span>
+                    <span><i class="bi bi-bullseye me-1"></i> {% trans "Addressed to:" %} <strong>{{ petition.target }}</strong></span>
+                </div>
+
+                {% if petition.image %}
+                <div class="petition-detail-image my-4">
+                    <img src="{{ petition.image.url }}" alt="{{ petition.title }}" class="img-fluid rounded-3">
+                </div>
+                {% endif %}
+
+                <div class="petition-detail-body">
+                    {{ petition.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Recent Signatures -->
+            <div class="wn-petition-signatures mt-4 animate-fade-in-up animate-delay-2">
+                <div class="wn-section-header">
+                    <div class="section-icon blue">
+                        <i class="bi bi-pen"></i>
+                    </div>
+                    <h3>{% trans "Recent Signatures" %}</h3>
+                    <span class="section-count">{{ total_signatures }}</span>
+                </div>
+
+                {% if signatures %}
+                <div class="signatures-list">
+                    {% for sig in signatures %}
+                    <div class="signature-item">
+                        <div class="signature-user">
+                            <div class="signature-avatar">{{ sig.user.username|first|upper }}</div>
+                            <div>
+                                <div class="signature-name">{{ sig.user.username }}</div>
+                                <div class="signature-time">{{ sig.signed_at|timesince }} {% trans "ago" %}</div>
+                            </div>
+                        </div>
+                        {% if sig.comment %}
+                        <p class="signature-comment">"{{ sig.comment }}"</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">{% trans "No signatures yet. Be the first to sign!" %}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="wn-petition-sidebar animate-fade-in-up animate-delay-1">
+                <!-- Progress -->
+                <div class="petition-sidebar-progress">
+                    <div class="petition-sidebar-count">
+                        <span class="big-number">{{ total_signatures }}</span>
+                        <span class="goal-text">{% trans "of" %} {{ petition.goal }} {% trans "signatures" %}</span>
+                    </div>
+                    <div class="petition-progress-bar large">
+                        <div class="petition-progress-fill{% if petition.status == 'achieved' %} achieved{% endif %}"
+                            style="width: {{ petition.progress_percentage }}%"></div>
+                    </div>
+                    <div class="petition-sidebar-percentage">{{ petition.progress_percentage }}% {% trans "reached" %}
+                    </div>
+                </div>
+
+                <!-- Sign Form -->
+                {% if petition.status == 'active' %}
+                {% if user.is_authenticated %}
+                {% if has_signed %}
+                <div class="petition-signed-state">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>{% trans "You've signed this petition" %}</span>
+                </div>
+                {% elif petition.created_by == user %}
+                <div class="petition-own-state">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>{% trans "This is your petition" %}</span>
+                </div>
+                {% else %}
+                <form method="post" action="{% url 'petition_sign' petition_id=petition.id %}"
+                    class="petition-sign-form" id="signForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <textarea name="comment" class="form-control" rows="2"
+                            placeholder="{% trans 'Why do you support this? (optional)' %}"></textarea>
+                    </div>
+                    <button type="submit" class="btn wn-btn-sign w-100" id="signBtn">
+                        <i class="bi bi-pen me-1"></i> {% trans "Sign this Petition" %}
+                    </button>
+                </form>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'login' %}" class="btn wn-btn-primary w-100">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Login to Sign" %}
+                </a>
+                {% endif %}
+                {% else %}
+                <div class="petition-closed-state">
+                    <i class="bi bi-lock-fill"></i>
+                    <span>{% trans "This petition is no longer accepting signatures" %}</span>
+                </div>
+                {% endif %}
+
+                <!-- Share -->
+                <div class="petition-share mt-3">
+                    <p class="share-label">{% trans "Share this petition" %}</p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm wn-share-btn"
+                            onclick="navigator.clipboard.writeText(window.location.href); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!';">
+                            <i class="bi bi-link-45deg"></i> {% trans "Copy Link" %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('signForm');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const btn = document.getElementById('signBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Signing...';
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    },
+                    body: new FormData(form),
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update count
+                            document.querySelector('.big-number').textContent = data.signature_count;
+                            document.querySelector('.petition-sidebar-percentage').textContent = data.progress + '% reached';
+                            document.querySelectorAll('.petition-progress-fill').forEach(el => {
+                                el.style.width = data.progress + '%';
+                            });
+                            // Replace form with signed state
+                            form.outerHTML = '<div class="petition-signed-state"><i class="bi bi-check-circle-fill"></i><span>You\'ve signed this petition</span></div>';
+                        } else if (data.error) {
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="bi bi-pen me-1"></i> Sign this Petition';
+                            alert(data.error);
+                        }
+                    })
+                    .catch(() => {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-pen me-1"></i> Sign this Petition';
+                    });
+            });
+        }
+    });
+</script>
+{% endblock %}
