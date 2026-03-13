@@ -196,6 +196,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome back to Watchdog Nepal Admin",
     "copyright": "Iigal / Watchdog Nepal",
     "show_ui_builder": False,
+    "custom_css": "css/admin_custom.css",
 }
 
 JAZZMIN_UI_TWEAKS = {
