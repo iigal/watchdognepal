@@ -22,3 +22,10 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'mobile', 'password1', 'password2']
+
+    def clean_mobile(self):
+        mobile = self.cleaned_data.get('mobile')
+        from .models import UserProfile
+        if UserProfile.objects.filter(mobile=mobile).exists():
+            raise forms.ValidationError("This mobile number is already registered.")
+        return mobile

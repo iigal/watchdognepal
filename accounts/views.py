@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import RegisterForm
+from .models import UserProfile
 from .utils import send_otp_sms
 import random
 
@@ -13,6 +14,11 @@ def register_view(request):
             user = form.save(commit=False)
             user.is_active = False # Deactivate until OTP is verified
             user.save()
+            
+            mobile = form.cleaned_data.get('mobile')
+            
+            # Create UserProfile to reserve the mobile number
+            UserProfile.objects.create(user=user, mobile=mobile)
             
             # Generate OTP
             otp = str(random.randint(100000, 999999))
