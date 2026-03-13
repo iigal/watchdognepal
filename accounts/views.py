@@ -2,20 +2,32 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.utils import timezone
 from .forms import RegisterForm
-from .models import UserProfile
-from .utils import send_otp_sms, send_otp_email
+from .models import UserProfile, SMSLog
+from .utils import send_otp_sms, send_otp_email, get_client_ip
 import random
 
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+            user_ip = get_client_ip(request)
+            
+            # Rate limiting check: max 10 SMS per IP per day
+            today = timezone.now().date()
+            sms_count = SMSLog.objects.filter(ip_address=user_ip, sent_at__date=today).count()
+            
+            if sms_count >= 10:
+                messages.error(request, 'You have exceeded the maximum number of SMS requests for today. Please try again tomorrow.')
+                return redirect('register')
+                
             user = form.save(commit=False)
             user.is_active = False # Deactivate until OTP is verified
             user.save()
             
             mobile = form.cleaned_data.get('mobile')
+            email = form.cleaned_data.get('email')
             
             # Create UserProfile to reserve the mobile number
             UserProfile.objects.create(user=user, mobile=mobile)
@@ -23,8 +35,6 @@ def register_view(request):
             # Generate OTPs
             mobile_otp = str(random.randint(100000, 999999))
             email_otp = str(random.randint(100000, 999999))
-            mobile = form.cleaned_data.get('mobile')
-            email = form.cleaned_data.get('email')
             
             # Store in session
             request.session['registration_user_id'] = user.id
@@ -34,7 +44,7 @@ def register_view(request):
             request.session['registration_email'] = email
             
             # Send SMS and Email
-            sms_success = send_otp_sms(mobile, mobile_otp)
+            sms_success = send_otp_sms(mobile, mobile_otp, ip_address=user_ip)
             email_success = send_otp_email(email, email_otp)
             
             if sms_success and email_success:

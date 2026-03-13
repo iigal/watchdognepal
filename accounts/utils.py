@@ -1,9 +1,44 @@
 import requests
 import logging
+import json
 from django.conf import settings
 from django.core.mail import send_mail
+from .models import SMSLog
 
 logger = logging.getLogger(__name__)
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def get_sms_credits():
+    """
+    Fetches the available SMS credits from Aakash SMS API.
+    """
+    url = 'https://sms.aakashsms.com/sms/v4/credit'
+    token = getattr(settings, 'AAKASH_SMS_TOKEN', '')
+    
+    if not token:
+        return "N/A (Token missing)"
+        
+    payload = {'auth_token': token}
+    
+    try:
+        response = requests.post(url, data=payload, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        
+        if not data.get('error'):
+            return data.get('available_credit', 'Unknown')
+        else:
+            return "Error fetching credits"
+    except Exception as e:
+        logger.error(f"Failed to fetch SMS credits: {e}")
+        return "Error fetching credits"
 
 def send_otp_email(email_address, otp):
     """
@@ -27,16 +62,17 @@ def send_otp_email(email_address, otp):
         logger.error(f"Exception occurred while sending Email to {email_address}: {e}")
         return False
 
-
-def send_otp_sms(mobile_number, otp):
+def send_otp_sms(mobile_number, otp, ip_address=None):
     """
-    Sends an OTP message via Aakash SMS API v4.
+    Sends an OTP message via Aakash SMS API v4 and logs it.
     """
     url = 'https://sms.aakashsms.com/sms/v4/send-user'
     token = getattr(settings, 'AAKASH_SMS_TOKEN', '')
     
     if not token:
         logger.error("AAKASH_SMS_TOKEN is not configured in settings.")
+        if ip_address:
+            SMSLog.objects.create(mobile_number=mobile_number, ip_address=ip_address, is_success=False, response_data="Token missing")
         return False
         
     headers = {
@@ -56,16 +92,29 @@ def send_otp_sms(mobile_number, otp):
         response.raise_for_status()
         data = response.json()
         
-        # Log response or handle specific errors if needed
-        # The API wraps response in a list like {"responses": [{"error": false, ...}]}
-        
-        # Just check for explicit failure returned
+        is_success = True
         if 'error' in data and data['error'] is True:
             logger.error(f"Failed to send SMS to {mobile_number}: {data.get('message')}")
-            return False
+            is_success = False
+        else:
+            logger.info(f"OTP sent successfully to {mobile_number}")
             
-        logger.info(f"OTP sent successfully to {mobile_number}")
-        return True
-    except requests.exceptions.RequestException as e:
+        if ip_address:
+            SMSLog.objects.create(
+                mobile_number=mobile_number, 
+                ip_address=ip_address, 
+                is_success=is_success, 
+                response_data=json.dumps(data)
+            )
+            
+        return is_success
+    except Exception as e:
         logger.error(f"Exception occurred while sending SMS to {mobile_number}: {e}")
+        if ip_address:
+             SMSLog.objects.create(
+                mobile_number=mobile_number, 
+                ip_address=ip_address, 
+                is_success=False, 
+                response_data=str(e)
+            )
         return False

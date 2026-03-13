@@ -1,0 +1,30 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title mb-1"><i class="fas fa-sms mr-2"></i> Aakash SMS Balance</h5>
+                        <p class="card-text mb-0">Current available credits for Watchdog Nepal</p>
+                    </div>
+                    <div>
+                        <h2 class="mb-0 font-weight-bold">
+                            {% if sms_credits %}
+                                {{ sms_credits }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ block.super }}
+{% endblock %}

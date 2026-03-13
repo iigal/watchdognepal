@@ -69,3 +69,37 @@ class PetitionSignatureAdmin(admin.ModelAdmin):
     list_display = ('user', 'petition', 'signed_at')
     list_filter = ('signed_at',)
     search_fields = ('user__username', 'petition__title')
+
+from .models import VisitorLog, IPLocationCache
+import json
+
+@admin.register(IPLocationCache)
+class IPLocationCacheAdmin(admin.ModelAdmin):
+    list_display = ('ip_address', 'city', 'country', 'latitude', 'longitude', 'fetched_at')
+    search_fields = ('ip_address', 'city', 'country')
+
+@admin.register(VisitorLog)
+class VisitorLogAdmin(admin.ModelAdmin):
+    list_display = ('ip_address', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
+    list_filter = ('timestamp', 'method', 'device_type', 'os_name', 'browser')
+    search_fields = ('ip_address', 'path', 'user__username', 'browser', 'os_name')
+    
+    change_list_template = "admin/core/visitorlog/change_list.html"
+
+    def changelist_view(self, request, extra_context=None):
+        extra_context = extra_context or {}
+        
+        # Get all cached locations that have valid lat/lon
+        locations = IPLocationCache.objects.filter(
+            latitude__isnull=False, 
+            longitude__isnull=False
+        ).values('latitude', 'longitude', 'city')
+        
+        heat_data = [
+            [float(loc['latitude']), float(loc['longitude']), 1.0] # [lat, lng, intensity]
+            for loc in locations
+        ]
+        
+        extra_context['heat_data_json'] = json.dumps(heat_data)
+        
+        return super().changelist_view(request, extra_context=extra_context)
