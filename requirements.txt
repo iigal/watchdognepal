@@ -13,3 +13,4 @@ crispy-bootstrap5==2024.10
 django-jazzmin==3.0.3
 whitenoise==6.8.2
 python-dateutil==2.9.0.post0
+requests==2.32.5
