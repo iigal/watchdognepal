@@ -1,13 +1,14 @@
 /* Admin Custom CSS to fix visibility issues with Jazzmin Darkly theme */
 
 /* Fix for headings that might be invisible (white on white) */
-.content-header h1, 
-.content-header h2, 
+.content-header h1,
+.content-header h2,
 .content-header h3,
 .main-header .nav-link,
 .breadcrumb-item a,
 .breadcrumb-item.active {
-    color: #333333 !important; /* Force dark color for visibility */
+    color: #333333 !important;
+    /* Force dark color for visibility */
 }
 
 /* If it is indeed a dark theme but the header is white, let's also try to force a dark background for the header as an alternative */
@@ -16,7 +17,7 @@
 }
 
 /* Fix for dropdowns that might have white text on white background */
-select.form-control, 
+select.form-control,
 .select2-container--default .select2-selection--single,
 .select2-dropdown {
     background-color: #303030 !important;
@@ -44,4 +45,8 @@ select {
 /* But since it's a dark theme, forcing a dark background is usually better */
 body.dark-mode {
     background-color: #222 !important;
+}
+
+.main h3 {
+    color: #333333 !important;
 }
