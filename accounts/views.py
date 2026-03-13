@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import RegisterForm
 from .models import UserProfile
-from .utils import send_otp_sms
+from .utils import send_otp_sms, send_otp_email
 import random
 
 def register_view(request):
@@ -20,23 +20,31 @@ def register_view(request):
             # Create UserProfile to reserve the mobile number
             UserProfile.objects.create(user=user, mobile=mobile)
             
-            # Generate OTP
-            otp = str(random.randint(100000, 999999))
+            # Generate OTPs
+            mobile_otp = str(random.randint(100000, 999999))
+            email_otp = str(random.randint(100000, 999999))
             mobile = form.cleaned_data.get('mobile')
+            email = form.cleaned_data.get('email')
             
             # Store in session
             request.session['registration_user_id'] = user.id
-            request.session['registration_otp'] = otp
+            request.session['registration_mobile_otp'] = mobile_otp
+            request.session['registration_email_otp'] = email_otp
             request.session['registration_mobile'] = mobile
+            request.session['registration_email'] = email
             
-            # Send SMS
-            success = send_otp_sms(mobile, otp)
-            if success:
-                messages.info(request, f'An OTP has been sent to {mobile}. Please verify to complete registration.')
+            # Send SMS and Email
+            sms_success = send_otp_sms(mobile, mobile_otp)
+            email_success = send_otp_email(email, email_otp)
+            
+            if sms_success and email_success:
+                messages.info(request, f'Verification codes have been sent to {mobile} and {email}.')
+            elif sms_success:
+                messages.warning(request, f'Code sent to {mobile}, but failed to send to {email}.')
+            elif email_success:
+                messages.warning(request, f'Code sent to {email}, but failed to send to {mobile}.')
             else:
-                # We can choose to alert the user it failed but still allow them to verify if they somehow received it,
-                # or we can resend. For now just show error msg.
-                messages.error(request, 'Failed to send OTP SMS. Please contact support if you do not receive it.')
+                messages.error(request, 'Failed to send verification codes. Please contact support.')
                 
             return redirect('verify_otp')
     else:
@@ -49,12 +57,17 @@ def verify_otp_view(request):
         return redirect('register')
         
     mobile = request.session.get('registration_mobile', '')
+    email = request.session.get('registration_email', '')
         
     if request.method == 'POST':
-        entered_otp = request.POST.get('otp')
-        expected_otp = request.session.get('registration_otp')
+        entered_mobile_otp = request.POST.get('mobile_otp')
+        entered_email_otp = request.POST.get('email_otp')
         
-        if entered_otp and entered_otp == expected_otp:
+        expected_mobile_otp = request.session.get('registration_mobile_otp')
+        expected_email_otp = request.session.get('registration_email_otp')
+        
+        if (entered_mobile_otp and entered_mobile_otp == expected_mobile_otp) and \
+           (entered_email_otp and entered_email_otp == expected_email_otp):
             # Activate user
             try:
                 user = User.objects.get(id=request.session['registration_user_id'])
@@ -63,18 +76,20 @@ def verify_otp_view(request):
                 
                 # Clear session
                 request.session.pop('registration_user_id', None)
-                request.session.pop('registration_otp', None)
+                request.session.pop('registration_mobile_otp', None)
+                request.session.pop('registration_email_otp', None)
                 request.session.pop('registration_mobile', None)
+                request.session.pop('registration_email', None)
                 
-                messages.success(request, 'Mobile number verified successfully! You can now log in.')
+                messages.success(request, 'Mobile and Email unified successfully! You can now log in.')
                 return redirect('login')
             except User.DoesNotExist:
                 messages.error(request, 'User not found. Please register again.')
                 return redirect('register')
         else:
-            messages.error(request, 'Invalid OTP. Please try again.')
+            messages.error(request, 'Invalid verification code(s). Please try again.')
             
-    return render(request, 'accounts/verify_otp.html', {'mobile': mobile})
+    return render(request, 'accounts/verify_otp.html', {'mobile': mobile, 'email': email})
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']

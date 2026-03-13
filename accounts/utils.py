@@ -1,8 +1,32 @@
 import requests
 import logging
 from django.conf import settings
+from django.core.mail import send_mail
 
 logger = logging.getLogger(__name__)
+
+def send_otp_email(email_address, otp):
+    """
+    Sends an OTP message via Email.
+    """
+    subject = "Your Watchdog Nepal Verification Code"
+    message = f"Your Verification Code is: {otp}"
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@watchdognepal.com')
+    
+    try:
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=from_email,
+            recipient_list=[email_address],
+            fail_silently=False,
+        )
+        logger.info(f"OTP sent successfully to {email_address}")
+        return True
+    except Exception as e:
+        logger.error(f"Exception occurred while sending Email to {email_address}: {e}")
+        return False
+
 
 def send_otp_sms(mobile_number, otp):
     """

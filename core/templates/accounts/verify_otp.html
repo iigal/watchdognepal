@@ -13,7 +13,7 @@
           Verify Mobile Number
         </h2>
         <p style="font-size: 0.88rem; color: var(--wn-text-muted);">
-          Please enter the 6-digit verification code sent to <strong>{{ mobile }}</strong>.
+          Please enter the 6-digit verification codes sent to <strong>{{ mobile }}</strong> and <strong>{{ email }}</strong>.
         </p>
       </div>
 
@@ -23,8 +23,12 @@
           <form method="POST">
             {% csrf_token %}
             <div class="mb-3">
-              <label for="otp" class="form-label fw-bold">Verification Code</label>
-              <input type="text" class="form-control text-center" id="otp" name="otp" placeholder="Enter 6-digit OTP" required maxlength="6" pattern="\d{6}">
+              <label for="mobile_otp" class="form-label fw-bold">Mobile Verification Code</label>
+              <input type="text" class="form-control text-center" id="mobile_otp" name="mobile_otp" placeholder="Enter 6-digit OTP from SMS" required maxlength="6" pattern="\d{6}">
+            </div>
+            <div class="mb-3">
+              <label for="email_otp" class="form-label fw-bold">Email Verification Code</label>
+              <input type="text" class="form-control text-center" id="email_otp" name="email_otp" placeholder="Enter 6-digit OTP from Email" required maxlength="6" pattern="\d{6}">
             </div>
             
             <div class="d-grid mt-4">
