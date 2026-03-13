@@ -19,26 +19,43 @@ def get_sms_credits():
     """
     Fetches the available SMS credits from Aakash SMS API.
     """
-    url = 'https://sms.aakashsms.com/sms/v4/credit'
-    token = getattr(settings, 'AAKASH_SMS_TOKEN', '')
+    token = getattr(settings, 'AAKASH_SMS_TOKEN', '').strip()
     
     if not token:
         return "N/A (Token missing)"
         
+    # Try standard v1 using form data first (Most common for Aakash SMS credit checking)
+    v1_url = 'https://sms.aakashsms.com/sms/v1/credit'
     payload = {'auth_token': token}
     
     try:
-        response = requests.post(url, data=payload, timeout=10)
-        response.raise_for_status()
-        data = response.json()
+        response = requests.post(v1_url, data=payload, timeout=10)
         
-        if not data.get('error'):
-            return data.get('available_credit', 'Unknown')
-        else:
-            return "Error fetching credits"
+        if response.status_code == 200:
+            data = response.json()
+            if 'available_credit' in data:
+                return data['available_credit']
+            elif 'credit' in data:
+                return data['credit']
+            elif 'response' in data and not getattr(data, 'error', False):
+                return data['response']
+                
+        # If v1 fails/isn't 200, try v4 with headers
+        v4_url = 'https://sms.aakashsms.com/sms/v4/credit'
+        v4_response = requests.post(v4_url, headers={'auth-token': token}, json={}, timeout=10)
+        if v4_response.status_code == 200:
+            v4_data = v4_response.json()
+            if not v4_data.get('error'):
+                if 'available_credit' in v4_data:
+                    return v4_data['available_credit']
+                elif 'data' in v4_data and isinstance(v4_data['data'], dict):
+                    return v4_data['data'].get('available_credit', 'Format Unknown')
+                    
+        return f"API Error: HTTP {response.status_code}"
+        
     except Exception as e:
         logger.error(f"Failed to fetch SMS credits: {e}")
-        return "Error fetching credits"
+        return "Error fetching API (Check Logs)"
 
 def send_otp_email(email_address, otp):
     """
