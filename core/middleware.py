@@ -42,18 +42,23 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
         
         user = request.user if hasattr(request, 'user') and request.user.is_authenticated else None
         
-        # Save Visitor Log
-        VisitorLog.objects.create(
-            user=user,
-            session_key=session_key,
-            ip_address=ip_address,
-            path=path,
-            method=request.method,
-            browser=browser,
-            os_name=os_name,
-            device_type=device_type,
-            status_code=response.status_code
-        )
+        try:
+            # Save Visitor Log
+            VisitorLog.objects.create(
+                user=user,
+                session_key=session_key,
+                ip_address=ip_address,
+                path=path,
+                method=request.method,
+                browser=browser,
+                os_name=os_name,
+                device_type=device_type,
+                status_code=response.status_code
+            )
+        except Exception as e:
+            # Logging should not crash the site
+            import logging
+            logging.getLogger(__name__).error(f"Failed to log visitor: {e}")
         
         # Check cache, fetch location asynchronously if not found
         if not IPLocationCache.objects.filter(ip_address=ip_address).exists():
