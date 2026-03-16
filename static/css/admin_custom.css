@@ -4,11 +4,22 @@
 .content-header h1,
 .content-header h2,
 .content-header h3,
-.main-header .nav-link,
-.breadcrumb-item a,
-.breadcrumb-item.active {
-    color: #333333 !important;
-    /* Force dark color for visibility */
+#main h3 {
+    color: #212529 !important; /* Dark color for light header background */
+}
+
+/* Fix for breadcrumbs on dark background */
+.breadcrumb-item a {
+    color: #3b82f6 !important; /* Vivid blue for links */
+}
+
+.breadcrumb-item.active,
+.breadcrumb-item {
+    color: #f1f5f9 !important; /* Nearly white for text on dark background */
+}
+
+.main-header .nav-link {
+    color: #f1f5f9 !important;
 }
 
 /* If it is indeed a dark theme but the header is white, let's also try to force a dark background for the header as an alternative */
@@ -48,5 +59,15 @@ body.dark-mode {
 }
 
 #main h3 {
-    color: #333333 !important;
+    color: #212529 !important;
+}
+
+/* Ensure text inside dark containers is light */
+.card-body, .info-box-content {
+    color: inherit;
+}
+
+body.dark-mode .card {
+    background-color: #343a40 !important;
+    color: #fff !important;
 }
