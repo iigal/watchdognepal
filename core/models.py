@@ -259,3 +259,15 @@ class VisitorLog(models.Model):
 
     def __str__(self):
         return f"{self.ip_address} visited {self.path} at {self.timestamp}"
+
+class BannedIP(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    reason = models.TextField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Banned: {self.ip_address}"
+
+    class Meta:
+        verbose_name = "Banned IP"
+        verbose_name_plural = "Banned IPs"

@@ -16,8 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 from core.views import (
     home, submit_activity, vote_activity,
     party_list, party_detail,
@@ -28,6 +29,8 @@ from core.views import (
 )
 
 urlpatterns = [
+    path('robots.txt', RedirectView.as_view(url=staticfiles_storage.url('robots.txt')), name='robots_txt'),
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico')), name='favicon_ico'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
     path('', home, name='home'),

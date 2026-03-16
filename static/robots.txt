@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /accounts/
+Sitemap: https://watchdognepal.com/sitemap.xml

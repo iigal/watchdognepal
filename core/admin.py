@@ -80,7 +80,12 @@ class PetitionSignatureAdmin(admin.ModelAdmin):
     list_filter = ('signed_at',)
     search_fields = ('user__username', 'petition__title')
 
-from .models import VisitorLog, IPLocationCache
+from .models import VisitorLog, IPLocationCache, BannedIP
+
+@admin.register(BannedIP)
+class BannedIPAdmin(admin.ModelAdmin):
+    list_display = ('ip_address', 'reason', 'timestamp')
+    search_fields = ('ip_address', 'reason')
 import json
 
 @admin.register(IPLocationCache)

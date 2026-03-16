@@ -4,12 +4,14 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseForbidden
 from .utils import get_client_ip
+from .models import BannedIP
 
 logger = logging.getLogger(__name__)
 
 class ScannerBlockingMiddleware:
     """
     Middleware to block IPs that trigger too many 404s in a short window.
+    Also checks for manually banned IPs in the BannedIP model.
     """
     def __init__(self, get_response):
         self.get_response = get_response
@@ -25,7 +27,11 @@ class ScannerBlockingMiddleware:
 
         ip = get_client_ip(request)
         
-        # Check if already blocked
+        # 1. Check if manually banned in DB
+        if BannedIP.objects.filter(ip_address=ip).exists():
+            return HttpResponseForbidden("Your IP has been permanently banned from this website.")
+
+        # 2. Check if temporarily blocked in cache
         if cache.get(f"blocked_ip_{ip}"):
             logger.warning(f"Blocked request from scanner IP: {ip}")
             return HttpResponseForbidden("Your IP has been temporarily blocked due to suspicious activity.")
