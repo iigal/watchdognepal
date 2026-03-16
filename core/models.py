@@ -248,5 +248,13 @@ class VisitorLog(models.Model):
     class Meta:
         ordering = ['-timestamp']
 
+    @property
+    def visitor_type(self):
+        if self.user:
+            return "Registered"
+        if self.device_type == "Bot":
+            return "Bot"
+        return "Guest"
+
     def __str__(self):
         return f"{self.ip_address} visited {self.path} at {self.timestamp}"

@@ -22,6 +22,51 @@
 {% endblock %}
 
 {% block content %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{ total_registered }}</h3>
+                <p>Registered Users</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <a href="?visitor_type=registered" class="small-box-footer">
+                Filter Registered <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="small-box bg-secondary">
+            <div class="inner">
+                <h3>{{ total_guests }}</h3>
+                <p>Guest Visitors</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-user-secret"></i>
+            </div>
+            <a href="?visitor_type=guest" class="small-box-footer">
+                Filter Guests <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{ total_bots }}</h3>
+                <p>Bot Visits</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <a href="?visitor_type=bot" class="small-box-footer">
+                Filter Bots <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-12">
         <div class="card card-outline card-primary">

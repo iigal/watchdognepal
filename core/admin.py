@@ -88,16 +88,57 @@ class IPLocationCacheAdmin(admin.ModelAdmin):
     list_display = ('ip_address', 'city', 'country', 'latitude', 'longitude', 'fetched_at')
     search_fields = ('ip_address', 'city', 'country')
 
+class VisitorTypeFilter(admin.SimpleListFilter):
+    title = 'Visitor Type'
+    parameter_name = 'visitor_type'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('registered', 'Registered'),
+            ('bot', 'Bot'),
+            ('guest', 'Guest'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'registered':
+            return queryset.filter(user__isnull=False)
+        if self.value() == 'bot':
+            return queryset.filter(device_type='Bot', user__isnull=True)
+        if self.value() == 'guest':
+            return queryset.filter(user__isnull=True).exclude(device_type='Bot')
+        return queryset
+
 @admin.register(VisitorLog)
 class VisitorLogAdmin(admin.ModelAdmin):
-    list_display = ('ip_address', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
-    list_filter = ('timestamp', 'method', 'device_type', 'os_name', 'browser')
+    list_display = ('ip_address', 'formatted_visitor_type', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
+    list_filter = (VisitorTypeFilter, 'timestamp', 'method', 'device_type', 'os_name', 'browser')
     search_fields = ('ip_address', 'path', 'user__username', 'browser', 'os_name')
     
     change_list_template = "admin/core/visitorlog/change_list.html"
 
+    def formatted_visitor_type(self, obj):
+        v_type = obj.visitor_type
+        colors = {
+            'Registered': '#28a745', # Success green
+            'Bot': '#dc3545',        # Danger red
+            'Guest': '#6c757d'       # Muted grey
+        }
+        from django.utils.html import format_html
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            colors.get(v_type, '#000'),
+            v_type
+        )
+    formatted_visitor_type.short_description = 'Visitor Type'
+
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}
+        
+        # Summary counts
+        all_logs = VisitorLog.objects.all()
+        extra_context['total_registered'] = all_logs.filter(user__isnull=False).count()
+        extra_context['total_bots'] = all_logs.filter(device_type='Bot', user__isnull=True).count()
+        extra_context['total_guests'] = all_logs.filter(user__isnull=True).exclude(device_type='Bot').count()
         
         # Get all cached locations that have valid lat/lon
         locations = IPLocationCache.objects.filter(
