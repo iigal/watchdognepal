@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Sign In" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7 col-sm-10">
+
+      <div class="text-center mb-4 animate-fade-in-up">
+        <div class="mb-3">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="48" height="48">
+        </div>
+        <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;">
+          {% trans "Sign In Via Google" %}
+        </h2>
+        <p style="font-size: 0.88rem; color: var(--wn-text-muted);">
+          {% blocktrans with provider.name as provider_name %}You are about to sign in using a third-party account from {{ provider_name }}.{% endblocktrans %}
+        </p>
+      </div>
+
+      <div class="wn-auth-card animate-fade-in-up animate-delay-1">
+        <div class="card-body text-center p-4">
+          <form method="post">
+            {% csrf_token %}
+            <div class="d-grid gap-2">
+              <button type="submit" class="wn-btn-primary justify-content-center w-100 py-3">
+                <i class="bi bi-google me-2"></i> {% trans "Continue to Google" %}
+              </button>
+              <a href="{% url 'login' %}" class="btn btn-link text-muted mt-2" style="font-size: 0.82rem; text-decoration: none;">
+                {% trans "Cancel and go back" %}
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
