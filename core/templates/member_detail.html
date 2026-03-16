@@ -1,7 +1,33 @@
 {% extends 'base.html' %}
 {% load nepali_dates %}
 
-{% block title %}{{ member.name }} — Watchdog Nepal{% endblock %}
+{% block title %}{{ member.name }} — Watchdog Nepal
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.status-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
