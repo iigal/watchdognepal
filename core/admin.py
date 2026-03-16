@@ -166,3 +166,20 @@ class VisitorLogAdmin(admin.ModelAdmin):
         extra_context['heat_data_json'] = json.dumps(heat_data)
         
         return super().changelist_view(request, extra_context=extra_context)
+
+    def delete_model(self, request, obj):
+        ip = obj.ip_address
+        super().delete_model(request, obj)
+        # If no more logs for this IP, delete the cache
+        if not VisitorLog.objects.filter(ip_address=ip).exists():
+            IPLocationCache.objects.filter(ip_address=ip).delete()
+
+    def delete_queryset(self, request, queryset):
+        # Get distinct IPs from the queryset before deleting
+        ips = list(queryset.values_list('ip_address', flat=True).distinct())
+        super().delete_queryset(request, queryset)
+        
+        # For each affected IP, if no logs remain, delete from cache
+        for ip in ips:
+            if not VisitorLog.objects.filter(ip_address=ip).exists():
+                IPLocationCache.objects.filter(ip_address=ip).delete()
