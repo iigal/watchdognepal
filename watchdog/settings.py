@@ -35,7 +35,12 @@ AAKASH_SMS_TOKEN = os.environ.get('AAKASH_SMS_TOKEN', '')
 ENVIRONMENT = os.environ.get('ENVIRONMENT', 'development')
 DEBUG = ENVIRONMENT != 'production'
 
-ALLOWED_HOSTS = ['watchdognepal.com', 'www.watchdognepal.com','127.0.0.1']
+ALLOWED_HOSTS = ['watchdognepal.com', 'www.watchdognepal.com', '127.0.0.1', 'localhost']
+
+# Proxy Security Settings
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -68,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.security_middleware.ScannerBlockingMiddleware',
     'core.middleware.VisitorTrackingMiddleware',
 ]
 

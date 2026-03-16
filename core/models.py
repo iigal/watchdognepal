@@ -243,6 +243,7 @@ class VisitorLog(models.Model):
     browser = models.CharField(max_length=50, blank=True, null=True)
     os_name = models.CharField(max_length=50, blank=True, null=True)
     device_type = models.CharField(max_length=20, blank=True, null=True)
+    status_code = models.PositiveIntegerField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

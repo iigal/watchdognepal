@@ -8,12 +8,12 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
     """
     Middleware to log page visits and trigger background IP geolocation.
     """
-    def process_request(self, request):
+    def process_response(self, request, response):
         path = request.path
         
         # Don't track static files, media, or admin panel
         if any(path.startswith(prefix) for prefix in ['/static/', '/media/', '/admin/']):
-            return
+            return response
 
         ip_address = get_client_ip(request)
         
@@ -32,11 +32,11 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
             device_type = "Bot"
         
         # Ensure session exists (for unauthenticated users)
-        if not request.session.session_key:
-            request.session.create()
-            
-        session_key = request.session.session_key
-        user = request.user if request.user.is_authenticated else None
+        session_key = None
+        if hasattr(request, 'session') and request.session.session_key:
+            session_key = request.session.session_key
+        
+        user = request.user if hasattr(request, 'user') and request.user.is_authenticated else None
         
         # Save Visitor Log
         VisitorLog.objects.create(
@@ -47,7 +47,8 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
             method=request.method,
             browser=browser,
             os_name=os_name,
-            device_type=device_type
+            device_type=device_type,
+            status_code=response.status_code
         )
         
         # Check cache, fetch location asynchronously if not found
@@ -56,3 +57,5 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
             thread = threading.Thread(target=fetch_ip_location, args=(ip_address,))
             thread.daemon = True
             thread.start()
+            
+        return response

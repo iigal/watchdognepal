@@ -110,11 +110,23 @@ class VisitorTypeFilter(admin.SimpleListFilter):
 
 @admin.register(VisitorLog)
 class VisitorLogAdmin(admin.ModelAdmin):
-    list_display = ('ip_address', 'formatted_visitor_type', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
-    list_filter = (VisitorTypeFilter, 'timestamp', 'method', 'device_type', 'os_name', 'browser')
+    list_display = ('ip_address', 'formatted_visitor_type', 'formatted_status_code', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
+    list_filter = (VisitorTypeFilter, 'status_code', 'timestamp', 'method', 'device_type', 'os_name', 'browser')
     search_fields = ('ip_address', 'path', 'user__username', 'browser', 'os_name')
     
     change_list_template = "admin/core/visitorlog/change_list.html"
+
+    def formatted_status_code(self, obj):
+        if not obj.status_code:
+            return "-"
+        color = "#28a745" if 200 <= obj.status_code < 300 else "#dc3545"
+        from django.utils.html import format_html
+        return format_html(
+            '<span style="color: {}; font-weight: bold;">{}</span>',
+            color,
+            obj.status_code
+        )
+    formatted_status_code.short_description = 'Status'
 
     def formatted_visitor_type(self, obj):
         v_type = obj.visitor_type
