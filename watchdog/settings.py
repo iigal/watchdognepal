@@ -207,7 +207,7 @@ JAZZMIN_SETTINGS = {
     "site_logo": "favicon.png",
     "login_logo": "favicon.png",
     "welcome_sign": "Welcome back to Watchdog Nepal Admin",
-    "copyright": "Iigal / Watchdog Nepal",
+    "copyright": "iigal / Watchdog Nepal",
     "show_ui_builder": False,
     "custom_css": "css/admin_custom.css",
 }
