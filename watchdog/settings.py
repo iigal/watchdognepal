@@ -37,9 +37,9 @@ DEBUG = ENVIRONMENT != 'production'
 
 ALLOWED_HOSTS = ['watchdognepal.com', 'www.watchdognepal.com', '127.0.0.1', 'localhost']
 
-# Proxy Security Settings
-USE_X_FORWARDED_HOST = True
-USE_X_FORWARDED_PORT = True
+# Proxy Security Settings (Disabled these as they might cause 400 Bad Request if proxy isn't configured for them)
+# USE_X_FORWARDED_HOST = True
+# USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 import pymysql
