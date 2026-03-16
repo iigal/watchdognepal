@@ -2136,3 +2136,192 @@ a {
     font-size: 1.5rem;
   }
 }
+
+/* ============================================
+   Manifesto & Sub-Manifesto Tracking
+   ============================================ */
+
+.manifesto-listing {
+  padding: 2rem 0;
+}
+
+.manifesto-card {
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
+  border-radius: var(--wn-radius-xl);
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--wn-shadow-sm);
+  transition: var(--wn-transition);
+}
+
+.manifesto-card:hover {
+  box-shadow: var(--wn-shadow-lg);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.manifesto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.manifesto-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  color: var(--wn-text);
+}
+
+.manifesto-meta {
+  font-size: 0.82rem;
+  color: var(--wn-text-muted);
+  display: flex;
+  gap: 1rem;
+}
+
+/* Progress Bar */
+.manifesto-progress-wrapper {
+  margin: 1.5rem 0;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--wn-text);
+}
+
+.wn-progress {
+  height: 8px;
+  background: var(--wn-bg);
+  border-radius: var(--wn-radius-full);
+  overflow: hidden;
+}
+
+.wn-progress-bar {
+  height: 100%;
+  background: var(--wn-gradient-blue);
+  border-radius: var(--wn-radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Sub-manifesto List */
+.sub-manifesto-details {
+  border-top: 1px solid var(--wn-border-light);
+  margin-top: 1rem;
+}
+
+.sub-manifesto-details summary {
+  padding: 0.75rem 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--wn-blue);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sub-manifesto-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.sub-manifesto-details summary::before {
+  content: '→';
+  transition: transform 0.2s;
+}
+
+.sub-manifesto-details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.sub-manifesto-list {
+  padding-top: 0.5rem;
+}
+
+.sub-manifesto-item {
+  background: #f8fafc;
+  border-radius: var(--wn-radius-md);
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  transition: var(--wn-transition-fast);
+}
+
+.sub-manifesto-item:hover {
+  background: #fff;
+  border-color: var(--wn-border);
+  box-shadow: var(--wn-shadow-xs);
+}
+
+.sub-manifesto-content h4 {
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+  color: var(--wn-text);
+}
+
+.sub-manifesto-item.overdue .sub-manifesto-content h4 {
+  color: var(--wn-rose);
+  text-decoration: line-through;
+}
+
+.sub-manifesto-deadline {
+  font-size: 0.75rem;
+  color: var(--wn-text-muted);
+}
+
+.deadline-inherited {
+  font-style: italic;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* Status Badges */
+.status-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.status-complete {
+  background: var(--wn-emerald-bg);
+  color: var(--wn-emerald);
+  border: 1px solid var(--wn-emerald);
+}
+
+.status-overdue {
+  background: var(--wn-rose-bg);
+  color: var(--wn-rose);
+  border: 1px solid var(--wn-rose);
+}
+
+.status-pending {
+  background: var(--wn-bg);
+  color: var(--wn-text-light);
+  border: 1px solid var(--wn-border);
+}
+
+/* Toggle Switch Styling */
+.status-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: var(--wn-transition-fast);
+}
+
+.status-toggle:hover {
+  transform: scale(1.1);
+}

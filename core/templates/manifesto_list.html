@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Manifesto Tracking" %} - Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="wn-hero">
+    <div class="container text-center">
+        <h1 class="animate-fade-in-up">{% trans "Manifesto" %} <span class="hero-gradient-text">{% trans "Tracking" %}</span></h1>
+        <p class="mx-auto animate-fade-in-up animate-delay-1">{% trans "Monitoring government promises and implementation progress." %}</p>
+    </div>
+</div>
+
+<div class="container manifesto-listing">
+    <div class="row">
+        {% for manifesto in manifestos %}
+        <div class="col-12 animate-fade-in-up" style="animation-delay: {{ forloop.counter }}00ms">
+            <div class="manifesto-card" id="manifesto-{{ manifesto.id }}">
+                <div class="manifesto-header">
+                    <div class="manifesto-info">
+                        <h3>{{ manifesto.title }}</h3>
+                        <div class="manifesto-meta">
+                            <span>
+                                <i class="bi bi-person-fill"></i> 
+                                {% if manifesto.elected_member %}
+                                    {{ manifesto.elected_member.name }} ({{ manifesto.elected_member.party.name }})
+                                {% else %}
+                                    {{ manifesto.party.name }}
+                                {% endif %}
+                            </span>
+                            <span>
+                                <i class="bi bi-calendar-event"></i> 
+                                {% trans "Deadline" %}: {{ manifesto.calculated_deadline|default:"Not set" }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="manifesto-status-icon">
+                        {% if manifesto.is_completed %}
+                        <div class="status-badge status-complete" title="Completed">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        {% elif manifesto.is_overdue %}
+                        <div class="status-badge status-overdue" title="Overdue">
+                            <i class="bi bi-x-lg"></i>
+                        </div>
+                        {% else %}
+                        <div class="status-badge status-pending" title="Pending">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="manifesto-desc mt-2">
+                    {{ manifesto.description|truncatewords:40 }}
+                </div>
+
+                <div class="manifesto-progress-wrapper">
+                    <div class="progress-label">
+                        <span>{% trans "Implementation Progress" %}</span>
+                        <span class="progress-fraction">{{ manifesto.progress_fraction }}</span>
+                    </div>
+                    <div class="wn-progress">
+                        <div class="wn-progress-bar" style="width: {{ manifesto.completion_percentage }}%"></div>
+                    </div>
+                </div>
+
+                {% if manifesto.sub_manifestos.all %}
+                <details class="sub-manifesto-details">
+                    <summary>{% trans "View Sub-Manifestos" %}</summary>
+                    <div class="sub-manifesto-list">
+                        {% for sub in manifesto.sub_manifestos.all %}
+                        <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-{{ sub.id }}">
+                            <div class="sub-manifesto-content">
+                                <h4>{{ sub.title }}</h4>
+                                <div class="sub-manifesto-deadline">
+                                    <i class="bi bi-calendar3"></i> 
+                                    {{ sub.effective_deadline|default:"No deadline" }}
+                                    {% if sub.is_inherited_deadline %}
+                                    <span class="deadline-inherited">({% trans "inherited" %})</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="sub-manifesto-actions d-flex align-items-center">
+                                <button class="status-toggle" 
+                                        data-pk="{{ sub.id }}" 
+                                        data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
+                                        {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+                                    {% if sub.is_completed %}
+                                    <div class="status-badge status-complete">
+                                        <i class="bi bi-check-lg"></i>
+                                    </div>
+                                    {% elif sub.is_overdue %}
+                                    <div class="status-badge status-overdue">
+                                        <i class="bi bi-x-lg"></i>
+                                    </div>
+                                    {% else %}
+                                    <div class="status-badge status-pending">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                    {% endif %}
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </details>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="wn-empty-state">
+                <i class="bi bi-clipboard-x"></i>
+                <h3>{% trans "No manifestos found" %}</h3>
+                <p>{% trans "There are currently no manifesto points tracked." %}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.status-toggle');
+    
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            const manifestoCard = this.closest('.manifesto-card');
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Simplest approach: reload page for accurate status calculation (overdue etc)
+                    location.reload();
+                }
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Activity, ManifestoPoint, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
+from .models import Activity, ManifestoPoint, SubManifesto, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
 from .forms import ActivityForm, PetitionForm
 
 
@@ -248,3 +248,32 @@ def dashboard(request):
         'my_activities': my_activities,
     }
     return render(request, 'dashboard.html', context)
+
+# ─── Manifesto Views ──────────────────────────────────────────
+
+def manifesto_list(request):
+    manifestos = ManifestoPoint.objects.prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party')
+    return render(request, 'manifesto_list.html', {'manifestos': manifestos})
+
+
+@require_POST
+@login_required
+def toggle_submanifesto_completion(request, pk):
+    submanifesto = get_object_or_404(SubManifesto, pk=pk)
+    submanifesto.is_completed = not submanifesto.is_completed
+    submanifesto.save()
+    
+    # Check if all submanifestos are completed to potentially auto-complete the parent
+    parent = submanifesto.parent
+    all_completed = parent.sub_manifestos.filter(is_completed=False).count() == 0
+    if all_completed != parent.is_completed:
+        parent.is_completed = all_completed
+        parent.save()
+        
+    return JsonResponse({
+        'success': True,
+        'is_completed': submanifesto.is_completed,
+        'parent_progress': parent.progress_fraction,
+        'parent_completed': parent.is_completed,
+        'parent_percentage': parent.completion_percentage
+    })

@@ -31,6 +31,7 @@ class ManifestoPoint(models.Model):
     completion_days = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in days from oath")
     completion_months = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in months from oath")
     completion_years = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in years from oath")
+    is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
@@ -60,8 +61,61 @@ class ManifestoPoint(models.Model):
                 
         return None
 
+    @property
+    def is_overdue(self):
+        if self.is_completed:
+            return False
+        deadline = self.calculated_deadline
+        if deadline:
+            from django.utils import timezone
+            return deadline < timezone.now().date()
+        return False
+
+    @property
+    def progress_fraction(self):
+        total = self.sub_manifestos.count()
+        if total == 0:
+            return "1/1" if self.is_completed else "0/1"
+        completed = self.sub_manifestos.filter(is_completed=True).count()
+        return f"{completed}/{total}"
+
+    @property
+    def completion_percentage(self):
+        total = self.sub_manifestos.count()
+        if total == 0:
+            return 100 if self.is_completed else 0
+        completed = self.sub_manifestos.filter(is_completed=True).count()
+        return int((completed / total) * 100)
+
     def __str__(self):
         return self.title
+
+class SubManifesto(models.Model):
+    parent = models.ForeignKey(ManifestoPoint, on_delete=models.CASCADE, related_name='sub_manifestos')
+    title = models.CharField(max_length=200)
+    deadline = models.DateField(blank=True, null=True)
+    is_completed = models.BooleanField(default=False)
+
+    @property
+    def effective_deadline(self):
+        return self.deadline or self.parent.calculated_deadline
+
+    @property
+    def is_inherited_deadline(self):
+        return self.deadline is None
+
+    @property
+    def is_overdue(self):
+        if self.is_completed:
+            return False
+        deadline = self.effective_deadline
+        if deadline:
+            from django.utils import timezone
+            return deadline < timezone.now().date()
+        return False
+
+    def __str__(self):
+        return f"{self.parent.title} - {self.title}"
 
 class Activity(models.Model):
     LEVEL_CHOICES = [

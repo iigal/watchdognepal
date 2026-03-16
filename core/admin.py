@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, Petition, PetitionSignature
+from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, SubManifesto, Petition, PetitionSignature
 from .widgets import NepaliDatePickerWidget
 
 @admin.register(PoliticalParty)
@@ -25,12 +25,22 @@ class ManifestoPointAdminForm(forms.ModelForm):
         }
 
 
+class SubManifestoInline(admin.TabularInline):
+    model = SubManifesto
+    extra = 1
+    fields = ('title', 'deadline', 'is_completed')
+    widgets = {
+        'deadline': NepaliDatePickerWidget(),
+    }
+
+
 @admin.register(ManifestoPoint)
 class ManifestoPointAdmin(admin.ModelAdmin):
     form = ManifestoPointAdminForm
-    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'completion_years', 'completion_months', 'completion_days', 'deadline')
-    list_filter = ('party', 'elected_member')
+    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
+    list_filter = ('party', 'elected_member', 'is_completed')
     search_fields = ('title', 'description')
+    inlines = [SubManifestoInline]
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
