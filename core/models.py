@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.urls import reverse
 
 class PoliticalParty(models.Model):
     name = models.CharField(max_length=200)
@@ -12,6 +13,9 @@ class PoliticalParty(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('party_detail', kwargs={'party_id': self.id})
+
 class ElectedMember(models.Model):
     name = models.CharField(max_length=200)
     constituency = models.CharField(max_length=200, help_text="e.g., Kathmandu-1")
@@ -21,6 +25,9 @@ class ElectedMember(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.constituency})"
+
+    def get_absolute_url(self):
+        return reverse('elected_member_detail', kwargs={'member_id': self.id})
 
 class ManifestoPoint(models.Model):
     title = models.CharField(max_length=200)
@@ -205,6 +212,9 @@ class Petition(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('petition_detail', kwargs={'petition_id': self.id})
 
     class Meta:
         ordering = ['-created_at']
