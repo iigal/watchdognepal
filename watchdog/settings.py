@@ -240,3 +240,12 @@ else:
     EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 DEFAULT_FROM_EMAIL = 'Watchdog Nepal <noreply@watchdognepal.com>'
+
+# SMTP Configuration Check (Production only)
+if not DEBUG and EMAIL_BACKEND == 'django.core.mail.backends.smtp.EmailBackend':
+    if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
+        import logging
+        logging.getLogger(__name__).warning(
+            "CRITICAL: EMAIL_HOST_USER or EMAIL_HOST_PASSWORD is NOT set in production. "
+            "Email verification will FAIL."
+        )

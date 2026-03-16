@@ -65,18 +65,28 @@ def send_otp_email(email_address, otp):
     message = f"Your Verification Code is: {otp}"
     from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@watchdognepal.com')
     
+    backend = getattr(settings, 'EMAIL_BACKEND', 'Unknown')
+    logger.info(f"Attempting to send OTP email to {email_address} using backend: {backend}")
+    
     try:
-        send_mail(
+        sent_count = send_mail(
             subject=subject,
             message=message,
             from_email=from_email,
             recipient_list=[email_address],
             fail_silently=False,
         )
-        logger.info(f"OTP sent successfully to {email_address}")
-        return True
+        if sent_count > 0:
+            logger.info(f"OTP email sent successfully to {email_address}")
+            return True
+        else:
+            logger.warning(f"send_mail returned 0 for {email_address}")
+            return False
     except Exception as e:
-        logger.error(f"Exception occurred while sending Email to {email_address}: {e}")
+        logger.error(f"Failed to send verification email to {email_address}. Error: {str(e)}")
+        # In production, this might be due to missing connection settings
+        if not settings.DEBUG:
+            logger.error("Check if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD are set correctly in the environment.")
         return False
 
 def send_otp_sms(mobile_number, otp, ip_address=None):
