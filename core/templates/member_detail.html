@@ -82,8 +82,8 @@
                             {% for sub in point.sub_manifestos.all %}
                             <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-{{ sub.id }}">
                                 <div class="sub-manifesto-content">
-                                    <h4 class="mb-1">{{ sub.title }}</h4>
-                                    <div class="sub-manifesto-deadline" style="font-size: 0.72rem;">
+                                    <h4 class="">{{ sub.title }}</h4>
+                                    <div class="sub-manifesto-deadline">
                                         <i class="bi bi-calendar3 me-1"></i> 
                                         {{ sub.effective_deadline|to_bs|default:"No deadline" }}
                                         {% if sub.is_inherited_deadline %}

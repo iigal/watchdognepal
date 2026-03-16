@@ -2240,14 +2240,14 @@ a {
 }
 
 .sub-manifesto-list {
-  padding-top: 0.5rem;
+  padding-top: 0.25rem;
 }
 
 .sub-manifesto-item {
   background: #f8fafc;
   border-radius: var(--wn-radius-md);
-  padding: 1rem;
-  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2262,8 +2262,9 @@ a {
 }
 
 .sub-manifesto-content h4 {
-  font-size: 0.95rem;
-  margin-bottom: 0.2rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
   color: var(--wn-text);
 }
 
@@ -2273,25 +2274,25 @@ a {
 }
 
 .sub-manifesto-deadline {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--wn-text-muted);
 }
 
 .deadline-inherited {
   font-style: italic;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   opacity: 0.8;
 }
 
 /* Status Badges */
 .status-badge {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.85rem;
   flex-shrink: 0;
 }
 
