@@ -19,6 +19,10 @@ class ScannerBlockingMiddleware:
         self.block_duration = 3600 # Block for 1 hour
 
     def __call__(self, request):
+        # Don't block staff/admin
+        if hasattr(request, 'user') and request.user.is_authenticated and request.user.is_staff:
+            return self.get_response(request)
+
         ip = get_client_ip(request)
         
         # Check if already blocked

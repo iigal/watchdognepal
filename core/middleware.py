@@ -14,6 +14,10 @@ class VisitorTrackingMiddleware(MiddlewareMixin):
         # Don't track static files, media, or admin panel
         if any(path.startswith(prefix) for prefix in ['/static/', '/media/', '/admin/']):
             return response
+            
+        # Don't track staff/admin activity
+        if hasattr(request, 'user') and request.user.is_authenticated and request.user.is_staff:
+            return response
 
         ip_address = get_client_ip(request)
         
