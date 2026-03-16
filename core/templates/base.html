@@ -6,6 +6,15 @@
 <html lang="en">
 
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4Z5QK8WTB5"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-4Z5QK8WTB5');
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
@@ -80,7 +89,7 @@
               {% get_current_language as LANGUAGE_CODE %}
               {% get_available_languages as LANGUAGES %}
               {% for lang in LANGUAGES %}
-              <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+              <option value="{{ lang.0 }}" {% if lang.0==LANGUAGE_CODE %}selected{% endif %}>
                 {{ lang.1 }}
               </option>
               {% endfor %}
