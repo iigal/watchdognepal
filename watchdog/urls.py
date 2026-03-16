@@ -53,6 +53,7 @@ urlpatterns = [
     path('members/', elected_member_list, name='elected_member_list'),
     path('members/<int:member_id>/', elected_member_detail, name='elected_member_detail'),
     path('accounts/', include('accounts.urls')),
+    path('accounts/', include('allauth.urls')),
     # Petitions
     path('petitions/', petition_list, name='petition_list'),
     path('petitions/create/', petition_create, name='petition_create'),

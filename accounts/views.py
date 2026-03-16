@@ -6,21 +6,25 @@ from django.utils import timezone
 from .forms import RegisterForm
 from .models import UserProfile, SMSLog
 from .utils import send_otp_sms, send_otp_email, get_client_ip
+from core.utils import get_country_from_ip
 import random
 
 def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user_ip = get_client_ip(request)
+            # Detect country and determine verification method
+            country = get_country_from_ip(user_ip)
+            is_nepal = country == 'Nepal'
+            verification_method = 'sms' if is_nepal else 'email'
             
-            # Rate limiting check: max 10 SMS per IP per day
-            today = timezone.now().date()
-            sms_count = SMSLog.objects.filter(ip_address=user_ip, sent_at__date=today).count()
-            
-            if sms_count >= 10:
-                messages.error(request, 'You have exceeded the maximum number of SMS requests for today. Please try again tomorrow.')
-                return redirect('register')
+            # Rate limiting check for SMS (only if SMS is used)
+            if verification_method == 'sms':
+                today = timezone.now().date()
+                sms_count = SMSLog.objects.filter(ip_address=user_ip, sent_at__date=today).count()
+                if sms_count >= 10:
+                    messages.error(request, 'You have exceeded the maximum number of SMS requests for today. Please try again tomorrow.')
+                    return redirect('register')
                 
             user = form.save(commit=False)
             user.is_active = False # Deactivate until OTP is verified
@@ -29,7 +33,7 @@ def register_view(request):
             mobile = form.cleaned_data.get('mobile')
             email = form.cleaned_data.get('email')
             
-            # Create UserProfile to reserve the mobile number
+            # Create UserProfile
             UserProfile.objects.create(user=user, mobile=mobile)
             
             # Generate OTPs
@@ -42,19 +46,27 @@ def register_view(request):
             request.session['registration_email_otp'] = email_otp
             request.session['registration_mobile'] = mobile
             request.session['registration_email'] = email
+            request.session['verification_method'] = verification_method
             
-            # Send SMS and Email
-            sms_success = send_otp_sms(mobile, mobile_otp, ip_address=user_ip)
-            email_success = send_otp_email(email, email_otp)
-            
-            if sms_success and email_success:
-                messages.info(request, f'Verification codes have been sent to {mobile} and {email}.')
-            elif sms_success:
-                messages.warning(request, f'Code sent to {mobile}, but failed to send to {email}.')
-            elif email_success:
-                messages.warning(request, f'Code sent to {email}, but failed to send to {mobile}.')
+            # Send requested OTP
+            success = False
+            if verification_method == 'sms':
+                success = send_otp_sms(mobile, mobile_otp, ip_address=user_ip)
+                if success:
+                    messages.info(request, f'A verification code has been sent to your mobile number: {mobile}.')
+                else:
+                    messages.error(request, 'Failed to send SMS verification code. Please try again.')
             else:
-                messages.error(request, 'Failed to send verification codes. Please contact support.')
+                success = send_otp_email(email, email_otp)
+                if success:
+                    messages.info(request, f'A verification code has been sent to your email address: {email}.')
+                else:
+                    messages.error(request, 'Failed to send email verification code. Please try again.')
+            
+            if not success:
+                # Cleanup user if notification failed to avoid dead accounts
+                user.delete()
+                return redirect('register')
                 
             return redirect('verify_otp')
     else:
@@ -68,16 +80,21 @@ def verify_otp_view(request):
         
     mobile = request.session.get('registration_mobile', '')
     email = request.session.get('registration_email', '')
+    method = request.session.get('verification_method', 'sms')
         
     if request.method == 'POST':
-        entered_mobile_otp = request.POST.get('mobile_otp')
-        entered_email_otp = request.POST.get('email_otp')
+        is_valid = False
         
-        expected_mobile_otp = request.session.get('registration_mobile_otp')
-        expected_email_otp = request.session.get('registration_email_otp')
-        
-        if (entered_mobile_otp and entered_mobile_otp == expected_mobile_otp) and \
-           (entered_email_otp and entered_email_otp == expected_email_otp):
+        if method == 'sms':
+            entered_otp = request.POST.get('mobile_otp')
+            expected_otp = request.session.get('registration_mobile_otp')
+            is_valid = entered_otp and entered_otp == expected_otp
+        else:
+            entered_otp = request.POST.get('email_otp')
+            expected_otp = request.session.get('registration_email_otp')
+            is_valid = entered_otp and entered_otp == expected_otp
+            
+        if is_valid:
             # Activate user
             try:
                 user = User.objects.get(id=request.session['registration_user_id'])
@@ -90,16 +107,21 @@ def verify_otp_view(request):
                 request.session.pop('registration_email_otp', None)
                 request.session.pop('registration_mobile', None)
                 request.session.pop('registration_email', None)
+                request.session.pop('verification_method', None)
                 
-                messages.success(request, 'Mobile and Email unified successfully! You can now log in.')
+                messages.success(request, 'Identity verified successfully! You can now log in.')
                 return redirect('login')
             except User.DoesNotExist:
                 messages.error(request, 'User not found. Please register again.')
                 return redirect('register')
         else:
-            messages.error(request, 'Invalid verification code(s). Please try again.')
+            messages.error(request, 'Invalid verification code. Please try again.')
             
-    return render(request, 'accounts/verify_otp.html', {'mobile': mobile, 'email': email})
+    return render(request, 'accounts/verify_otp.html', {
+        'mobile': mobile, 
+        'email': email,
+        'method': method
+    })
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
