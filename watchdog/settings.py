@@ -37,10 +37,14 @@ DEBUG = ENVIRONMENT != 'production'
 
 ALLOWED_HOSTS = ['watchdognepal.com', 'www.watchdognepal.com', '127.0.0.1', 'localhost']
 
-# Proxy Security Settings (Disabled these as they might cause 400 Bad Request if proxy isn't configured for them)
-# USE_X_FORWARDED_HOST = True
-# USE_X_FORWARDED_PORT = True
+# Proxy Security Settings
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Fix for 400 Bad Request on bulk admin operations
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 import pymysql
 pymysql.install_as_MySQLdb()
