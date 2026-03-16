@@ -10,6 +10,15 @@ def fetch_ip_location(ip_address):
     """
     Fetches IP geolocation data from ip-api.com and saves/updates it in IPLocationCache.
     """
+    # Skip for local/reserved IPs
+    if ip_address in ['127.0.0.1', '::1'] or ip_address.startswith('192.168.') or ip_address.startswith('10.'):
+        return
+
+    # Skip during tests to avoid database locking and external requests
+    import sys
+    if 'test' in sys.argv:
+        return
+
     # IP-API limit: 45 requests per minute for free tier
     url = f"http://ip-api.com/json/{ip_address}"
     try:
