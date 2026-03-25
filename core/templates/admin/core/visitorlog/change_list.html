@@ -82,6 +82,19 @@
     </div>
 </div>
 
+<div class="row mb-2">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2">
+                <button type="button" id="sweep-delete-btn" class="btn btn-danger">
+                    <i class="fas fa-broom"></i> Sweep Delete Selected
+                </button>
+                <span class="ml-2 text-muted"> <i class="fas fa-info-circle"></i> Deletes ALL records from the same IP address as the selected visitors.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{ block.super }}
 
 <script>
@@ -133,6 +146,30 @@
             map.fitBounds(group.getBounds().pad(0.5));
         } else {
             console.log("No heatmap data available.");
+        }
+
+        // Sweep Delete functionality
+        const sweepBtn = document.getElementById('sweep-delete-btn');
+        if (sweepBtn) {
+            sweepBtn.addEventListener('click', function() {
+                const actionSelect = document.querySelector('select[name="action"]');
+                const form = document.getElementById('changelist-form');
+                
+                // Check if any items are selected (Django admin uses .action-select class for checkboxes)
+                const selected = document.querySelectorAll('input.action-select:checked');
+                if (selected.length === 0) {
+                    alert('Please select at least one visitor log first.');
+                    return;
+                }
+                
+                if (confirm('Are you sure you want to delete ALL logs for the IP addresses of the selected records? This action cannot be undone.')) {
+                    actionSelect.value = 'sweep_delete';
+                    // We need to trigger the submit on the form
+                    // Django admin actions usually require the 'index' hidden input to be set correctly if many actions exist
+                    // but setting the value and submitting usually works.
+                    form.submit();
+                }
+            });
         }
     });
 </script>

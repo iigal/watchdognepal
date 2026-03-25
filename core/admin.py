@@ -118,6 +118,24 @@ class VisitorLogAdmin(admin.ModelAdmin):
     list_display = ('ip_address', 'formatted_visitor_type', 'formatted_status_code', 'user', 'path', 'method', 'device_type', 'os_name', 'browser', 'timestamp')
     list_filter = (VisitorTypeFilter, 'status_code', 'timestamp', 'method', 'device_type', 'os_name', 'browser')
     search_fields = ('ip_address', 'path', 'user__username', 'browser', 'os_name')
+    actions = ['sweep_delete']
+
+    @admin.action(description='Sweep Delete: Delete ALL logs from selected IPs')
+    def sweep_delete(self, request, queryset):
+        ips = list(queryset.values_list('ip_address', flat=True).distinct())
+        if not ips:
+            return
+        
+        # Count total records that will be deleted across all selected IPs
+        total_to_delete = VisitorLog.objects.filter(ip_address__in=ips).count()
+        
+        # Perform the sweep delete
+        VisitorLog.objects.filter(ip_address__in=ips).delete()
+        
+        # Also clean up the location cache for these IPs as they no longer have any logs
+        IPLocationCache.objects.filter(ip_address__in=ips).delete()
+        
+        self.message_user(request, f"Successfully swept {total_to_delete} logs for {len(ips)} IP addresses.")
     
     change_list_template = "admin/core/visitorlog/change_list.html"
 
