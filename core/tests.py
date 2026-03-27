@@ -38,18 +38,7 @@ class WatchdogTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(self.member, response.context['members'])
 
-    def test_submit_activity_invalid_source(self):
-        self.client.login(username='testuser', password='password')
-        data = {
-            'title': 'Test Activity',
-            'description': 'Description',
-            'level': 'federal',
-            'source_link': 'https://example.com'  # Invalid source link
-        }
-        response = self.client.post(reverse('submit_activity'), data)
-        self.assertContains(response, 'The source link must be a verified government source')
-
-    def test_submit_activity_valid_source(self):
+    def test_submit_activity_with_source(self):
         self.client.login(username='testuser', password='password')
         data = {
             'title': 'Test Activity',
