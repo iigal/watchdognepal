@@ -11,9 +11,17 @@ class PoliticalPartyAdmin(admin.ModelAdmin):
 
 @admin.register(ElectedMember)
 class ElectedMemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'constituency', 'party', 'oath_date')
+    list_display = ('name', 'constituency', 'party', 'oath_date', 'phone_number', 'office_email')
     list_filter = ('party',)
-    search_fields = ('name', 'constituency')
+    search_fields = ('name', 'constituency', 'phone_number', 'office_email')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'constituency', 'party', 'image', 'oath_date')
+        }),
+        ('Contact Information', {
+            'fields': ('phone_number', 'alternate_phone_number', 'secretary_phone_number', 'personal_email', 'office_email')
+        }),
+    )
 
 
 class ManifestoPointAdminForm(forms.ModelForm):

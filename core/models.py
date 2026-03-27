@@ -22,6 +22,13 @@ class ElectedMember(models.Model):
     party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, related_name='members')
     image = models.ImageField(upload_to='member_images/', blank=True, null=True)
     oath_date = models.DateField(blank=True, null=True, help_text="Date the member took oath")
+    
+    # Contact Information
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    alternate_phone_number = models.CharField(max_length=15, blank=True, null=True)
+    secretary_phone_number = models.CharField(max_length=15, blank=True, null=True)
+    personal_email = models.EmailField(blank=True, null=True)
+    office_email = models.EmailField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.constituency})"
