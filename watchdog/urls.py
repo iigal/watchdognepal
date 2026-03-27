@@ -35,7 +35,7 @@ from core.views import (
     elected_member_list, elected_member_detail,
     activities_list,
     petition_list, petition_detail, petition_create, petition_sign,
-    dashboard, manifesto_list, toggle_submanifesto_completion,
+    dashboard, manifesto_list, toggle_submanifesto_completion, get_manifesto_options
 )
 
 urlpatterns = [
@@ -47,6 +47,7 @@ urlpatterns = [
     path('', home, name='home'),
     path('activities/', activities_list, name='activities_list'),
     path('submit/', submit_activity, name='submit_activity'),
+    path('api/manifesto-options/', get_manifesto_options, name='get_manifesto_options'),
     path('vote/<int:activity_id>/', vote_activity, name='vote_activity'),
     path('parties/', party_list, name='party_list'),
     path('parties/<int:party_id>/', party_detail, name='party_detail'),

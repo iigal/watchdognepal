@@ -70,11 +70,34 @@ def submit_activity(request):
         if form.is_valid():
             activity = form.save(commit=False)
             activity.created_by = request.user
+            activity.level = 'federal'
             activity.save()
             return redirect('home')
     else:
         form = ActivityForm()
     return render(request, 'submit_activity.html', {'form': form})
+
+from django.views.decorators.http import require_GET
+
+@require_GET
+def get_manifesto_options(request):
+    party_id = request.GET.get('party_id')
+    member_id = request.GET.get('member_id')
+    
+    if not party_id:
+        return JsonResponse({'manifestos': [], 'members': []})
+        
+    members_qs = ElectedMember.objects.filter(party_id=party_id)
+    members = [{'id': m.id, 'name': m.name} for m in members_qs]
+        
+    qs = ManifestoPoint.objects.all()
+    if member_id:
+        qs = qs.filter(elected_member_id=member_id)
+    else:
+        qs = qs.filter(party_id=party_id, elected_member__isnull=True)
+        
+    manifestos = [{'id': m.id, 'title': m.title} for m in qs]
+    return JsonResponse({'manifestos': manifestos, 'members': members})
 
 
 @require_POST
