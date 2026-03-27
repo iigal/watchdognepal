@@ -118,16 +118,19 @@
                         <i class="bi bi-patch-check-fill"></i> Verified Activities
                     </div>
 
+                    {% load accounts_tags %}
                     {% for activity in point.top_5_verified_activities %}
                     <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
                         <div class="d-flex align-items-center mb-2">
-                            {% if activity.created_by.profile.image %}
-                            <img src="{{ activity.created_by.profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                            {% with profile=activity.created_by|get_profile %}
+                            {% if profile and profile.image %}
+                            <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
                             {% else %}
                             <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
                                 {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
                             </div>
                             {% endif %}
+                            {% endwith %}
                             <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
                                 {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
                             </span>
