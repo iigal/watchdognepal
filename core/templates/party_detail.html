@@ -118,28 +118,35 @@
                         <i class="bi bi-patch-check-fill"></i> Verified Activities
                     </div>
 
-                    {% for activity in point.activities.all %}
-                    {% if activity.status == 'verified' %}
-                    <div class="wn-activity-item">
-                        <div class="d-flex w-100 justify-content-between align-items-center mb-1">
-                            <h6 class="mb-0 fw-bold" style="font-size: 0.88rem;">{{ activity.title }}</h6>
-                            <small style="font-size: 0.72rem; color: var(--wn-text-light);">
-                                {{ activity.created_at|to_bs }}
-                            </small>
+                    {% for activity in point.top_5_verified_activities %}
+                    <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
+                        <div class="d-flex align-items-center mb-2">
+                            {% if activity.created_by.profile.image %}
+                            <img src="{{ activity.created_by.profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                            </div>
+                            {% endif %}
+                            <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
+                                {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                            </span>
+                            <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
                         </div>
-                        <p class="mb-1" style="font-size: 0.82rem; color: var(--wn-text-muted);">
-                            {{ activity.description }}
-                        </p>
-                        <div class="d-flex justify-content-between align-items-end mt-2">
-                            <span class="wn-badge-level">{{ activity.get_level_display }}</span>
-                            <a href="{{ activity.source_link }}" target="_blank" class="wn-source-link">
-                                Source <i class="bi bi-box-arrow-up-right"></i>
+                        <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
+                            <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
                             </a>
                         </div>
+                        <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
+                            {{ activity.description|truncatewords:20 }}
+                        </div>
+                        <div class="d-flex justify-content-between align-items-end mt-2">
+                            <span class="wn-badge-level" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; background-color: var(--wn-bg-mute);">{{ activity.get_level_display }}</span>
+                        </div>
                     </div>
-                    {% endif %}
                     {% empty %}
-                    <p style="font-size: 0.82rem; color: var(--wn-text-light); font-style: italic;">
+                    <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
                         No verified activities for this point yet.
                     </p>
                     {% endfor %}

@@ -101,6 +101,10 @@ class ManifestoPoint(models.Model):
         completed = self.sub_manifestos.filter(is_completed=True).count()
         return int((completed / total) * 100)
 
+    @property
+    def top_5_verified_activities(self):
+        return self.activities.filter(status='verified').order_by('-created_at')[:5]
+
     def __str__(self):
         return self.title
 

@@ -106,25 +106,47 @@
                     </div>
                     <p class="manifesto-desc">{{ point.description }}</p>
 
+                    <div class="manifesto-progress-wrapper mb-3">
+                        <div class="progress-label">
+                            <span>{% trans "Implementation Progress" %}</span>
+                            <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                        </div>
+                        <div class="wn-progress">
+                            <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
+                        </div>
+                    </div>
+
                     <div class="mt-auto pt-2">
                         <div class="d-flex align-items-center gap-1 mb-2"
                             style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
                             <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
                         </div>
-                        {% for activity in point.activities.all %}
-                        {% if activity.status == 'verified' %}
-                        <div class="wn-verified-item">
-                            <div>
-                                <div class="vi-title">{{ activity.title }}</div>
-                                <div class="vi-date">{{ activity.created_at|to_bs }}</div>
+                        {% for activity in point.top_5_verified_activities %}
+                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% if activity.created_by.profile.image %}
+                                <img src="{{ activity.created_by.profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
                             </div>
-                            <a href="{{ activity.source_link }}" target="_blank" class="wn-source-link">
-                                {% trans "Source" %} <i class="bi bi-box-arrow-up-right"></i>
-                            </a>
+                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                {{ activity.description|truncatewords:15 }}
+                            </div>
                         </div>
-                        {% endif %}
                         {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); font-style: italic; margin: 0;">
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
                             No verified activities yet.
                         </p>
                         {% endfor %}
