@@ -43,7 +43,7 @@ class WatchdogTests(TestCase):
         data = {
             'title': 'Test Activity',
             'description': 'Description',
-            'level': 'federal',
+            'party': self.party.id,
             'manifesto_point': self.manifesto_point.id,
             'source_link': 'https://mof.gov.np/some-page'
         }

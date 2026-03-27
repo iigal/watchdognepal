@@ -114,7 +114,7 @@ SITE_ID = 1
 
 # Allauth / Socialaccount Configuration
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none' # We have our own custom OTP verification for registration
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
