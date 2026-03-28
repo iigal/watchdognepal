@@ -52,12 +52,11 @@
         {% load accounts_tags %}
         {% for point in in_progress_points %}
         <div class="col manifesto-count-item">
-            <div class="wn-manifesto-card" style="height: auto;">
+            <div class="wn-manifesto-card wn-expandable-card" style="height: auto; cursor: pointer;" onclick="toggleExpand(this)">
+                <!-- Compact summary (always visible) -->
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div class="manifesto-title" style="font-size: 0.92rem;">
-                        <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
-                            <i class="bi bi-link-45deg"></i>
-                        </a>
+                        <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
                         {{ point.title }}
                     </div>
                     {% if point.calculated_deadline %}
@@ -88,21 +87,53 @@
                         <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
                     </div>
                 </div>
-                <div class="d-flex align-items-center gap-1 mb-1" style="font-size: 0.75rem; font-weight: 600; color: var(--wn-emerald);">
-                    <i class="bi bi-patch-check-fill"></i> {% trans "Latest Verified" %}
-                </div>
-                {% for activity in point.top_5_verified_activities|slice:":2" %}
-                <div class="wn-verified-item mb-1" style="padding: 6px 10px;">
-                    <div>
-                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--wn-text-main);">
-                            <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                {{ activity.title|truncatewords:8 }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.65rem;"></i>
-                            </a>
-                        </div>
+
+                <!-- Expanded detail (hidden by default) -->
+                <div class="wn-expand-detail" style="display: none;">
+                    <p class="manifesto-desc">{{ point.description }}</p>
+                    <div class="mb-2" style="font-size: 0.85rem;">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
                     </div>
-                    <span style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
+                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                        </div>
+                        {% for activity in point.top_5_verified_activities %}
+                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            </div>
+                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                {{ activity.description|truncatewords:15 }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities yet.
+                        </p>
+                        {% endfor %}
+                    </div>
                 </div>
-                {% endfor %}
             </div>
         </div>
         {% endfor %}
@@ -124,8 +155,12 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
         {% for point in upcoming_deadlines %}
         <div class="col manifesto-count-item">
-            <div class="wn-deadline-card">
-                <div class="deadline-title">{{ point.title }}</div>
+            <div class="wn-deadline-card wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
+                <!-- Compact summary (always visible) -->
+                <div class="deadline-title">
+                    <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
+                    {{ point.title }}
+                </div>
                 <div class="deadline-party">
                     {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
                 </div>
@@ -136,6 +171,63 @@
                         data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
                     </div>
                     <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
+                </div>
+
+                <!-- Expanded detail (hidden by default) -->
+                <div class="wn-expand-detail" style="display: none; margin-top: 1rem;">
+                    <p class="manifesto-desc">{{ point.description }}</p>
+                    <div class="manifesto-progress-wrapper mb-3">
+                        <div class="progress-label">
+                            <span>{% trans "Implementation Progress" %}</span>
+                            <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                        </div>
+                        <div class="wn-progress">
+                            <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2" style="font-size: 0.85rem;">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
+                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                        </div>
+                        {% load accounts_tags %}
+                        {% for activity in point.top_5_verified_activities %}
+                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            </div>
+                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                {{ activity.description|truncatewords:15 }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities yet.
+                        </p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -259,7 +351,35 @@
     {% endfor %}
 </section>
 
+<style>
+    .wn-expandable-card .wn-expand-icon {
+        display: inline-block;
+        transition: transform 0.25s ease;
+    }
+    .wn-expandable-card.expanded .wn-expand-icon {
+        transform: rotate(90deg);
+    }
+    .wn-expand-detail {
+        overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+        opacity: 0;
+        max-height: 0;
+    }
+    .wn-expandable-card.expanded .wn-expand-detail {
+        display: block !important;
+        opacity: 1;
+        max-height: 2000px;
+    }
+    .wn-expandable-card:hover {
+        border-color: rgba(59, 130, 246, 0.25);
+    }
+</style>
+
 <script>
+    function toggleExpand(card) {
+        card.classList.toggle('expanded');
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         // Countdown timer
         function updateCountdowns() {
