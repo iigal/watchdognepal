@@ -74,6 +74,12 @@ def to_bs(value):
     return _to_nepali_digits(english_str)
 
 
+@register.filter(name='is_shown')
+def is_shown(value, shown_ids):
+    """Check if a value is in the given set/list."""
+    return value in shown_ids
+
+
 @register.filter(name='to_bs_english')
 def to_bs_english(value):
     """
