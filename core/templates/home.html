@@ -41,7 +41,7 @@
 {% if upcoming_deadlines %}
 <section class="container mt-4 animate-fade-in-up animate-delay-1">
     <div class="wn-section-header">
-        <div class="section-icon amber">
+        <div class="section-icon rose">
             <i class="bi bi-clock-history"></i>
         </div>
         <h3>{% trans "Approaching Deadlines" %}</h3>
@@ -64,6 +64,70 @@
                     </div>
                     <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
                 </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- In Progress Manifestos -->
+{% if in_progress_points %}
+<section class="container mt-4 animate-fade-in-up animate-delay-2">
+    <div class="wn-section-header">
+        <div class="section-icon emerald">
+            <i class="bi bi-activity"></i>
+        </div>
+        <h3>{% trans "In Progress" %}</h3>
+        <span class="section-count">{{ in_progress_points|length }} {% trans "active" %}</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        {% load accounts_tags %}
+        {% for point in in_progress_points %}
+        <div class="col">
+            <div class="wn-manifesto-card" style="height: auto;">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="manifesto-title" style="font-size: 0.92rem;">
+                        <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
+                            <i class="bi bi-link-45deg"></i>
+                        </a>
+                        {{ point.title }}
+                    </div>
+                    {% if point.calculated_deadline %}
+                    <span class="wn-deadline-badge ms-2">
+                        <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.78rem; color: var(--wn-text-muted);">
+                    <i class="bi bi-building me-1"></i>
+                    {% if point.party %}{{ point.party.name }}{% elif point.elected_member %}{{ point.elected_member.name }}{% endif %}
+                </div>
+                <div class="manifesto-progress-wrapper mb-2">
+                    <div class="progress-label">
+                        <span>{% trans "Progress" %}</span>
+                        <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                    </div>
+                    <div class="wn-progress">
+                        <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-1 mb-1" style="font-size: 0.75rem; font-weight: 600; color: var(--wn-emerald);">
+                    <i class="bi bi-patch-check-fill"></i> {% trans "Latest Verified" %}
+                </div>
+                {% for activity in point.top_5_verified_activities|slice:":2" %}
+                <div class="wn-verified-item mb-1" style="padding: 6px 10px;">
+                    <div>
+                        <div style="font-size: 0.8rem; font-weight: 600; color: var(--wn-text-main);">
+                            <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                {{ activity.title|truncatewords:8 }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.65rem;"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                </div>
+                {% endfor %}
             </div>
         </div>
         {% endfor %}
@@ -95,9 +159,19 @@
         <div class="row row-cols-1 row-cols-lg-2 g-3">
             {% for point in party.manifesto_points.all %}
             <div class="col manifesto-count-item">
-                <div class="wn-manifesto-card">
+                <div class="wn-manifesto-card" id="manifesto-{{ point.id }}">
                     <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="manifesto-title">{{ point.title }}</div>
+                        <div class="manifesto-title">
+                            <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
+                                <i class="bi bi-link-45deg"></i>
+                            </a>
+                            {{ point.title }}
+                            <span class="ms-2" style="font-size: 0.85rem;">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            </span>
+                        </div>
                         {% if point.calculated_deadline %}
                         <span class="wn-deadline-badge ms-2">
                             <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}

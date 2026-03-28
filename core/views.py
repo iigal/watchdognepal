@@ -29,9 +29,16 @@ def home(request):
     upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
     upcoming_deadlines = upcoming_deadlines[:5]
 
+    # Manifesto points with at least one verified activity (In Progress)
+    in_progress_points = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
+        activities__status='verified'
+    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
+
     context = {
         'government_parties': government_parties,
         'upcoming_deadlines': upcoming_deadlines,
+        'in_progress_points': in_progress_points,
     }
     return render(request, 'home.html', context)
 

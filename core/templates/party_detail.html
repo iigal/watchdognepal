@@ -39,7 +39,7 @@
 
     <div class="wn-accordion accordion animate-fade-in-up animate-delay-3" id="manifestoAccordion">
         {% for point in manifesto_points %}
-        <div class="accordion-item">
+        <div class="accordion-item" id="manifesto-{{ point.id }}">
             <h2 class="accordion-header" id="heading{{ point.id }}">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
@@ -55,6 +55,16 @@
             <div id="collapse{{ point.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ point.id }}"
                 data-bs-parent="#manifestoAccordion">
                 <div class="accordion-body">
+                    <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
+                        <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
+                            <i class="bi bi-link-45deg fs-5"></i>
+                        </a>
+                        <span class="ms-3">
+                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                            <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                            <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        </span>
+                    </div>
                     <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
                         {{ point.description }}
                     </p>
