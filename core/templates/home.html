@@ -37,43 +37,9 @@
     </div>
 </section>
 
-<!-- Approaching Deadlines -->
-{% if upcoming_deadlines %}
-<section class="container mt-4 animate-fade-in-up animate-delay-1">
-    <div class="wn-section-header">
-        <div class="section-icon rose">
-            <i class="bi bi-clock-history"></i>
-        </div>
-        <h3>{% trans "Approaching Deadlines" %}</h3>
-        <span class="section-count">{{ upcoming_deadlines|length }} {% trans "upcoming" %}</span>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-        {% for point in upcoming_deadlines %}
-        <div class="col">
-            <div class="wn-deadline-card">
-                <div class="deadline-title">{{ point.title }}</div>
-                <div class="deadline-party">
-                    {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
-                </div>
-                <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <div class="deadline-meta">
-                        <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-{{ point.id }}"
-                        data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
-                    </div>
-                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
 <!-- In Progress Manifestos -->
 {% if in_progress_points %}
-<section class="container mt-4 animate-fade-in-up animate-delay-2">
+<section class="container mt-4 animate-fade-in-up animate-delay-1">
     <div class="wn-section-header">
         <div class="section-icon emerald">
             <i class="bi bi-activity"></i>
@@ -137,6 +103,40 @@
                     <span style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
                 </div>
                 {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Approaching Deadlines -->
+{% if upcoming_deadlines %}
+<section class="container mt-4 animate-fade-in-up animate-delay-2">
+    <div class="wn-section-header">
+        <div class="section-icon rose">
+            <i class="bi bi-clock-history"></i>
+        </div>
+        <h3>{% trans "Approaching Deadlines" %}</h3>
+        <span class="section-count">{{ upcoming_deadlines|length }} {% trans "upcoming" %}</span>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+        {% for point in upcoming_deadlines %}
+        <div class="col">
+            <div class="wn-deadline-card">
+                <div class="deadline-title">{{ point.title }}</div>
+                <div class="deadline-party">
+                    {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
+                </div>
+                <div class="mt-2 d-flex align-items-center justify-content-between">
+                    <div class="deadline-meta">
+                        <i class="bi bi-clock-history me-1"></i>
+                        <span class="deadline-countdown" id="countdown-{{ point.id }}"
+                        data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
+                    </div>
+                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
+                </div>
             </div>
         </div>
         {% endfor %}

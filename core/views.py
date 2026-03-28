@@ -15,9 +15,19 @@ def home(request):
     
     today = timezone.now().date()
     
-    # Fetch all relevant manifesto points and filter/sort in Python because calculated_deadline is a property
+    # Priority 1: In Progress — manifesto points with at least one verified activity
+    in_progress_points = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
+        activities__status='verified'
+    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
+
+    in_progress_ids = set(in_progress_points.values_list('id', flat=True))
+
+    # Priority 2: Approaching Deadlines — exclude items already shown in In Progress
     manifesto_points = ManifestoPoint.objects.filter(
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).exclude(
+        id__in=in_progress_ids
     ).select_related('party', 'elected_member', 'elected_member__party')
     
     upcoming_deadlines = []
@@ -29,20 +39,9 @@ def home(request):
     upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
     upcoming_deadlines = upcoming_deadlines[:5]
 
-    # Collect IDs already shown in Approaching Deadlines
-    deadline_ids = set(p.id for p in upcoming_deadlines)
-
-    # Manifesto points with at least one verified activity (In Progress)
-    # Exclude points already shown in Approaching Deadlines
-    in_progress_points = ManifestoPoint.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-        activities__status='verified'
-    ).exclude(
-        id__in=deadline_ids
-    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
-
     # IDs to exclude from the bottom manifesto list (already shown above)
-    shown_ids = deadline_ids | set(in_progress_points.values_list('id', flat=True))
+    deadline_ids = set(p.id for p in upcoming_deadlines)
+    shown_ids = in_progress_ids | deadline_ids
 
     context = {
         'government_parties': government_parties,
