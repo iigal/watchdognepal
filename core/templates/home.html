@@ -24,15 +24,19 @@
                         <div class="stat-label">{% trans "Gov. Parties" %}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="hero-manifesto-count">0</div>
+                        <div class="stat-number">{{ total_manifesto_count }}</div>
                         <div class="stat-label">{% trans "Manifesto Points" %}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="hero-commitment-count">0</div>
+                        <div class="stat-number">{{ total_commitment_count }}</div>
                         <div class="stat-label">{% trans "Commitments" %}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">{{ upcoming_deadlines|length|add:upcoming_commitment_deadlines|length }}</div>
+                        <div class="stat-number">{{ total_in_progress_count }}</div>
+                        <div class="stat-label">{% trans "In Progress" %}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ total_upcoming_deadline_count }}</div>
                         <div class="stat-label">{% trans "Upcoming Deadlines" %}</div>
                     </div>
                 </div>
@@ -238,18 +242,20 @@
 {% endif %}
 
 <!-- Approaching Deadlines (both Manifestos & Commitments) -->
-{% if upcoming_deadlines or upcoming_commitment_deadlines %}
+{% if mixed_upcoming_deadlines %}
 <section class="container mt-4 animate-fade-in-up animate-delay-2">
     <div class="wn-section-header">
         <div class="section-icon rose">
             <i class="bi bi-clock-history"></i>
         </div>
         <h3>{% trans "Approaching Deadlines" %}</h3>
-        <span class="section-count">{{ upcoming_deadlines|length|add:upcoming_commitment_deadlines|length }} {% trans "upcoming" %}</span>
+        <span class="section-count">{{ mixed_upcoming_deadlines|length }} {% trans "upcoming" %}</span>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-        {% for point in upcoming_deadlines %}
+        {% for item in mixed_upcoming_deadlines %}
+        {% if item.item_type == 'manifesto' %}
+        {% with point=item %}
         <div class="col manifesto-count-item">
             <div class="wn-deadline-card wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
                 <span class="wn-type-badge wn-type-manifesto mb-2"><i class="bi bi-journal-text me-1"></i>{% trans "Manifesto" %}</span>
@@ -328,9 +334,9 @@
                 </div>
             </div>
         </div>
-        {% endfor %}
-
-        {% for commitment in upcoming_commitment_deadlines %}
+        {% endwith %}
+        {% elif item.item_type == 'commitment' %}
+        {% with commitment=item %}
         <div class="col commitment-count-item">
             <div class="wn-deadline-card wn-deadline-card-violet wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
                 <span class="wn-type-badge wn-type-commitment mb-2"><i class="bi bi-bookmark-star me-1"></i>{% trans "Commitment" %}</span>
@@ -407,6 +413,8 @@
                 </div>
             </div>
         </div>
+        {% endwith %}
+        {% endif %}
         {% endfor %}
     </div>
 </section>
@@ -700,14 +708,6 @@
 
         updateCountdowns();
         setInterval(updateCountdowns, 1000);
-
-        // Count manifesto points and commitments
-        const manifestoItems = document.querySelectorAll('.manifesto-count-item');
-        const commitmentItems = document.querySelectorAll('.commitment-count-item');
-        const manifestoCounter = document.getElementById('hero-manifesto-count');
-        const commitmentCounter = document.getElementById('hero-commitment-count');
-        if (manifestoCounter) manifestoCounter.textContent = manifestoItems.length;
-        if (commitmentCounter) commitmentCounter.textContent = commitmentItems.length;
 
         // Handle hash-based scrolling for commitments and manifesto anchors
         const hash = window.location.hash;

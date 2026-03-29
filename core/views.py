@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.cache import cache
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
@@ -18,6 +19,32 @@ def home(request):
     
     today = timezone.now().date()
     
+    # --- Caching Counters ---
+    total_manifesto_count = cache.get('total_manifesto_count')
+    if total_manifesto_count is None:
+        total_manifesto_count = ManifestoPoint.objects.filter(
+            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+        ).count()
+        cache.set('total_manifesto_count', total_manifesto_count, 60 * 60 * 24 * 180)  # 6 months
+
+    total_commitment_count = cache.get('total_commitment_count')
+    if total_commitment_count is None:
+        total_commitment_count = Commitment.objects.filter(
+            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+        ).count()
+        cache.set('total_commitment_count', total_commitment_count, 60 * 60 * 24 * 7)  # 1 week
+
+    total_in_progress_count = cache.get('total_in_progress_count')
+    if total_in_progress_count is None:
+        total_in_progress_count = ManifestoPoint.objects.filter(
+            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
+            activities__status='verified'
+        ).distinct().count() + Commitment.objects.filter(
+            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
+            activities__status='verified'
+        ).distinct().count()
+        cache.set('total_in_progress_count', total_in_progress_count, 60 * 60 * 24)  # 1 day
+
     # ─── Manifesto: In Progress ───
     in_progress_points = ManifestoPoint.objects.filter(
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
@@ -37,9 +64,11 @@ def home(request):
     for point in manifesto_points:
         calc_deadline = point.calculated_deadline
         if calc_deadline and calc_deadline >= today:
+            point.item_type = 'manifesto'
             upcoming_deadlines.append(point)
             
     upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
+    total_upcoming_manifesto = len(upcoming_deadlines)
     upcoming_deadlines = upcoming_deadlines[:5]
 
     deadline_ids = set(p.id for p in upcoming_deadlines)
@@ -64,24 +93,41 @@ def home(request):
     for c in commitment_qs:
         calc_deadline = c.calculated_deadline
         if calc_deadline and calc_deadline >= today:
+            c.item_type = 'commitment'
             upcoming_commitment_deadlines.append(c)
             
     upcoming_commitment_deadlines.sort(key=lambda c: c.calculated_deadline)
-    upcoming_commitment_deadlines = upcoming_commitment_deadlines[:5]
+    total_upcoming_commitment = len(upcoming_commitment_deadlines)
 
-    commitment_deadline_ids = set(c.id for c in upcoming_commitment_deadlines)
+    mixed_upcoming_deadlines = upcoming_deadlines + upcoming_commitment_deadlines
+    mixed_upcoming_deadlines.sort(key=lambda item: item.calculated_deadline)
+    mixed_upcoming_deadlines = mixed_upcoming_deadlines[:10]
+
+    commitment_deadline_ids = set(c.id for c in upcoming_commitment_deadlines[:5])  # Limit to 5 for ids tracker optionally
     shown_commitment_ids = in_progress_commitment_ids | commitment_deadline_ids
+
+    total_upcoming_deadline_count = cache.get('total_upcoming_deadline_count')
+    if total_upcoming_deadline_count is None:
+        total_upcoming_deadline_count = total_upcoming_manifesto + total_upcoming_commitment
+        cache.set('total_upcoming_deadline_count', total_upcoming_deadline_count, 60 * 60 * 24)  # 1 day
 
     context = {
         'government_parties': government_parties,
         # Manifesto
-        'upcoming_deadlines': upcoming_deadlines,
+        'upcoming_deadlines': upcoming_deadlines[:5],  # keeping for backwards comp or ID calculation
         'in_progress_points': in_progress_points,
         'shown_manifesto_ids': shown_manifesto_ids,
         # Commitment
-        'upcoming_commitment_deadlines': upcoming_commitment_deadlines,
+        'upcoming_commitment_deadlines': upcoming_commitment_deadlines[:5],
         'in_progress_commitments': in_progress_commitments,
         'shown_commitment_ids': shown_commitment_ids,
+        # Mixed Approach Array
+        'mixed_upcoming_deadlines': mixed_upcoming_deadlines,
+        # Counters
+        'total_manifesto_count': total_manifesto_count,
+        'total_commitment_count': total_commitment_count,
+        'total_in_progress_count': total_in_progress_count,
+        'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }
     return render(request, 'home.html', context)
 
