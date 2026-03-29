@@ -18,6 +18,27 @@ def get_font(path, size, fallback="Arial"):
     except IOError:
         return ImageFont.load_default()
 
+def get_latin_font(size):
+    linux_fonts = [
+        '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+        '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
+        '/usr/share/fonts/truetype/freefont/FreeSans.ttf',
+    ]
+    mac_fonts = [
+        '/System/Library/Fonts/Helvetica.ttc',
+        '/Library/Fonts/Arial.ttf'
+    ]
+    for font_path in linux_fonts + mac_fonts:
+        if os.path.exists(font_path):
+            try:
+                return ImageFont.truetype(font_path, size)
+            except Exception:
+                pass
+    try:
+        return ImageFont.truetype("Arial", size)
+    except IOError:
+        return ImageFont.load_default()
+
 def draw_text_wrapped(draw, text, font, draw_x, draw_y, max_width, fill="white", line_spacing=10, max_lines=None):
     """Draws text wrapped within max_width and returns the bottom Y coordinate."""
     # This is a basic wrapper. TrueType formatting for Devanagari might need layout engine, 
@@ -75,10 +96,11 @@ def generate_manifesto_og_image(point):
     padding = 60
 
     # 2. Fonts
-    font_brand = get_font(FONT_BOLD_PATH, 32)
+    font_brand_latin = get_latin_font(32)
     font_title = get_font(FONT_BOLD_PATH, 55)
     font_desc = get_font(FONT_REGULAR_PATH, 36)
     font_meta = get_font(FONT_REGULAR_PATH, 28)
+    font_latin_meta = get_latin_font(28)
 
     # 3. Draw Logo & Brand
     logo_size = 80
@@ -99,7 +121,7 @@ def generate_manifesto_og_image(point):
             pass # Ignore logo errors
     
     # Brand Text
-    draw.text((padding + logo_size + 20, current_y + 20), "Watchdog Nepal", font=font_brand, fill=(148, 163, 184))
+    draw.text((padding + logo_size + 20, current_y + 20), "Watchdog Nepal", font=font_brand_latin, fill=(148, 163, 184))
     
     current_y += logo_size + 40
 
@@ -117,28 +139,28 @@ def generate_manifesto_og_image(point):
         current_y += 40
 
     # 6. Metadata (Party, Deadline, Verified Activities)
-    meta_texts = []
+    meta_items = []
     
     owner = point.party.name if point.party else (point.elected_member.name if point.elected_member else "Government")
-    meta_texts.append(f"🏛 {owner}")
+    # Store tuples of (text, font_to_use)
+    meta_items.append((str(owner), font_meta))
     
     if point.calculated_deadline:
-        # Avoid bs4 imports here, keep it simple, just stringifying
-        meta_texts.append(f"📅 Deadline: {point.calculated_deadline.strftime('%Y-%m-%d')}")
+        meta_items.append((f"Deadline: {point.calculated_deadline.strftime('%Y-%m-%d')}", font_latin_meta))
         
     activities_count = point.verified_activities.count() if hasattr(point, 'verified_activities') else 0
     if activities_count > 0:
-        meta_texts.append(f"✓ {activities_count} Verified Activities")
+        meta_items.append((f"{activities_count} Verified Activities", font_latin_meta))
 
     meta_x = padding
-    for m in meta_texts:
-        draw.text((meta_x, current_y), m, font=font_meta, fill=(203, 213, 225))
+    for text, font_to_use in meta_items:
+        draw.text((meta_x, current_y), text, font=font_to_use, fill=(203, 213, 225))
         # Add spacing horizontally
-        meta_x += draw.textlength(m, font=font_meta) + 40
+        meta_x += draw.textlength(text, font=font_to_use) + 40
 
     # 7. Progress Bar at bottom area
     current_y = height - 120
-    draw.text((padding, current_y - 40), f"Implementation Progress: {point.completion_percentage}%", font=font_meta, fill="white")
+    draw.text((padding, current_y - 40), f"Implementation Progress: {point.completion_percentage}%", font=font_latin_meta, fill="white")
     
     bar_width = width - (padding * 2)
     bar_height = 24
