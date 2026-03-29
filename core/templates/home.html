@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load nepali_dates i18n %}
 
-{% block title %}Watchdog Nepal — {% trans "Government Manifestos Tracker" %}{% endblock %}
+{% block title %}Watchdog Nepal — {% trans "Government Manifestos & Commitments Tracker" %}{% endblock %}
 
 {% block content %}
 
@@ -28,7 +28,11 @@
                         <div class="stat-label">{% trans "Manifesto Points" %}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">{{ upcoming_deadlines|length }}</div>
+                        <div class="stat-number" id="hero-commitment-count">0</div>
+                        <div class="stat-label">{% trans "Commitments" %}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ upcoming_deadlines|length|add:upcoming_commitment_deadlines|length }}</div>
                         <div class="stat-label">{% trans "Upcoming Deadlines" %}</div>
                     </div>
                 </div>
@@ -37,15 +41,15 @@
     </div>
 </section>
 
-<!-- In Progress Manifestos -->
-{% if in_progress_points %}
+<!-- In Progress Section (both Manifestos & Commitments) -->
+{% if in_progress_points or in_progress_commitments %}
 <section class="container mt-4 animate-fade-in-up animate-delay-1">
     <div class="wn-section-header">
         <div class="section-icon emerald">
             <i class="bi bi-activity"></i>
         </div>
         <h3>{% trans "In Progress" %}</h3>
-        <span class="section-count">{{ in_progress_points|length }} {% trans "active" %}</span>
+        <span class="section-count">{{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
@@ -53,6 +57,8 @@
         {% for point in in_progress_points %}
         <div class="col manifesto-count-item">
             <div class="wn-manifesto-card wn-expandable-card" style="height: auto; cursor: pointer;" onclick="toggleExpand(this)">
+                <!-- Type badge -->
+                <span class="wn-type-badge wn-type-manifesto mb-2"><i class="bi bi-journal-text me-1"></i>{% trans "Manifesto" %}</span>
                 <!-- Compact summary (always visible) -->
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <div class="manifesto-title" style="font-size: 0.92rem;">
@@ -73,7 +79,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <div class="deadline-meta">
                         <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-ip-{{ point.id }}"
+                        <span class="deadline-countdown" id="countdown-ip-m-{{ point.id }}"
                         data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
                     </div>
                 </div>
@@ -137,25 +143,116 @@
             </div>
         </div>
         {% endfor %}
+
+        {% for commitment in in_progress_commitments %}
+        <div class="col commitment-count-item">
+            <div class="wn-commitment-card wn-expandable-card" style="height: auto; cursor: pointer;" onclick="toggleExpand(this)">
+                <!-- Type badge -->
+                <span class="wn-type-badge wn-type-commitment mb-2"><i class="bi bi-bookmark-star me-1"></i>{% trans "Commitment" %}</span>
+                <!-- Compact summary -->
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="manifesto-title" style="font-size: 0.92rem;">
+                        <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
+                        {{ commitment.title }}
+                    </div>
+                    {% if commitment.calculated_deadline %}
+                    <span class="wn-deadline-badge wn-deadline-badge-violet ms-2">
+                        <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.78rem; color: var(--wn-text-muted);">
+                    <i class="bi bi-building me-1"></i>
+                    {% if commitment.party %}{{ commitment.party.name }}{% elif commitment.elected_member %}{{ commitment.elected_member.name }}{% endif %}
+                </div>
+                {% if commitment.calculated_deadline %}
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="deadline-meta">
+                        <i class="bi bi-clock-history me-1"></i>
+                        <span class="deadline-countdown" id="countdown-ip-c-{{ commitment.id }}"
+                        data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</span>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="manifesto-progress-wrapper mb-2">
+                    <div class="progress-label">
+                        <span>{% trans "Progress" %}</span>
+                        <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
+                    </div>
+                    <div class="wn-progress">
+                        <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Expanded detail -->
+                <div class="wn-expand-detail" style="display: none;">
+                    <p class="manifesto-desc">{{ commitment.description }}</p>
+                    <div class="mb-2" style="font-size: 0.85rem;">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
+                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                        </div>
+                        {% for activity in commitment.top_5_verified_activities %}
+                        <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            </div>
+                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                {{ activity.description|truncatewords:15 }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities yet.
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </section>
 {% endif %}
 
-<!-- Approaching Deadlines -->
-{% if upcoming_deadlines %}
+<!-- Approaching Deadlines (both Manifestos & Commitments) -->
+{% if upcoming_deadlines or upcoming_commitment_deadlines %}
 <section class="container mt-4 animate-fade-in-up animate-delay-2">
     <div class="wn-section-header">
         <div class="section-icon rose">
             <i class="bi bi-clock-history"></i>
         </div>
         <h3>{% trans "Approaching Deadlines" %}</h3>
-        <span class="section-count">{{ upcoming_deadlines|length }} {% trans "upcoming" %}</span>
+        <span class="section-count">{{ upcoming_deadlines|length|add:upcoming_commitment_deadlines|length }} {% trans "upcoming" %}</span>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
         {% for point in upcoming_deadlines %}
         <div class="col manifesto-count-item">
             <div class="wn-deadline-card wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
+                <span class="wn-type-badge wn-type-manifesto mb-2"><i class="bi bi-journal-text me-1"></i>{% trans "Manifesto" %}</span>
                 <!-- Compact summary (always visible) -->
                 <div class="deadline-title">
                     <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
@@ -167,7 +264,7 @@
                 <div class="mt-2 d-flex align-items-center justify-content-between">
                     <div class="deadline-meta">
                         <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-{{ point.id }}"
+                        <span class="deadline-countdown" id="countdown-dl-m-{{ point.id }}"
                         data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
                     </div>
                     <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
@@ -232,11 +329,90 @@
             </div>
         </div>
         {% endfor %}
+
+        {% for commitment in upcoming_commitment_deadlines %}
+        <div class="col commitment-count-item">
+            <div class="wn-deadline-card wn-deadline-card-violet wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
+                <span class="wn-type-badge wn-type-commitment mb-2"><i class="bi bi-bookmark-star me-1"></i>{% trans "Commitment" %}</span>
+                <div class="deadline-title">
+                    <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
+                    {{ commitment.title }}
+                </div>
+                <div class="deadline-party">
+                    {% if commitment.party %}{{ commitment.party.name }}{% else %}{{ commitment.elected_member.name }}{% endif %}
+                </div>
+                <div class="mt-2 d-flex align-items-center justify-content-between">
+                    <div class="deadline-meta">
+                        <i class="bi bi-clock-history me-1"></i>
+                        <span class="deadline-countdown" id="countdown-dl-c-{{ commitment.id }}"
+                        data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</span>
+                    </div>
+                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ commitment.calculated_deadline|to_bs }}</small>
+                </div>
+
+                <!-- Expanded detail -->
+                <div class="wn-expand-detail" style="display: none; margin-top: 1rem;">
+                    <p class="manifesto-desc">{{ commitment.description }}</p>
+                    <div class="manifesto-progress-wrapper mb-3">
+                        <div class="progress-label">
+                            <span>{% trans "Implementation Progress" %}</span>
+                            <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
+                        </div>
+                        <div class="wn-progress">
+                            <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
+                        </div>
+                    </div>
+                    <div class="mb-2" style="font-size: 0.85rem;">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                    <div class="mt-auto pt-2">
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
+                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                        </div>
+                        {% for activity in commitment.top_5_verified_activities %}
+                        <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            </div>
+                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                {{ activity.description|truncatewords:15 }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities yet.
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </section>
 {% endif %}
 
-<!-- Government Parties & Manifesto Points -->
+<!-- Government Parties — Tabbed Manifesto & Commitment Points -->
 <section class="container mt-5 mb-5">
     {% for party in government_parties %}
     <div class="wn-party-section animate-fade-in-up animate-delay-{{ forloop.counter }}">
@@ -257,89 +433,191 @@
             </div>
         </div>
 
-        <div class="row row-cols-1 row-cols-lg-2 g-3">
-            {% for point in party.manifesto_points.all %}
-            {% if not point.id|is_shown:shown_manifesto_ids %}
-            <div class="col manifesto-count-item">
-                <div class="wn-manifesto-card" id="manifesto-{{ point.id }}">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div class="manifesto-title">
-                            <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
-                                <i class="bi bi-link-45deg"></i>
-                            </a>
-                            {{ point.title }}
-                            <span class="ms-2" style="font-size: 0.85rem;">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                            </span>
-                        </div>
-                        {% if point.calculated_deadline %}
-                        <span class="wn-deadline-badge ms-2">
-                            <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
-                        </span>
-                        {% endif %}
-                    </div>
-                    <p class="manifesto-desc">{{ point.description }}</p>
+        <!-- Tab Switcher -->
+        <div class="wn-tab-switcher mb-3">
+            <button class="wn-tab-btn active" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
+                <i class="bi bi-journal-text me-1"></i>{% trans "Manifesto Points" %}
+                <span class="wn-tab-count">{{ party.manifesto_points.all|length }}</span>
+            </button>
+            <button class="wn-tab-btn" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
+                <i class="bi bi-bookmark-star me-1"></i>{% trans "Commitments" %}
+                <span class="wn-tab-count">{{ party.commitments.all|length }}</span>
+            </button>
+        </div>
 
-                    <div class="manifesto-progress-wrapper mb-3">
-                        <div class="progress-label">
-                            <span>{% trans "Implementation Progress" %}</span>
-                            <span class="progress-fraction">{{ point.progress_fraction }}</span>
-                        </div>
-                        <div class="wn-progress">
-                            <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                        </div>
-                    </div>
-
-                    <div class="mt-auto pt-2">
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
-                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                        </div>
-                        {% load accounts_tags %}
-                        {% for activity in point.top_5_verified_activities %}
-                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+        <!-- Manifesto Points Tab -->
+        <div id="manifesto-{{ party.id }}" class="wn-tab-panel">
+            <div class="row row-cols-1 row-cols-lg-2 g-3">
+                {% for point in party.manifesto_points.all %}
+                {% if not point.id|is_shown:shown_manifesto_ids %}
+                <div class="col manifesto-count-item">
+                    <div class="wn-manifesto-card" id="manifesto-pt-{{ point.id }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="manifesto-title">
+                                <a href="#manifesto-pt-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
+                                    <i class="bi bi-link-45deg"></i>
                                 </a>
+                                {{ point.title }}
+                                <span class="ms-2" style="font-size: 0.85rem;">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                    <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                    <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                                </span>
                             </div>
-                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                {{ activity.description|truncatewords:15 }}
+                            {% if point.calculated_deadline %}
+                            <span class="wn-deadline-badge ms-2">
+                                <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <p class="manifesto-desc">{{ point.description }}</p>
+
+                        <div class="manifesto-progress-wrapper mb-3">
+                            <div class="progress-label">
+                                <span>{% trans "Implementation Progress" %}</span>
+                                <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                            </div>
+                            <div class="wn-progress">
+                                <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
                             </div>
                         </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities yet.
-                        </p>
-                        {% endfor %}
+
+                        <div class="mt-auto pt-2">
+                            <div class="d-flex align-items-center gap-1 mb-2"
+                                style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
+                                <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                            </div>
+                            {% load accounts_tags %}
+                            {% for activity in point.top_5_verified_activities %}
+                            <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                                <div class="d-flex align-items-center mb-2">
+                                    {% with profile=activity.created_by|get_profile %}
+                                    {% if profile and profile.image %}
+                                    <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                        {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    {% endwith %}
+                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                        {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                    </span>
+                                    <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                                </div>
+                                <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                    <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                        {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                    </a>
+                                </div>
+                                <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                    {{ activity.description|truncatewords:15 }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                                No verified activities yet.
+                            </p>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
+                {% endif %}
+                {% empty %}
+                <div class="col-12">
+                    <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
+                        {% trans "This party has not added any manifesto points yet." %}
+                    </p>
+                </div>
+                {% endfor %}
             </div>
-            {% endif %}
-            {% empty %}
-            <div class="col-12">
-                <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
-                    {% trans "This party has not added any manifesto points yet." %}
-                </p>
+        </div>
+
+        <!-- Commitments Tab -->
+        <div id="commitment-{{ party.id }}" class="wn-tab-panel" style="display: none;">
+            <div class="row row-cols-1 row-cols-lg-2 g-3">
+                {% for commitment in party.commitments.all %}
+                {% if not commitment.id|is_shown:shown_commitment_ids %}
+                <div class="col commitment-count-item">
+                    <div class="wn-commitment-card" id="commitment-{{ commitment.id }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="manifesto-title">
+                                <a href="#commitment-{{ commitment.id }}" class="text-muted text-decoration-none" title="Link to this commitment">
+                                    <i class="bi bi-link-45deg"></i>
+                                </a>
+                                {{ commitment.title }}
+                                <span class="ms-2" style="font-size: 0.85rem;">
+                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                    <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                    <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                                </span>
+                            </div>
+                            {% if commitment.calculated_deadline %}
+                            <span class="wn-deadline-badge wn-deadline-badge-violet ms-2">
+                                <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
+                            </span>
+                            {% endif %}
+                        </div>
+                        <p class="manifesto-desc">{{ commitment.description }}</p>
+
+                        <div class="manifesto-progress-wrapper mb-3">
+                            <div class="progress-label">
+                                <span>{% trans "Implementation Progress" %}</span>
+                                <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
+                            </div>
+                            <div class="wn-progress">
+                                <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-2">
+                            <div class="d-flex align-items-center gap-1 mb-2"
+                                style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
+                                <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
+                            </div>
+                            {% for activity in commitment.top_5_verified_activities %}
+                            <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
+                                <div class="d-flex align-items-center mb-2">
+                                    {% with profile=activity.created_by|get_profile %}
+                                    {% if profile and profile.image %}
+                                    <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
+                                        {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                    </div>
+                                    {% endif %}
+                                    {% endwith %}
+                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
+                                        {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                    </span>
+                                    <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                                </div>
+                                <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
+                                    <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                        {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                    </a>
+                                </div>
+                                <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
+                                    {{ activity.description|truncatewords:15 }}
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                                No verified activities yet.
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% empty %}
+                <div class="col-12">
+                    <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
+                        {% trans "This party has not added any commitments yet." %}
+                    </p>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
     {% empty %}
@@ -380,6 +658,17 @@
         card.classList.toggle('expanded');
     }
 
+    function switchPartyTab(btn, showId, hideId) {
+        // Toggle active button
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.wn-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Toggle panels
+        document.getElementById(showId).style.display = '';
+        document.getElementById(hideId).style.display = 'none';
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         // Countdown timer
         function updateCountdowns() {
@@ -412,10 +701,40 @@
         updateCountdowns();
         setInterval(updateCountdowns, 1000);
 
-        // Count manifesto points
+        // Count manifesto points and commitments
         const manifestoItems = document.querySelectorAll('.manifesto-count-item');
-        const counter = document.getElementById('hero-manifesto-count');
-        if (counter) counter.textContent = manifestoItems.length;
+        const commitmentItems = document.querySelectorAll('.commitment-count-item');
+        const manifestoCounter = document.getElementById('hero-manifesto-count');
+        const commitmentCounter = document.getElementById('hero-commitment-count');
+        if (manifestoCounter) manifestoCounter.textContent = manifestoItems.length;
+        if (commitmentCounter) commitmentCounter.textContent = commitmentItems.length;
+
+        // Handle hash-based scrolling for commitments and manifesto anchors
+        const hash = window.location.hash;
+        if (hash) {
+            const target = document.querySelector(hash);
+            if (target) {
+                // If the target is inside a hidden tab, activate it first
+                const tabPanel = target.closest('.wn-tab-panel');
+                if (tabPanel && tabPanel.style.display === 'none') {
+                    const partySection = tabPanel.closest('.wn-party-section');
+                    if (partySection) {
+                        const tabBtns = partySection.querySelectorAll('.wn-tab-btn');
+                        const panels = partySection.querySelectorAll('.wn-tab-panel');
+                        panels.forEach(p => p.style.display = 'none');
+                        tabPanel.style.display = '';
+                        tabBtns.forEach(b => b.classList.remove('active'));
+                        // Find the button that corresponds to this panel
+                        tabBtns.forEach(b => {
+                            if (b.getAttribute('onclick').includes(tabPanel.id)) {
+                                b.classList.add('active');
+                            }
+                        });
+                    }
+                }
+                setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+            }
+        }
     });
 </script>
 {% endblock %}

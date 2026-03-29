@@ -29,154 +29,305 @@
         </div>
     </div>
 
-    <!-- Manifesto Points -->
-    <div class="wn-section-header animate-fade-in-up animate-delay-2">
-        <div class="section-icon emerald">
-            <i class="bi bi-clipboard-check"></i>
-        </div>
-        <h4 class="mb-0">Manifesto Points</h4>
+    <!-- Tab Switcher -->
+    <div class="wn-tab-switcher mb-3 animate-fade-in-up animate-delay-2">
+        <button class="wn-tab-btn active" onclick="switchTab(this, 'manifesto-panel', 'commitment-panel')">
+            <i class="bi bi-journal-text me-1"></i>Manifesto Points
+            <span class="wn-tab-count">{{ manifesto_points|length }}</span>
+        </button>
+        <button class="wn-tab-btn" onclick="switchTab(this, 'commitment-panel', 'manifesto-panel')">
+            <i class="bi bi-bookmark-star me-1"></i>Commitments
+            <span class="wn-tab-count">{{ commitments|length }}</span>
+        </button>
     </div>
 
-    <div class="wn-accordion accordion animate-fade-in-up animate-delay-3" id="manifestoAccordion">
-        {% for point in manifesto_points %}
-        <div class="accordion-item" id="manifesto-{{ point.id }}">
-            <h2 class="accordion-header" id="heading{{ point.id }}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
-                    aria-controls="collapse{{ point.id }}">
-                    <span>{{ point.title }}</span>
-                    {% if point.calculated_deadline %}
-                    <span class="wn-deadline-badge ms-3">
-                        <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
-                    </span>
-                    {% endif %}
-                </button>
-            </h2>
-            <div id="collapse{{ point.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ point.id }}"
-                data-bs-parent="#manifestoAccordion">
-                <div class="accordion-body">
-                    <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
-                        <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
-                            <i class="bi bi-link-45deg fs-5"></i>
-                        </a>
-                        <span class="ms-3">
-                            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                            <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                            <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+    <!-- Manifesto Points Panel -->
+    <div id="manifesto-panel" class="wn-tab-panel animate-fade-in-up animate-delay-3">
+        <div class="wn-accordion accordion" id="manifestoAccordion">
+            {% for point in manifesto_points %}
+            <div class="accordion-item" id="manifesto-{{ point.id }}">
+                <h2 class="accordion-header" id="heading{{ point.id }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
+                        aria-controls="collapse{{ point.id }}">
+                        <span>{{ point.title }}</span>
+                        {% if point.calculated_deadline %}
+                        <span class="wn-deadline-badge ms-3">
+                            <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
                         </span>
-                    </div>
-                    <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
-                        {{ point.description }}
-                    </p>
-
-                    <!-- Implementation Progress -->
-                    <div class="manifesto-progress-wrapper my-3">
-                        <div class="progress-label mb-2">
-                            <span>Implementation Progress</span>
-                            <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                        {% endif %}
+                    </button>
+                </h2>
+                <div id="collapse{{ point.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ point.id }}"
+                    data-bs-parent="#manifestoAccordion">
+                    <div class="accordion-body">
+                        <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
+                            <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
+                                <i class="bi bi-link-45deg fs-5"></i>
+                            </a>
+                            <span class="ms-3">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            </span>
                         </div>
-                        <div class="wn-progress">
-                            <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                        </div>
-                    </div>
+                        <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
+                            {{ point.description }}
+                        </p>
 
-                    <!-- Sub-manifestos -->
-                    {% if point.sub_manifestos.all %}
-                    <details class="sub-manifesto-details mb-4">
-                        <summary>View Sub-Manifestos</summary>
-                        <div class="sub-manifesto-list">
-                            {% for sub in point.sub_manifestos.all %}
-                            <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-{{ sub.id }}">
-                                <div class="sub-manifesto-content">
-                                    <h4 class="">{{ sub.title }}</h4>
-                                    <div class="sub-manifesto-deadline">
-                                        <i class="bi bi-calendar3 me-1"></i> 
-                                        {{ sub.effective_deadline|to_bs|default:"No deadline" }}
-                                        {% if sub.is_inherited_deadline %}
-                                        <span class="deadline-inherited ms-1">(inherited)</span>
-                                        {% endif %}
+                        <!-- Implementation Progress -->
+                        <div class="manifesto-progress-wrapper my-3">
+                            <div class="progress-label mb-2">
+                                <span>Implementation Progress</span>
+                                <span class="progress-fraction">{{ point.progress_fraction }}</span>
+                            </div>
+                            <div class="wn-progress">
+                                <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-manifestos -->
+                        {% if point.sub_manifestos.all %}
+                        <details class="sub-manifesto-details mb-4">
+                            <summary>View Sub-Manifestos</summary>
+                            <div class="sub-manifesto-list">
+                                {% for sub in point.sub_manifestos.all %}
+                                <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-{{ sub.id }}">
+                                    <div class="sub-manifesto-content">
+                                        <h4 class="">{{ sub.title }}</h4>
+                                        <div class="sub-manifesto-deadline">
+                                            <i class="bi bi-calendar3 me-1"></i> 
+                                            {{ sub.effective_deadline|to_bs|default:"No deadline" }}
+                                            {% if sub.is_inherited_deadline %}
+                                            <span class="deadline-inherited ms-1">(inherited)</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="sub-manifesto-actions">
+                                        <button class="status-toggle" 
+                                                data-pk="{{ sub.id }}" 
+                                                data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
+                                                {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+                                            {% if sub.is_completed %}
+                                            <div class="status-badge status-complete">
+                                                <i class="bi bi-check-lg"></i>
+                                            </div>
+                                            {% elif sub.is_overdue %}
+                                            <div class="status-badge status-overdue">
+                                                <i class="bi bi-x-lg"></i>
+                                            </div>
+                                            {% else %}
+                                            <div class="status-badge status-pending">
+                                                <i class="bi bi-clock"></i>
+                                            </div>
+                                            {% endif %}
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="sub-manifesto-actions">
-                                    <button class="status-toggle" 
-                                            data-pk="{{ sub.id }}" 
-                                            data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
-                                            {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
-                                        {% if sub.is_completed %}
-                                        <div class="status-badge status-complete">
-                                            <i class="bi bi-check-lg"></i>
-                                        </div>
-                                        {% elif sub.is_overdue %}
-                                        <div class="status-badge status-overdue">
-                                            <i class="bi bi-x-lg"></i>
-                                        </div>
-                                        {% else %}
-                                        <div class="status-badge status-pending">
-                                            <i class="bi bi-clock"></i>
-                                        </div>
-                                        {% endif %}
-                                    </button>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% endif %}
+
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 700; color: var(--wn-emerald);">
+                            <i class="bi bi-patch-check-fill"></i> Verified Activities
+                        </div>
+
+                        {% load accounts_tags %}
+                        {% for activity in point.top_5_verified_activities %}
+                        <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
                                 </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
                             </div>
-                            {% endfor %}
-                        </div>
-                    </details>
-                    {% endif %}
-
-                    <div class="d-flex align-items-center gap-1 mb-2"
-                        style="font-size: 0.78rem; font-weight: 700; color: var(--wn-emerald);">
-                        <i class="bi bi-patch-check-fill"></i> Verified Activities
-                    </div>
-
-                    {% load accounts_tags %}
-                    {% for activity in point.top_5_verified_activities %}
-                    <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
-                        <div class="d-flex align-items-center mb-2">
-                            {% with profile=activity.created_by|get_profile %}
-                            {% if profile and profile.image %}
-                            <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                            {% else %}
-                            <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                            <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
                             </div>
-                            {% endif %}
-                            {% endwith %}
-                            <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
-                                {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                            </span>
-                            <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
+                                {{ activity.description|truncatewords:20 }}
+                            </div>
+                            <div class="d-flex justify-content-between align-items-end mt-2">
+                                <span class="wn-badge-level" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; background-color: var(--wn-bg-mute);">{{ activity.get_level_display }}</span>
+                            </div>
                         </div>
-                        <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
-                            <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                            </a>
-                        </div>
-                        <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
-                            {{ activity.description|truncatewords:20 }}
-                        </div>
-                        <div class="d-flex justify-content-between align-items-end mt-2">
-                            <span class="wn-badge-level" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; background-color: var(--wn-bg-mute);">{{ activity.get_level_display }}</span>
-                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities for this point yet.
+                        </p>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                        No verified activities for this point yet.
-                    </p>
-                    {% endfor %}
                 </div>
             </div>
+            {% empty %}
+            <div class="wn-empty-state">
+                <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
+                <h4>No manifesto points</h4>
+                <p class="mb-0">No manifesto points found for this party.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% empty %}
-        <div class="wn-empty-state">
-            <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
-            <h4>No manifesto points</h4>
-            <p class="mb-0">No manifesto points found for this party.</p>
+    </div>
+
+    <!-- Commitments Panel -->
+    <div id="commitment-panel" class="wn-tab-panel" style="display: none;">
+        <div class="wn-accordion accordion" id="commitmentAccordion">
+            {% for commitment in commitments %}
+            <div class="accordion-item" id="commitment-{{ commitment.id }}">
+                <h2 class="accordion-header" id="c-heading{{ commitment.id }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#c-collapse{{ commitment.id }}" aria-expanded="false"
+                        aria-controls="c-collapse{{ commitment.id }}">
+                        <span>{{ commitment.title }}</span>
+                        {% if commitment.calculated_deadline %}
+                        <span class="wn-deadline-badge wn-deadline-badge-violet ms-3">
+                            <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
+                        </span>
+                        {% endif %}
+                    </button>
+                </h2>
+                <div id="c-collapse{{ commitment.id }}" class="accordion-collapse collapse" aria-labelledby="c-heading{{ commitment.id }}"
+                    data-bs-parent="#commitmentAccordion">
+                    <div class="accordion-body">
+                        <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
+                            <a href="#commitment-{{ commitment.id }}" class="text-muted text-decoration-none" title="Link to this commitment">
+                                <i class="bi bi-link-45deg fs-5"></i>
+                            </a>
+                            <span class="ms-3">
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                            </span>
+                        </div>
+                        <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
+                            {{ commitment.description }}
+                        </p>
+
+                        <div class="manifesto-progress-wrapper my-3">
+                            <div class="progress-label mb-2">
+                                <span>Implementation Progress</span>
+                                <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
+                            </div>
+                            <div class="wn-progress">
+                                <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-commitments -->
+                        {% if commitment.sub_commitments.all %}
+                        <details class="sub-manifesto-details mb-4">
+                            <summary>View Sub-Commitments</summary>
+                            <div class="sub-manifesto-list">
+                                {% for sub in commitment.sub_commitments.all %}
+                                <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-c-{{ sub.id }}">
+                                    <div class="sub-manifesto-content">
+                                        <h4 class="">{{ sub.title }}</h4>
+                                        <div class="sub-manifesto-deadline">
+                                            <i class="bi bi-calendar3 me-1"></i> 
+                                            {{ sub.effective_deadline|to_bs|default:"No deadline" }}
+                                            {% if sub.is_inherited_deadline %}
+                                            <span class="deadline-inherited ms-1">(inherited)</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="sub-manifesto-actions">
+                                        <button class="status-toggle" 
+                                                data-pk="{{ sub.id }}" 
+                                                data-url="{% url 'toggle_subcommitment_completion' sub.id %}"
+                                                {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+                                            {% if sub.is_completed %}
+                                            <div class="status-badge status-complete">
+                                                <i class="bi bi-check-lg"></i>
+                                            </div>
+                                            {% elif sub.is_overdue %}
+                                            <div class="status-badge status-overdue">
+                                                <i class="bi bi-x-lg"></i>
+                                            </div>
+                                            {% else %}
+                                            <div class="status-badge status-pending">
+                                                <i class="bi bi-clock"></i>
+                                            </div>
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </details>
+                        {% endif %}
+
+                        <div class="d-flex align-items-center gap-1 mb-2"
+                            style="font-size: 0.78rem; font-weight: 700; color: var(--wn-violet);">
+                            <i class="bi bi-patch-check-fill"></i> Verified Activities
+                        </div>
+
+                        {% for activity in commitment.top_5_verified_activities %}
+                        <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
+                            <div class="d-flex align-items-center mb-2">
+                                {% with profile=activity.created_by|get_profile %}
+                                {% if profile and profile.image %}
+                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
+                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
+                                </div>
+                                {% endif %}
+                                {% endwith %}
+                                <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
+                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
+                                </span>
+                                <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
+                            </div>
+                            <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
+                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
+                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
+                                </a>
+                            </div>
+                            <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
+                                {{ activity.description|truncatewords:20 }}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
+                            No verified activities for this commitment yet.
+                        </p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="wn-empty-state">
+                <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
+                <h4>No commitments</h4>
+                <p class="mb-0">No commitments found for this party.</p>
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
     </div>
 </div>
  
 <script>
+function switchTab(btn, showId, hideId) {
+    const parent = btn.parentElement;
+    parent.querySelectorAll('.wn-tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(showId).style.display = '';
+    document.getElementById(hideId).style.display = 'none';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const toggles = document.querySelectorAll('.status-toggle');
     toggles.forEach(toggle => {
@@ -199,6 +350,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
+
+    // Handle hash-based tab switching
+    const hash = window.location.hash;
+    if (hash && hash.startsWith('#commitment-')) {
+        const commitmentBtn = document.querySelector('.wn-tab-btn:nth-child(2)');
+        if (commitmentBtn) commitmentBtn.click();
+        setTimeout(() => {
+            const target = document.querySelector(hash);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+    }
 });
 </script>
 {% endblock %}

@@ -51,15 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const partySelect = document.getElementById('id_party');
     const memberSelect = document.getElementById('id_member');
     const manifestoSelect = document.getElementById('id_manifesto_point');
+    const commitmentSelect = document.getElementById('id_commitment');
 
-    if (!partySelect || !memberSelect || !manifestoSelect) return;
+    if (!partySelect || !memberSelect || !manifestoSelect || !commitmentSelect) return;
 
-    function updateManifestos() {
+    function updateOptions() {
         const partyId = partySelect.value;
         const memberId = memberSelect.value;
         
         if (!partyId) {
             manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+            commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
             return;
         }
 
@@ -68,35 +70,50 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const currentVal = manifestoSelect.value;
+                // Update manifestos
+                const currentManifesto = manifestoSelect.value;
                 manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-                let exists = false;
+                let manifestoExists = false;
                 data.manifestos.forEach(m => {
                     const option = document.createElement('option');
                     option.value = m.id;
                     option.textContent = m.title;
-                    if (m.id == currentVal) {
+                    if (m.id == currentManifesto) {
                         option.selected = true;
-                        exists = true;
+                        manifestoExists = true;
                     }
                     manifestoSelect.appendChild(option);
                 });
-                if(!exists) manifestoSelect.value = '';
+                if(!manifestoExists) manifestoSelect.value = '';
+
+                // Update commitments
+                const currentCommitment = commitmentSelect.value;
+                commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+                let commitmentExists = false;
+                data.commitments.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.title;
+                    if (c.id == currentCommitment) {
+                        option.selected = true;
+                        commitmentExists = true;
+                    }
+                    commitmentSelect.appendChild(option);
+                });
+                if(!commitmentExists) commitmentSelect.value = '';
             });
     }
 
-    function updateMembersAndManifestos() {
+    function updateMembersAndOptions() {
         const partyId = partySelect.value;
         
         if (!partyId) {
             memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
             manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+            commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
             return;
         }
 
-        // We fetch without member_id to get only the party's general manifesto points
-        // and the list of members for that party.
-        // Wait, if a member is already selected, should we retain it?
         const currentMember = memberSelect.value;
         const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${currentMember}`;
         
@@ -121,36 +138,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Update manifestos
-                const currentVal = manifestoSelect.value;
+                const currentManifesto = manifestoSelect.value;
                 manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
                 let manifestoExists = false;
                 data.manifestos.forEach(m => {
                     const option = document.createElement('option');
                     option.value = m.id;
                     option.textContent = m.title;
-                    if (m.id == currentVal) {
+                    if (m.id == currentManifesto) {
                         option.selected = true;
                         manifestoExists = true;
                     }
                     manifestoSelect.appendChild(option);
                 });
                 if (!manifestoExists) manifestoSelect.value = '';
+
+                // Update commitments
+                const currentCommitment = commitmentSelect.value;
+                commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+                let commitmentExists = false;
+                data.commitments.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.title;
+                    if (c.id == currentCommitment) {
+                        option.selected = true;
+                        commitmentExists = true;
+                    }
+                    commitmentSelect.appendChild(option);
+                });
+                if (!commitmentExists) commitmentSelect.value = '';
             });
     }
 
     partySelect.addEventListener('change', () => {
         memberSelect.value = ''; // Reset member when party changes
-        updateMembersAndManifestos();
+        updateMembersAndOptions();
     });
-    memberSelect.addEventListener('change', updateManifestos);
-    
-    // Initial load handling (e.g., if there are form errors and it re-renders with values)
-    if (partySelect.value) {
-        // If there's an initial loaded manifesto point, we shouldn't wipe it
-        // The script above preserves selections if they exist in the new options.
-        // But since this runs on load, we just trigger it.
-        // Nothing needed here right now as Django renders the options initially anyway.
-    }
+    memberSelect.addEventListener('change', updateOptions);
 });
 </script>
 {% endblock %}

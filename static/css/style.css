@@ -21,6 +21,9 @@
   --wn-amber-bg: rgba(245, 158, 11, 0.08);
   --wn-rose: #f43f5e;
   --wn-rose-bg: rgba(244, 63, 94, 0.08);
+  --wn-violet: #8b5cf6;
+  --wn-violet-bg: rgba(139, 92, 246, 0.08);
+  --wn-violet-vivid: #7c3aed;
 
   /* Neutrals */
   --wn-bg: #f1f5f9;
@@ -2330,4 +2333,150 @@ a {
 
 .status-toggle:hover {
   transform: scale(1.1);
+}
+
+/* ---------- Commitment Cards ---------- */
+.wn-commitment-card {
+  background: linear-gradient(135deg, #faf5ff, #f5f3ff);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-left: 4px solid var(--wn-violet);
+  border-radius: var(--wn-radius-lg);
+  padding: 1.5rem;
+  transition: var(--wn-transition);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.wn-commitment-card:hover {
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.12);
+}
+
+.wn-commitment-card .manifesto-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wn-text);
+  margin-bottom: 0.5rem;
+}
+
+.wn-commitment-card .manifesto-desc {
+  font-size: 0.85rem;
+  color: var(--wn-text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+
+/* Violet progress bar variant */
+.wn-progress-bar-violet {
+  background: linear-gradient(90deg, var(--wn-violet), var(--wn-violet-vivid)) !important;
+}
+
+/* Violet deadline badge variant */
+.wn-deadline-badge-violet {
+  background: var(--wn-violet-bg) !important;
+  color: var(--wn-violet) !important;
+}
+
+/* Violet deadline card variant */
+.wn-deadline-card-violet {
+  background: linear-gradient(135deg, #faf5ff, #ede9fe) !important;
+  border-color: rgba(139, 92, 246, 0.3) !important;
+}
+
+.wn-deadline-card-violet::before {
+  background: var(--wn-violet) !important;
+}
+
+/* Violet verified activity item */
+.wn-verified-item-violet {
+  border-left: 3px solid var(--wn-violet) !important;
+}
+
+/* ---------- Type Badges ---------- */
+.wn-type-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--wn-radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.wn-type-manifesto {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--wn-blue);
+}
+
+.wn-type-commitment {
+  background: var(--wn-violet-bg);
+  color: var(--wn-violet);
+}
+
+/* ---------- Tab Switcher ---------- */
+.wn-tab-switcher {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--wn-bg);
+  padding: 0.35rem;
+  border-radius: var(--wn-radius-lg);
+  border: 1px solid var(--wn-border);
+  width: fit-content;
+}
+
+.wn-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1.1rem;
+  border: none;
+  border-radius: var(--wn-radius-md);
+  background: transparent;
+  color: var(--wn-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--wn-transition-fast);
+  white-space: nowrap;
+}
+
+.wn-tab-btn:hover {
+  color: var(--wn-text);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.wn-tab-btn.active {
+  background: var(--wn-card);
+  color: var(--wn-text);
+  box-shadow: var(--wn-shadow-sm);
+}
+
+.wn-tab-count {
+  background: var(--wn-bg);
+  color: var(--wn-text-muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--wn-radius-full);
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+.wn-tab-btn.active .wn-tab-count {
+  background: var(--wn-blue);
+  color: #fff;
+}
+
+/* Section icon violet variant */
+.wn-section-header .section-icon.violet {
+  background: var(--wn-violet-bg);
+  color: var(--wn-violet);
+}
+
+/* ---------- Tab Panel ---------- */
+.wn-tab-panel {
+  animation: fadeIn 0.2s ease;
 }

@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Activity, Petition, PoliticalParty, ElectedMember, ManifestoPoint
+from .models import Activity, Petition, PoliticalParty, ElectedMember, ManifestoPoint, Commitment
 
 class ActivityForm(forms.ModelForm):
     party = forms.ModelChoiceField(
@@ -16,12 +16,15 @@ class ActivityForm(forms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = ['title', 'description', 'party', 'member', 'manifesto_point', 'source_link']
+        fields = ['title', 'description', 'party', 'member', 'manifesto_point', 'commitment', 'source_link']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
         self.fields['manifesto_point'].queryset = ManifestoPoint.objects.none()
+        self.fields['manifesto_point'].required = False
+        self.fields['commitment'].queryset = Commitment.objects.none()
+        self.fields['commitment'].required = False
         
         if 'party' in self.data:
             try:
@@ -29,18 +32,29 @@ class ActivityForm(forms.ModelForm):
                 member_id = self.data.get('member')
                 if member_id:
                     self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(elected_member_id=member_id)
+                    self.fields['commitment'].queryset = Commitment.objects.filter(elected_member_id=member_id)
                 else:
                     self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(party_id=party_id, elected_member__isnull=True)
+                    self.fields['commitment'].queryset = Commitment.objects.filter(party_id=party_id, elected_member__isnull=True)
             except (ValueError, TypeError):
                 pass
-        elif self.instance.pk and self.instance.manifesto_point:
-            if self.instance.manifesto_point.elected_member:
-                self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(elected_member=self.instance.manifesto_point.elected_member)
-                self.fields['party'].initial = self.instance.manifesto_point.party
-                self.fields['member'].initial = self.instance.manifesto_point.elected_member
-            else:
-                self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(party=self.instance.manifesto_point.party, elected_member__isnull=True)
-                self.fields['party'].initial = self.instance.manifesto_point.party
+        elif self.instance.pk:
+            if self.instance.manifesto_point:
+                if self.instance.manifesto_point.elected_member:
+                    self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(elected_member=self.instance.manifesto_point.elected_member)
+                    self.fields['party'].initial = self.instance.manifesto_point.party
+                    self.fields['member'].initial = self.instance.manifesto_point.elected_member
+                else:
+                    self.fields['manifesto_point'].queryset = ManifestoPoint.objects.filter(party=self.instance.manifesto_point.party, elected_member__isnull=True)
+                    self.fields['party'].initial = self.instance.manifesto_point.party
+            if self.instance.commitment:
+                if self.instance.commitment.elected_member:
+                    self.fields['commitment'].queryset = Commitment.objects.filter(elected_member=self.instance.commitment.elected_member)
+                    self.fields['party'].initial = self.instance.commitment.party
+                    self.fields['member'].initial = self.instance.commitment.elected_member
+                else:
+                    self.fields['commitment'].queryset = Commitment.objects.filter(party=self.instance.commitment.party, elected_member__isnull=True)
+                    self.fields['party'].initial = self.instance.commitment.party
 
 
 

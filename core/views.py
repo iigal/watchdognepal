@@ -5,18 +5,20 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Activity, ManifestoPoint, SubManifesto, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
+from .models import Activity, ManifestoPoint, SubManifesto, Commitment, SubCommitment, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
 from .forms import ActivityForm, PetitionForm
-from .og_image import generate_manifesto_og_image
+from .og_image import generate_manifesto_og_image, generate_commitment_og_image
 
 
 def home(request):
     # Fetch all parties that are in government
-    government_parties = PoliticalParty.objects.filter(in_government=True).prefetch_related('manifesto_points__activities')
+    government_parties = PoliticalParty.objects.filter(in_government=True).prefetch_related(
+        'manifesto_points__activities', 'commitments__activities'
+    )
     
     today = timezone.now().date()
     
-    # Priority 1: In Progress — manifesto points with at least one verified activity
+    # ─── Manifesto: In Progress ───
     in_progress_points = ManifestoPoint.objects.filter(
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
         activities__status='verified'
@@ -24,7 +26,7 @@ def home(request):
 
     in_progress_ids = set(in_progress_points.values_list('id', flat=True))
 
-    # Priority 2: Approaching Deadlines — exclude items already shown in In Progress
+    # ─── Manifesto: Approaching Deadlines ───
     manifesto_points = ManifestoPoint.objects.filter(
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
     ).exclude(
@@ -40,15 +42,46 @@ def home(request):
     upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
     upcoming_deadlines = upcoming_deadlines[:5]
 
-    # IDs to exclude from the bottom manifesto list (already shown above)
     deadline_ids = set(p.id for p in upcoming_deadlines)
-    shown_ids = in_progress_ids | deadline_ids
+    shown_manifesto_ids = in_progress_ids | deadline_ids
+
+    # ─── Commitment: In Progress ───
+    in_progress_commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
+        activities__status='verified'
+    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
+
+    in_progress_commitment_ids = set(in_progress_commitments.values_list('id', flat=True))
+
+    # ─── Commitment: Approaching Deadlines ───
+    commitment_qs = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).exclude(
+        id__in=in_progress_commitment_ids
+    ).select_related('party', 'elected_member', 'elected_member__party')
+    
+    upcoming_commitment_deadlines = []
+    for c in commitment_qs:
+        calc_deadline = c.calculated_deadline
+        if calc_deadline and calc_deadline >= today:
+            upcoming_commitment_deadlines.append(c)
+            
+    upcoming_commitment_deadlines.sort(key=lambda c: c.calculated_deadline)
+    upcoming_commitment_deadlines = upcoming_commitment_deadlines[:5]
+
+    commitment_deadline_ids = set(c.id for c in upcoming_commitment_deadlines)
+    shown_commitment_ids = in_progress_commitment_ids | commitment_deadline_ids
 
     context = {
         'government_parties': government_parties,
+        # Manifesto
         'upcoming_deadlines': upcoming_deadlines,
         'in_progress_points': in_progress_points,
-        'shown_manifesto_ids': shown_ids,
+        'shown_manifesto_ids': shown_manifesto_ids,
+        # Commitment
+        'upcoming_commitment_deadlines': upcoming_commitment_deadlines,
+        'in_progress_commitments': in_progress_commitments,
+        'shown_commitment_ids': shown_commitment_ids,
     }
     return render(request, 'home.html', context)
 
@@ -102,19 +135,30 @@ def get_manifesto_options(request):
     member_id = request.GET.get('member_id')
     
     if not party_id:
-        return JsonResponse({'manifestos': [], 'members': []})
+        return JsonResponse({'manifestos': [], 'commitments': [], 'members': []})
         
     members_qs = ElectedMember.objects.filter(party_id=party_id)
     members = [{'id': m.id, 'name': m.name} for m in members_qs]
         
-    qs = ManifestoPoint.objects.all()
+    # Manifesto points
+    m_qs = ManifestoPoint.objects.all()
     if member_id:
-        qs = qs.filter(elected_member_id=member_id)
+        m_qs = m_qs.filter(elected_member_id=member_id)
     else:
-        qs = qs.filter(party_id=party_id, elected_member__isnull=True)
+        m_qs = m_qs.filter(party_id=party_id, elected_member__isnull=True)
         
-    manifestos = [{'id': m.id, 'title': m.title} for m in qs]
-    return JsonResponse({'manifestos': manifestos, 'members': members})
+    manifestos = [{'id': m.id, 'title': m.title} for m in m_qs]
+
+    # Commitments
+    c_qs = Commitment.objects.all()
+    if member_id:
+        c_qs = c_qs.filter(elected_member_id=member_id)
+    else:
+        c_qs = c_qs.filter(party_id=party_id, elected_member__isnull=True)
+
+    commitments = [{'id': c.id, 'title': c.title} for c in c_qs]
+
+    return JsonResponse({'manifestos': manifestos, 'commitments': commitments, 'members': members})
 
 
 @require_POST
@@ -153,9 +197,13 @@ def party_list(request):
 
 def party_detail(request, party_id):
     party = get_object_or_404(PoliticalParty, id=party_id)
-    # Get all manifesto points for this party
     manifesto_points = party.manifesto_points.all().prefetch_related('activities')
-    return render(request, 'party_detail.html', {'party': party, 'manifesto_points': manifesto_points})
+    commitments = party.commitments.all().prefetch_related('activities')
+    return render(request, 'party_detail.html', {
+        'party': party,
+        'manifesto_points': manifesto_points,
+        'commitments': commitments,
+    })
 
 
 def elected_member_list(request):
@@ -166,7 +214,12 @@ def elected_member_list(request):
 def elected_member_detail(request, member_id):
     member = get_object_or_404(ElectedMember, id=member_id)
     manifesto_points = member.manifesto_points.all().prefetch_related('activities')
-    return render(request, 'member_detail.html', {'member': member, 'manifesto_points': manifesto_points})
+    commitments = member.commitments.all().prefetch_related('activities')
+    return render(request, 'member_detail.html', {
+        'member': member,
+        'manifesto_points': manifesto_points,
+        'commitments': commitments,
+    })
 
 
 # ─── Petition Views ───────────────────────────────────────────
@@ -328,6 +381,47 @@ def manifesto_og_image(request, pk):
     
     response = HttpResponse(content_type="image/png")
     # Add simple cache control to prevent excessive generation
+    response['Cache-Control'] = 'public, max-age=3600'
+    img.save(response, "PNG")
+    return response
+
+# ─── Commitment Views ─────────────────────────────────────────
+
+def commitment_list(request):
+    commitments = Commitment.objects.prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party')
+    return render(request, 'commitment_list.html', {'commitments': commitments})
+
+
+@require_POST
+@login_required
+def toggle_subcommitment_completion(request, pk):
+    subcommitment = get_object_or_404(SubCommitment, pk=pk)
+    subcommitment.is_completed = not subcommitment.is_completed
+    subcommitment.save()
+    
+    parent = subcommitment.parent
+    all_completed = parent.sub_commitments.filter(is_completed=False).count() == 0
+    if all_completed != parent.is_completed:
+        parent.is_completed = all_completed
+        parent.save()
+        
+    return JsonResponse({
+        'success': True,
+        'is_completed': subcommitment.is_completed,
+        'parent_progress': parent.progress_fraction,
+        'parent_completed': parent.is_completed,
+        'parent_percentage': parent.completion_percentage
+    })
+
+def commitment_detail(request, pk):
+    commitment = get_object_or_404(Commitment.objects.select_related('party', 'elected_member'), pk=pk)
+    return render(request, 'commitment_detail.html', {'commitment': commitment})
+
+def commitment_og_image(request, pk):
+    commitment = get_object_or_404(Commitment, pk=pk)
+    img = generate_commitment_og_image(commitment)
+    
+    response = HttpResponse(content_type="image/png")
     response['Cache-Control'] = 'public, max-age=3600'
     img.save(response, "PNG")
     return response

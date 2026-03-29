@@ -1,13 +1,13 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import PoliticalParty, ElectedMember, Petition
+from .models import PoliticalParty, ElectedMember, Petition, Commitment
 
 class StaticViewSitemap(Sitemap):
     priority = 1.0
     changefreq = 'daily'
 
     def items(self):
-        return ['home', 'party_list', 'elected_member_list', 'activities_list', 'petition_list', 'manifesto_list']
+        return ['home', 'party_list', 'elected_member_list', 'activities_list', 'petition_list', 'manifesto_list', 'commitment_list']
 
     def location(self, item):
         return reverse(item)
@@ -35,3 +35,13 @@ class PetitionSitemap(Sitemap):
 
     def lastmod(self, obj):
         return obj.updated_at
+
+class CommitmentSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.8
+
+    def items(self):
+        return Commitment.objects.all()
+
+    def location(self, obj):
+        return reverse('commitment_detail', kwargs={'pk': obj.pk})

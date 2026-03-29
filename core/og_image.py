@@ -176,3 +176,91 @@ def generate_manifesto_og_image(point):
                                radius=bar_height//2, fill=(16, 185, 129)) # Emerald-500
 
     return img
+
+
+def generate_commitment_og_image(commitment):
+    """
+    Generates a 1200x630 OG image for a Commitment.
+    Uses a violet/indigo color scheme to distinguish from manifesto images.
+    Returns a Pillow Image object.
+    """
+    width, height = 1200, 630
+    bg_color = (15, 12, 41)  # Deep violet-navy
+    img = Image.new('RGB', (width, height), color=bg_color)
+    draw = ImageDraw.Draw(img)
+
+    # Decorative gradient accent at bottom (violet to indigo)
+    for i in range(10):
+        draw.line([(0, height - 10 + i), (width, height - 10 + i)], fill=(139, 92 + i*5, 246 - i*3))
+
+    padding = 60
+
+    font_brand_latin = get_latin_font(32)
+    font_title = get_font(FONT_BOLD_PATH, 55)
+    font_desc = get_font(FONT_REGULAR_PATH, 36)
+    font_meta = get_font(FONT_REGULAR_PATH, 28)
+    font_latin_meta = get_latin_font(28)
+
+    # Logo & Brand
+    logo_size = 80
+    current_y = padding
+    if os.path.exists(LOGO_PATH):
+        try:
+            logo = Image.open(LOGO_PATH).convert("RGBA")
+            logo = logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
+            mask = Image.new('L', (logo_size, logo_size), 0)
+            mask_draw = ImageDraw.Draw(mask)
+            mask_draw.ellipse((0, 0, logo_size, logo_size), fill=255)
+            img.paste(logo, (padding, current_y), mask)
+        except Exception:
+            pass
+
+    draw.text((padding + logo_size + 20, current_y + 20), "Watchdog Nepal — Commitment", font=font_brand_latin, fill=(167, 139, 250))
+    current_y += logo_size + 40
+
+    # Title
+    title = str(commitment.title)
+    current_y = draw_text_wrapped(draw, title, font_title, padding, current_y,
+                                  max_width=width - (padding * 2), fill="white", max_lines=3, line_spacing=15)
+    current_y += 20
+
+    # Description
+    if commitment.description:
+        desc = str(commitment.description)
+        current_y = draw_text_wrapped(draw, desc, font_desc, padding, current_y,
+                                      max_width=width - (padding * 2), fill=(167, 139, 250), max_lines=2, line_spacing=10)
+        current_y += 40
+
+    # Metadata
+    meta_items = []
+    owner = commitment.party.name if commitment.party else (commitment.elected_member.name if commitment.elected_member else "Government")
+    meta_items.append((str(owner), font_meta))
+
+    if commitment.calculated_deadline:
+        meta_items.append((f"Deadline: {commitment.calculated_deadline.strftime('%Y-%m-%d')}", font_latin_meta))
+
+    activities_count = commitment.activities.filter(status='verified').count()
+    if activities_count > 0:
+        meta_items.append((f"{activities_count} Verified Activities", font_latin_meta))
+
+    meta_x = padding
+    for text, font_to_use in meta_items:
+        draw.text((meta_x, current_y), text, font=font_to_use, fill=(203, 213, 225))
+        meta_x += draw.textlength(text, font=font_to_use) + 40
+
+    # Progress Bar (violet theme)
+    current_y = height - 120
+    draw.text((padding, current_y - 40), f"Implementation Progress: {commitment.completion_percentage}%", font=font_latin_meta, fill="white")
+
+    bar_width = width - (padding * 2)
+    bar_height = 24
+
+    draw.rounded_rectangle([(padding, current_y), (padding + bar_width, current_y + bar_height)],
+                           radius=bar_height//2, fill=(30, 20, 59))
+
+    progress_width = max(int(bar_width * (commitment.completion_percentage / 100.0)), bar_height)
+    if commitment.completion_percentage > 0:
+        draw.rounded_rectangle([(padding, current_y), (padding + progress_width, current_y + bar_height)],
+                               radius=bar_height//2, fill=(139, 92, 246))  # Violet-500
+
+    return img

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, SubManifesto, Petition, PetitionSignature
+from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, SubManifesto, Commitment, SubCommitment, Petition, PetitionSignature
 from .widgets import NepaliDatePickerWidget
 
 @admin.register(PoliticalParty)
@@ -50,9 +50,36 @@ class ManifestoPointAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description')
     inlines = [SubManifestoInline]
 
+
+class CommitmentAdminForm(forms.ModelForm):
+    class Meta:
+        model = Commitment
+        fields = '__all__'
+        widgets = {
+            'deadline': NepaliDatePickerWidget(),
+        }
+
+
+class SubCommitmentInline(admin.TabularInline):
+    model = SubCommitment
+    extra = 1
+    fields = ('title', 'deadline', 'is_completed')
+    widgets = {
+        'deadline': NepaliDatePickerWidget(),
+    }
+
+
+@admin.register(Commitment)
+class CommitmentAdmin(admin.ModelAdmin):
+    form = CommitmentAdminForm
+    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
+    list_filter = ('party', 'elected_member', 'is_completed')
+    search_fields = ('title', 'description')
+    inlines = [SubCommitmentInline]
+
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ('title', 'level', 'status', 'manifesto_point', 'created_by', 'created_at', 'positive_votes', 'negative_votes')
+    list_display = ('title', 'level', 'status', 'manifesto_point', 'commitment', 'created_by', 'created_at', 'positive_votes', 'negative_votes')
     list_filter = ('level', 'status', 'created_at')
     search_fields = ('title', 'description', 'province')
     actions = ['mark_as_verified']

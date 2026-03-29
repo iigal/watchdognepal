@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ commitment.title }} — Watchdog Nepal{% endblock %}
+
+{% block og_meta %}
+<meta property="og:title" content="{{ commitment.title }}">
+<meta property="og:description" content="{{ commitment.description|truncatewords:20 }}">
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_og_image' commitment.id %}">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ commitment.title }}">
+<meta name="twitter:description" content="{{ commitment.description|truncatewords:20 }}">
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_og_image' commitment.id %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 py-5 text-center" style="min-height: 50vh; display: flex; flex-direction: column; justify-content: center;">
+    <div class="spinner-border text-primary mx-auto mb-3" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h4>{% trans "Redirecting to commitment..." %}</h4>
+    <p class="text-muted">{% trans "If you are not redirected automatically" %}, <a href="/#commitment-{{ commitment.id }}" class="text-decoration-none">{% trans "click here" %}</a>.</p>
+</div>
+<script>
+    // Automatically redirect the user to the homepage anchored to the commitment
+    window.location.replace("/#commitment-{{ commitment.id }}");
+</script>
+{% endblock %}

@@ -21,13 +21,14 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.sitemaps.views import sitemap
-from core.sitemaps import StaticViewSitemap, PartySitemap, MemberSitemap, PetitionSitemap
+from core.sitemaps import StaticViewSitemap, PartySitemap, MemberSitemap, PetitionSitemap, CommitmentSitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
     'parties': PartySitemap,
     'members': MemberSitemap,
     'petitions': PetitionSitemap,
+    'commitments': CommitmentSitemap,
 }
 from core.views import (
     home, submit_activity, vote_activity,
@@ -36,7 +37,8 @@ from core.views import (
     activities_list,
     petition_list, petition_detail, petition_create, petition_sign,
     dashboard, manifesto_list, toggle_submanifesto_completion, get_manifesto_options,
-    manifesto_detail, manifesto_og_image
+    manifesto_detail, manifesto_og_image,
+    commitment_list, commitment_detail, commitment_og_image, toggle_subcommitment_completion,
 )
 
 urlpatterns = [
@@ -68,6 +70,11 @@ urlpatterns = [
     path('manifestos/<int:pk>/', manifesto_detail, name='manifesto_detail'),
     path('submanifesto/toggle/<int:pk>/', toggle_submanifesto_completion, name='toggle_submanifesto_completion'),
     path('og/manifesto/<int:pk>.png', manifesto_og_image, name='manifesto_og_image'),
+    # Commitments
+    path('commitments/', commitment_list, name='commitment_list'),
+    path('commitments/<int:pk>/', commitment_detail, name='commitment_detail'),
+    path('subcommitment/toggle/<int:pk>/', toggle_subcommitment_completion, name='toggle_subcommitment_completion'),
+    path('og/commitment/<int:pk>.png', commitment_og_image, name='commitment_og_image'),
 ]
 
 if settings.DEBUG:

@@ -135,6 +135,105 @@ class SubManifesto(models.Model):
     def __str__(self):
         return f"{self.parent.title} - {self.title}"
 
+class Commitment(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, blank=True, null=True, related_name='commitments')
+    elected_member = models.ForeignKey(ElectedMember, on_delete=models.CASCADE, blank=True, null=True, related_name='commitments')
+    deadline = models.DateField(blank=True, null=True)
+    completion_days = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in days from oath")
+    completion_months = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in months from oath")
+    completion_years = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in years from oath")
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        if not self.party and not self.elected_member:
+            raise ValidationError("A commitment must be linked to either a party or an elected member.")
+
+    @property
+    def calculated_deadline(self):
+        if self.deadline:
+            return self.deadline
+
+        base_date = None
+        if self.elected_member and self.elected_member.oath_date:
+            base_date = self.elected_member.oath_date
+        elif self.party and self.party.oath_date:
+            base_date = self.party.oath_date
+
+        if base_date:
+            from dateutil.relativedelta import relativedelta
+
+            years = self.completion_years or 0
+            months = self.completion_months or 0
+            days = self.completion_days or 0
+
+            if years > 0 or months > 0 or days > 0:
+                return base_date + relativedelta(years=years, months=months, days=days)
+
+        return None
+
+    @property
+    def is_overdue(self):
+        if self.is_completed:
+            return False
+        deadline = self.calculated_deadline
+        if deadline:
+            from django.utils import timezone
+            return deadline < timezone.now().date()
+        return False
+
+    @property
+    def progress_fraction(self):
+        total = self.sub_commitments.count()
+        if total == 0:
+            return "1/1" if self.is_completed else "0/1"
+        completed = self.sub_commitments.filter(is_completed=True).count()
+        return f"{completed}/{total}"
+
+    @property
+    def completion_percentage(self):
+        total = self.sub_commitments.count()
+        if total == 0:
+            return 100 if self.is_completed else 0
+        completed = self.sub_commitments.filter(is_completed=True).count()
+        return int((completed / total) * 100)
+
+    @property
+    def top_5_verified_activities(self):
+        return self.activities.filter(status='verified').order_by('-created_at')[:5]
+
+    def __str__(self):
+        return self.title
+
+class SubCommitment(models.Model):
+    parent = models.ForeignKey(Commitment, on_delete=models.CASCADE, related_name='sub_commitments')
+    title = models.CharField(max_length=200)
+    deadline = models.DateField(blank=True, null=True)
+    is_completed = models.BooleanField(default=False)
+
+    @property
+    def effective_deadline(self):
+        return self.deadline or self.parent.calculated_deadline
+
+    @property
+    def is_inherited_deadline(self):
+        return self.deadline is None
+
+    @property
+    def is_overdue(self):
+        if self.is_completed:
+            return False
+        deadline = self.effective_deadline
+        if deadline:
+            from django.utils import timezone
+            return deadline < timezone.now().date()
+        return False
+
+    def __str__(self):
+        return f"{self.parent.title} - {self.title}"
+
 class Activity(models.Model):
     LEVEL_CHOICES = [
         ('federal', 'Federal'),
@@ -154,6 +253,7 @@ class Activity(models.Model):
     source_link = models.URLField()
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='unverified')
     manifesto_point = models.ForeignKey(ManifestoPoint, on_delete=models.SET_NULL, blank=True, null=True, related_name='activities')
+    commitment = models.ForeignKey(Commitment, on_delete=models.SET_NULL, blank=True, null=True, related_name='activities')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
