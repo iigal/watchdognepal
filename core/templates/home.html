@@ -92,9 +92,9 @@
                 <div class="wn-expand-detail" style="display: none;">
                     <p class="manifesto-desc">{{ point.description }}</p>
                     <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
                     </div>
                     <div class="mt-auto pt-2">
                         <div class="d-flex align-items-center gap-1 mb-2"
@@ -186,9 +186,9 @@
                         </div>
                     </div>
                     <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
+                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
                     </div>
                     <div class="mt-auto pt-2">
                         <div class="d-flex align-items-center gap-1 mb-2"
@@ -269,9 +269,9 @@
                             </a>
                             {{ point.title }}
                             <span class="ms-2" style="font-size: 0.85rem;">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
                             </span>
                         </div>
                         {% if point.calculated_deadline %}

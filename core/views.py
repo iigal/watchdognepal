@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.db import models
@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Activity, ManifestoPoint, SubManifesto, PoliticalParty, ElectedMember, Vote, Petition, PetitionSignature
 from .forms import ActivityForm, PetitionForm
+from .og_image import generate_manifesto_og_image
 
 
 def home(request):
@@ -316,3 +317,17 @@ def toggle_submanifesto_completion(request, pk):
         'parent_completed': parent.is_completed,
         'parent_percentage': parent.completion_percentage
     })
+
+def manifesto_detail(request, pk):
+    manifesto = get_object_or_404(ManifestoPoint.objects.select_related('party', 'elected_member'), pk=pk)
+    return render(request, 'manifesto_detail.html', {'manifesto': manifesto})
+
+def manifesto_og_image(request, pk):
+    point = get_object_or_404(ManifestoPoint, pk=pk)
+    img = generate_manifesto_og_image(point)
+    
+    response = HttpResponse(content_type="image/png")
+    # Add simple cache control to prevent excessive generation
+    response['Cache-Control'] = 'public, max-age=3600'
+    img.save(response, "PNG")
+    return response

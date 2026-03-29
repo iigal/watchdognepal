@@ -35,7 +35,8 @@ from core.views import (
     elected_member_list, elected_member_detail,
     activities_list,
     petition_list, petition_detail, petition_create, petition_sign,
-    dashboard, manifesto_list, toggle_submanifesto_completion, get_manifesto_options
+    dashboard, manifesto_list, toggle_submanifesto_completion, get_manifesto_options,
+    manifesto_detail, manifesto_og_image
 )
 
 urlpatterns = [
@@ -64,7 +65,9 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     # Manifestos
     path('manifestos/', manifesto_list, name='manifesto_list'),
+    path('manifestos/<int:pk>/', manifesto_detail, name='manifesto_detail'),
     path('submanifesto/toggle/<int:pk>/', toggle_submanifesto_completion, name='toggle_submanifesto_completion'),
+    path('og/manifesto/<int:pk>.png', manifesto_og_image, name='manifesto_og_image'),
 ]
 
 if settings.DEBUG:
