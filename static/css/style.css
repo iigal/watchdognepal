@@ -2337,8 +2337,8 @@ a {
 
 /* ---------- Commitment Cards ---------- */
 .wn-commitment-card {
-  background: linear-gradient(135deg, #faf5ff, #f5f3ff);
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: var(--wn-card);
+  border: 1px solid var(--wn-border);
   border-left: 4px solid var(--wn-violet);
   border-radius: var(--wn-radius-lg);
   padding: 1.5rem;
