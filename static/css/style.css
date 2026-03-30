@@ -2346,6 +2346,7 @@ a {
   height: 100%;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--wn-shadow-sm);
 }
 
 .wn-commitment-card:hover {
