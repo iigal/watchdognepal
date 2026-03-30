@@ -2337,16 +2337,16 @@ a {
 
 /* ---------- Commitment Cards ---------- */
 .wn-commitment-card {
-  background: var(--wn-card);
-  border: 1px solid var(--wn-border);
-  border-left: 4px solid var(--wn-violet);
+  background: #ffffff !important;
+  border: 1px solid var(--wn-border) !important;
+  border-left: 4px solid var(--wn-violet) !important;
   border-radius: var(--wn-radius-lg);
   padding: 1.5rem;
   transition: var(--wn-transition);
   height: 100%;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--wn-shadow-sm);
+  box-shadow: var(--wn-shadow-md) !important;
 }
 
 .wn-commitment-card:hover {
