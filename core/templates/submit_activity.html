@@ -22,11 +22,12 @@
           <div class="wn-info-alert mb-4">
             <i class="bi bi-info-circle-fill me-2" style="color: var(--wn-blue);"></i>
             <strong>Important:</strong>
-            Only activities with a verified government source will be approved. News articles or social
-            media links will not be accepted. Please ensure the source link is from a
-            <code style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">.gov</code>
+            After the link is provided, we will verify and accept as soon as possible.
+            <code
+              style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">verified source</code>
             or
-            <code style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">.gov.np</code>
+            <code
+              style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">government</code>
             domain.
           </div>
 
@@ -47,7 +48,7 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const partySelect = document.getElementById('id_party');
     const memberSelect = document.getElementById('id_member');
     const manifestoSelect = document.getElementById('id_manifesto_point');
@@ -56,126 +57,126 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!partySelect || !memberSelect || !manifestoSelect || !commitmentSelect) return;
 
     function updateOptions() {
-        const partyId = partySelect.value;
-        const memberId = memberSelect.value;
-        
-        if (!partyId) {
-            manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-            commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-            return;
-        }
+      const partyId = partySelect.value;
+      const memberId = memberSelect.value;
 
-        const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${memberId}`;
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // Update manifestos
-                const currentManifesto = manifestoSelect.value;
-                manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-                let manifestoExists = false;
-                data.manifestos.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.textContent = m.title;
-                    if (m.id == currentManifesto) {
-                        option.selected = true;
-                        manifestoExists = true;
-                    }
-                    manifestoSelect.appendChild(option);
-                });
-                if(!manifestoExists) manifestoSelect.value = '';
+      if (!partyId) {
+        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+        return;
+      }
 
-                // Update commitments
-                const currentCommitment = commitmentSelect.value;
-                commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-                let commitmentExists = false;
-                data.commitments.forEach(c => {
-                    const option = document.createElement('option');
-                    option.value = c.id;
-                    option.textContent = c.title;
-                    if (c.id == currentCommitment) {
-                        option.selected = true;
-                        commitmentExists = true;
-                    }
-                    commitmentSelect.appendChild(option);
-                });
-                if(!commitmentExists) commitmentSelect.value = '';
-            });
+      const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${memberId}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Update manifestos
+          const currentManifesto = manifestoSelect.value;
+          manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+          let manifestoExists = false;
+          data.manifestos.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.title;
+            if (m.id == currentManifesto) {
+              option.selected = true;
+              manifestoExists = true;
+            }
+            manifestoSelect.appendChild(option);
+          });
+          if (!manifestoExists) manifestoSelect.value = '';
+
+          // Update commitments
+          const currentCommitment = commitmentSelect.value;
+          commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+          let commitmentExists = false;
+          data.commitments.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            option.textContent = c.title;
+            if (c.id == currentCommitment) {
+              option.selected = true;
+              commitmentExists = true;
+            }
+            commitmentSelect.appendChild(option);
+          });
+          if (!commitmentExists) commitmentSelect.value = '';
+        });
     }
 
     function updateMembersAndOptions() {
-        const partyId = partySelect.value;
-        
-        if (!partyId) {
-            memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
-            manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-            commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-            return;
-        }
+      const partyId = partySelect.value;
 
-        const currentMember = memberSelect.value;
-        const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${currentMember}`;
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // Update members
-                memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
-                let memberExists = false;
-                data.members.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.textContent = m.name;
-                    if (m.id == currentMember) {
-                        option.selected = true;
-                        memberExists = true;
-                    }
-                    memberSelect.appendChild(option);
-                });
-                if (!memberExists) {
-                    memberSelect.value = '';
-                }
+      if (!partyId) {
+        memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
+        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+        return;
+      }
 
-                // Update manifestos
-                const currentManifesto = manifestoSelect.value;
-                manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-                let manifestoExists = false;
-                data.manifestos.forEach(m => {
-                    const option = document.createElement('option');
-                    option.value = m.id;
-                    option.textContent = m.title;
-                    if (m.id == currentManifesto) {
-                        option.selected = true;
-                        manifestoExists = true;
-                    }
-                    manifestoSelect.appendChild(option);
-                });
-                if (!manifestoExists) manifestoSelect.value = '';
+      const currentMember = memberSelect.value;
+      const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${currentMember}`;
 
-                // Update commitments
-                const currentCommitment = commitmentSelect.value;
-                commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-                let commitmentExists = false;
-                data.commitments.forEach(c => {
-                    const option = document.createElement('option');
-                    option.value = c.id;
-                    option.textContent = c.title;
-                    if (c.id == currentCommitment) {
-                        option.selected = true;
-                        commitmentExists = true;
-                    }
-                    commitmentSelect.appendChild(option);
-                });
-                if (!commitmentExists) commitmentSelect.value = '';
-            });
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          // Update members
+          memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
+          let memberExists = false;
+          data.members.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.name;
+            if (m.id == currentMember) {
+              option.selected = true;
+              memberExists = true;
+            }
+            memberSelect.appendChild(option);
+          });
+          if (!memberExists) {
+            memberSelect.value = '';
+          }
+
+          // Update manifestos
+          const currentManifesto = manifestoSelect.value;
+          manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+          let manifestoExists = false;
+          data.manifestos.forEach(m => {
+            const option = document.createElement('option');
+            option.value = m.id;
+            option.textContent = m.title;
+            if (m.id == currentManifesto) {
+              option.selected = true;
+              manifestoExists = true;
+            }
+            manifestoSelect.appendChild(option);
+          });
+          if (!manifestoExists) manifestoSelect.value = '';
+
+          // Update commitments
+          const currentCommitment = commitmentSelect.value;
+          commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+          let commitmentExists = false;
+          data.commitments.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            option.textContent = c.title;
+            if (c.id == currentCommitment) {
+              option.selected = true;
+              commitmentExists = true;
+            }
+            commitmentSelect.appendChild(option);
+          });
+          if (!commitmentExists) commitmentSelect.value = '';
+        });
     }
 
     partySelect.addEventListener('change', () => {
-        memberSelect.value = ''; // Reset member when party changes
-        updateMembersAndOptions();
+      memberSelect.value = ''; // Reset member when party changes
+      updateMembersAndOptions();
     });
     memberSelect.addEventListener('change', updateOptions);
-});
+  });
 </script>
 {% endblock %}
