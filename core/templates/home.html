@@ -17,11 +17,11 @@
         Hold your government accountable with data-driven transparency.{% endblocktrans %}
       </p>
       <div class="flex gap-4">
-        <div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-primary">
+        <div class="bg-surface-container-low p-6 rounded-xl">
           <span class="block text-primary font-black text-3xl">{{ total_manifesto_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60">{% trans "Manifesto Points" %}</span>
         </div>
-        <div class="bg-surface-container-low p-6 rounded-xl border-l-4 border-secondary">
+        <div class="bg-surface-container-low p-6 rounded-xl">
           <span class="block text-secondary font-black text-3xl">{{ total_in_progress_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60">{% trans "In Progress" %}</span>
         </div>
@@ -32,15 +32,16 @@
     <div class="lg:col-span-5 flex flex-col items-center">
       <div class="relative w-72 h-72">
         <div class="absolute inset-0 rounded-full gauge-gradient opacity-10 blur-xl"></div>
-        <div class="relative w-full h-full rounded-full border-[16px] border-surface-container-highest flex items-center justify-center">
+        <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" class="stroke-surface-container-highest" stroke-width="10"></circle>
+          <!-- Replace stroke-dasharray/offset below with dynamic values if needed, using 264 total length -->
+          <circle cx="50" cy="50" r="42" fill="none" class="stroke-primary" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="100"></circle>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
           <div class="text-center">
             <span class="block text-6xl font-black text-primary font-headline">{{ total_in_progress_count }}</span>
             <span class="text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">{% trans "Active Track" %}</span>
           </div>
-          <!-- Simplified Progress Arc SVG -->
-          <svg class="absolute inset-[-16px] w-[calc(100%+32px)] h-[calc(100%+32px)] -rotate-90">
-            <circle class="text-primary" cx="50%" cy="50%" fill="none" r="144" stroke="currentColor" stroke-dasharray="904" stroke-dashoffset="524" stroke-linecap="round" stroke-width="16"></circle>
-          </svg>
         </div>
       </div>
     </div>
