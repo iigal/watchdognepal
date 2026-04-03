@@ -1,77 +1,86 @@
 {% extends 'base.html' %}
-{% load static %}
-{% load django_bootstrap5 %}
-{% load socialaccount %}
+{% load static i18n widget_tweaks %}
 
-{% block title %}Login — Watchdog Nepal{% endblock %}
+{% block title %}{% trans "Login" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-5 col-md-7 col-sm-10">
+<div class="max-w-sm mx-auto px-4 md:px-8 pt-8 space-y-6">
 
-      <div class="text-center mb-4 animate-fade-in-up">
-        <img src="{% static 'favicon.png' %}" alt="Watchdog Nepal Logo" width="64" height="64" class="mb-3">
-        <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;">
-          Welcome Back
-        </h2>
-        <p style="font-size: 0.88rem; color: var(--wn-text-muted);">
-          Sign in to your Watchdog Nepal account
-        </p>
-      </div>
-
-      <div class="wn-auth-card animate-fade-in-up animate-delay-1">
-        <div class="card-body">
-
-          {% if form %}
-          <form method="POST" novalidate>
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            <div class="d-grid mt-4">
-              <button type="submit" class="wn-btn-primary justify-content-center">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Login
-              </button>
-            </div>
-          </form>
-          {% else %}
-          <form method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-              <label for="id_username" class="form-label fw-medium" style="font-size: 0.85rem;">Username</label>
-              <input type="text" name="username" id="id_username" class="form-control" />
-            </div>
-            <div class="mb-3">
-              <label for="id_password" class="form-label fw-medium" style="font-size: 0.85rem;">Password</label>
-              <input type="password" name="password" id="id_password" class="form-control" />
-            </div>
-            <div class="d-grid mt-4">
-              <button type="submit" class="wn-btn-primary justify-content-center">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Login
-              </button>
-            </div>
-          </form>
-          {% endif %}
-
-          <div class="mt-4">
-            <div class="position-relative mb-4 text-center">
-              <hr class="w-100">
-              <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted" style="font-size: 0.75rem;">OR</span>
-            </div>
-            
-            <a href="{% provider_login_url 'google' %}" class="btn btn-outline-dark w-100 py-2 d-flex align-items-center justify-content-center" style="font-size: 0.9rem; border-radius: var(--wn-radius-md); border-color: #ced4da;">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="18" height="18" class="me-2">
-              Continue with Google
-            </a>
-          </div>
-
-          <p class="mt-4 text-center mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
-            Don't have an account?
-            <a href="{% url 'register' %}" style="color: var(--wn-blue); font-weight: 600;">Register here</a>
-          </p>
-        </div>
-      </div>
-
-    </div>
+  <!-- Header -->
+  <div class="text-center space-y-2">
+    <img src="{% static 'favicon.png' %}" alt="Watchdog Nepal Logo" width="64" height="64" class="mx-auto mb-3">
+    <h2 class="font-headline text-2xl font-black text-on-surface tracking-tight">{% trans "Welcome Back" %}</h2>
+    <p class="text-sm text-slate-500">{% trans "Sign in to your Watchdog Nepal account" %}</p>
   </div>
+
+  <!-- Auth Card -->
+  <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8">
+
+    {% if form %}
+    <form method="POST" novalidate class="space-y-4">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          {{ field.label }}{% if field.field.required %} <span class="text-primary">*</span>{% endif %}
+        </label>
+        {% if field.errors %}
+        {% render_field field class="w-full px-4 py-2.5 text-sm bg-white border border-red-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200" %}
+        {% for error in field.errors %}
+        <p class="text-xs text-red-500 mt-1">{{ error }}</p>
+        {% endfor %}
+        {% else %}
+        {% render_field field class="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20" %}
+        {% endif %}
+        {% if field.help_text %}
+        <p class="text-xs text-slate-400 mt-1">{{ field.help_text }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all mt-2">
+        <span class="material-symbols-outlined text-[18px]">login</span> {% trans "Login" %}
+      </button>
+    </form>
+    {% else %}
+    <form method="POST" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label for="id_username" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{% trans "Username" %}</label>
+        <input type="text" name="username" id="id_username" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+      <div>
+        <label for="id_password" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">{% trans "Password" %}</label>
+        <input type="password" name="password" id="id_password" class="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all mt-2">
+        <span class="material-symbols-outlined text-[18px]">login</span> {% trans "Login" %}
+      </button>
+    </form>
+    {% endif %}
+
+    {% load socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+    <!-- Divider -->
+    <div class="relative my-6">
+      <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-slate-200"></div></div>
+      <div class="relative flex justify-center"><span class="bg-white px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">{% trans "or" %}</span></div>
+    </div>
+
+    <!-- Google OAuth -->
+    <a href="{% provider_login_url 'google' %}" class="w-full flex items-center justify-center gap-2 border border-slate-200 bg-white px-5 py-2.5 rounded-xl text-sm font-semibold text-on-surface hover:bg-slate-50 active:scale-95 transition-all" style="text-decoration:none;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" width="18" height="18">
+      {% trans "Continue with Google" %}
+    </a>
+    {% endif %}
+
+    <p class="text-center text-xs text-slate-500 mt-6">
+      {% trans "Don't have an account?" %}
+      <a href="{% url 'register' %}" class="text-secondary font-bold hover:text-primary transition-colors" style="text-decoration:none;">{% trans "Register here" %}</a>
+    </p>
+  </div>
+
 </div>
 {% endblock %}

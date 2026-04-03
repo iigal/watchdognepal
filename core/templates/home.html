@@ -5,736 +5,478 @@
 
 {% block content %}
 
-<!-- Hero Section -->
-<section class="wn-hero">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-7 animate-fade-in-up">
-                <h1>
-                    {% trans "Track Government" %}<br>
-                    <span class="hero-gradient-text">{% trans "Promises & Actions" %}</span>
-                </h1>
-                <p class="mt-3 mb-0">
-                    {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
-                    Hold your government accountable with data-driven transparency.{% endblocktrans %}
-                </p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">{{ government_parties|length }}</div>
-                        <div class="stat-label">{% trans "Gov. Parties" %}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ total_manifesto_count }}</div>
-                        <div class="stat-label">{% trans "Manifesto Points" %}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ total_commitment_count }}</div>
-                        <div class="stat-label">{% trans "Commitments" %}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ total_in_progress_count }}</div>
-                        <div class="stat-label">{% trans "In Progress" %}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">{{ total_upcoming_deadline_count }}</div>
-                        <div class="stat-label">{% trans "Upcoming Deadlines" %}</div>
-                    </div>
-                </div>
-            </div>
+<!-- Hero Section with Central Gauge -->
+<section class="max-w-5xl mx-auto mb-12 md:mb-16 px-4 md:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+    <div class="lg:col-span-7">
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-black font-headline text-on-surface leading-none mb-4 md:mb-6">
+        {% trans "Track Government" %} <br/><span class="text-primary">{% trans "Promises & Actions." %}</span>
+      </h1>
+      <p class="text-base md:text-xl text-on-surface-variant font-medium leading-relaxed max-w-lg mb-6 md:mb-8">
+        {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
+        Hold your government accountable with data-driven transparency.{% endblocktrans %}
+      </p>
+      <div class="flex gap-3 md:gap-4">
+        <div class="bg-surface-container-low p-4 md:p-6 rounded-xl flex-1 md:flex-none">
+          <span class="block text-primary font-black text-2xl md:text-3xl">{{ total_manifesto_count }}</span>
+          <span class="text-[10px] md:text-xs uppercase tracking-widest font-bold opacity-60">{% trans "Manifesto Points" %}</span>
         </div>
+        <div class="bg-surface-container-low p-4 md:p-6 rounded-xl flex-1 md:flex-none">
+          <span class="block text-secondary font-black text-2xl md:text-3xl">{{ total_in_progress_count }}</span>
+          <span class="text-[10px] md:text-xs uppercase tracking-widest font-bold opacity-60">{% trans "In Progress" %}</span>
+        </div>
+      </div>
     </div>
+
+    <!-- Central Progress Gauge -->
+    <div class="lg:col-span-5 flex flex-col items-center">
+      <div class="relative w-48 h-48 md:w-72 md:h-72">
+        <div class="absolute inset-0 rounded-full gauge-gradient opacity-10 blur-xl"></div>
+        <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" class="stroke-surface-container-highest" stroke-width="10"></circle>
+          <!-- Replace stroke-dasharray/offset below with dynamic values if needed, using 264 total length -->
+          <circle cx="50" cy="50" r="42" fill="none" class="stroke-primary" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="100"></circle>
+        </svg>
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="text-center">
+            <span class="block text-4xl md:text-6xl font-black text-primary font-headline">{{ total_in_progress_count }}</span>
+            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">{% trans "Active Track" %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- In Progress Section (both Manifestos & Commitments) -->
-{% if in_progress_points or in_progress_commitments %}
-<section class="container mt-4 animate-fade-in-up animate-delay-1">
-    <div class="wn-section-header">
-        <div class="section-icon emerald">
-            <i class="bi bi-activity"></i>
-        </div>
-        <h3>{% trans "In Progress" %}</h3>
-        <span class="section-count">{{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
+<div class="max-w-5xl mx-auto space-y-12 px-4 md:px-8">
+  {% if in_progress_points or in_progress_commitments %}
+  <header class="flex justify-between items-end border-b-2 border-primary/10 pb-4">
+    <div>
+      <span class="text-primary font-black uppercase tracking-widest text-sm">{% trans "Active Track" %}</span>
+      <h2 class="text-3xl font-black font-headline">{% trans "In Progress" %}</h2>
     </div>
+    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">{{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
+  </header>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-        {% load accounts_tags %}
-        {% for point in in_progress_points %}
-        <div class="col manifesto-count-item">
-            <div class="wn-manifesto-card wn-expandable-card" style="height: auto; cursor: pointer;" onclick="toggleExpand(this)">
-                <!-- Type badge -->
-                <span class="wn-type-badge wn-type-manifesto mb-2"><i class="bi bi-journal-text me-1"></i>{% trans "Manifesto" %}</span>
-                <!-- Compact summary (always visible) -->
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="manifesto-title" style="font-size: 0.92rem;">
-                        <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
-                        {{ point.title }}
-                    </div>
-                    {% if point.calculated_deadline %}
-                    <span class="wn-deadline-badge ms-2">
-                        <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
-                    </span>
-                    {% endif %}
-                </div>
-                <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.78rem; color: var(--wn-text-muted);">
-                    <i class="bi bi-building me-1"></i>
-                    {% if point.party %}{{ point.party.name }}{% elif point.elected_member %}{{ point.elected_member.name }}{% endif %}
-                </div>
-                {% if point.calculated_deadline %}
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="deadline-meta">
-                        <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-ip-m-{{ point.id }}"
-                        data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
-                    </div>
-                </div>
-                {% endif %}
-                <div class="manifesto-progress-wrapper mb-2">
-                    <div class="progress-label">
-                        <span>{% trans "Progress" %}</span>
-                        <span class="progress-fraction">{{ point.progress_fraction }}</span>
-                    </div>
-                    <div class="wn-progress">
-                        <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                    </div>
-                </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    {% load accounts_tags %}
 
-                <!-- Expanded detail (hidden by default) -->
-                <div class="wn-expand-detail" style="display: none;">
-                    <p class="manifesto-desc">{{ point.description }}</p>
-                    <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
-                    </div>
-                    <div class="mt-auto pt-2">
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
-                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                        </div>
-                        {% for activity in point.top_5_verified_activities %}
-                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                {{ activity.description|truncatewords:15 }}
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities yet.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+    {% for point in in_progress_points %}
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
+      <div class="mb-6">
+        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
+          <a href="{% url 'manifesto_detail' point.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ point.title }}</a>
+        </h3>
+        <div class="flex items-center gap-2 text-slate-500 text-sm mb-4">
+          <span class="material-symbols-outlined text-base">account_balance</span>
+          {% if point.party %}{{ point.party.name }}{% elif point.elected_member %}{{ point.elected_member.name }}{% endif %}
         </div>
-        {% endfor %}
-
-        {% for commitment in in_progress_commitments %}
-        <div class="col commitment-count-item">
-            <div class="wn-commitment-card wn-expandable-card" style="height: auto; cursor: pointer;" onclick="toggleExpand(this)">
-                <!-- Type badge -->
-                <span class="wn-type-badge wn-type-commitment mb-2"><i class="bi bi-bookmark-star me-1"></i>{% trans "Commitment" %}</span>
-                <!-- Compact summary -->
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <div class="manifesto-title" style="font-size: 0.92rem;">
-                        <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
-                        {{ commitment.title }}
-                    </div>
-                    {% if commitment.calculated_deadline %}
-                    <span class="wn-deadline-badge wn-deadline-badge-violet ms-2">
-                        <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
-                    </span>
-                    {% endif %}
-                </div>
-                <div class="d-flex align-items-center gap-2 mb-2" style="font-size: 0.78rem; color: var(--wn-text-muted);">
-                    <i class="bi bi-building me-1"></i>
-                    {% if commitment.party %}{{ commitment.party.name }}{% elif commitment.elected_member %}{{ commitment.elected_member.name }}{% endif %}
-                </div>
-                {% if commitment.calculated_deadline %}
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                    <div class="deadline-meta">
-                        <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-ip-c-{{ commitment.id }}"
-                        data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</span>
-                    </div>
-                </div>
-                {% endif %}
-                <div class="manifesto-progress-wrapper mb-2">
-                    <div class="progress-label">
-                        <span>{% trans "Progress" %}</span>
-                        <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
-                    </div>
-                    <div class="wn-progress">
-                        <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
-                    </div>
-                </div>
-
-                <!-- Expanded detail -->
-                <div class="wn-expand-detail" style="display: none;">
-                    <p class="manifesto-desc">{{ commitment.description }}</p>
-                    <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
-                    </div>
-                    <div class="mt-auto pt-2">
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
-                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                        </div>
-                        {% for activity in commitment.top_5_verified_activities %}
-                        <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                {{ activity.description|truncatewords:15 }}
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities yet.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+        <div class="space-y-4">
+          <div class="flex justify-between text-sm font-semibold mb-2">
+            <span class="text-slate-600">{% trans "Progress" %} ({{ point.progress_fraction }})</span>
+            <span class="text-secondary">{{ point.completion_percentage }}%</span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-secondary h-full rounded-full" style="width: {{ point.completion_percentage }}%"></div>
+          </div>
         </div>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
-<!-- Approaching Deadlines (both Manifestos & Commitments) -->
-{% if mixed_upcoming_deadlines %}
-<section class="container mt-4 animate-fade-in-up animate-delay-2">
-    <div class="wn-section-header">
-        <div class="section-icon rose">
-            <i class="bi bi-clock-history"></i>
+      </div>
+      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
+        {% if point.calculated_deadline %}
+        <div class="text-xs">
+          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
+          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</p>
         </div>
-        <h3>{% trans "Approaching Deadlines" %}</h3>
-        <span class="section-count">{{ mixed_upcoming_deadlines|length }} {% trans "upcoming" %}</span>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
-        {% for item in mixed_upcoming_deadlines %}
-        {% if item.item_type == 'manifesto' %}
-        {% with point=item %}
-        <div class="col manifesto-count-item">
-            <div class="wn-deadline-card wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
-                <span class="wn-type-badge wn-type-manifesto mb-2"><i class="bi bi-journal-text me-1"></i>{% trans "Manifesto" %}</span>
-                <!-- Compact summary (always visible) -->
-                <div class="deadline-title">
-                    <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
-                    {{ point.title }}
-                </div>
-                <div class="deadline-party">
-                    {% if point.party %}{{ point.party.name }}{% else %}{{ point.elected_member.name }}{% endif %}
-                </div>
-                <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <div class="deadline-meta">
-                        <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-dl-m-{{ point.id }}"
-                        data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</span>
-                    </div>
-                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ point.calculated_deadline|to_bs }}</small>
-                </div>
-
-                <!-- Expanded detail (hidden by default) -->
-                <div class="wn-expand-detail" style="display: none; margin-top: 1rem;">
-                    <p class="manifesto-desc">{{ point.description }}</p>
-                    <div class="manifesto-progress-wrapper mb-3">
-                        <div class="progress-label">
-                            <span>{% trans "Implementation Progress" %}</span>
-                            <span class="progress-fraction">{{ point.progress_fraction }}</span>
-                        </div>
-                        <div class="wn-progress">
-                            <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
-                    </div>
-                    <div class="mt-auto pt-2">
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
-                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                        </div>
-                        {% load accounts_tags %}
-                        {% for activity in point.top_5_verified_activities %}
-                        <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                {{ activity.description|truncatewords:15 }}
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities yet.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endwith %}
-        {% elif item.item_type == 'commitment' %}
-        {% with commitment=item %}
-        <div class="col commitment-count-item">
-            <div class="wn-deadline-card wn-deadline-card-violet wn-expandable-card" style="cursor: pointer;" onclick="toggleExpand(this)">
-                <span class="wn-type-badge wn-type-commitment mb-2"><i class="bi bi-bookmark-star me-1"></i>{% trans "Commitment" %}</span>
-                <div class="deadline-title">
-                    <i class="bi bi-chevron-right wn-expand-icon me-1" style="font-size: 0.7rem; transition: transform 0.2s;"></i>
-                    {{ commitment.title }}
-                </div>
-                <div class="deadline-party">
-                    {% if commitment.party %}{{ commitment.party.name }}{% else %}{{ commitment.elected_member.name }}{% endif %}
-                </div>
-                <div class="mt-2 d-flex align-items-center justify-content-between">
-                    <div class="deadline-meta">
-                        <i class="bi bi-clock-history me-1"></i>
-                        <span class="deadline-countdown" id="countdown-dl-c-{{ commitment.id }}"
-                        data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</span>
-                    </div>
-                    <small style="font-size: 0.75rem; color: var(--wn-text-light);">{{ commitment.calculated_deadline|to_bs }}</small>
-                </div>
-
-                <!-- Expanded detail -->
-                <div class="wn-expand-detail" style="display: none; margin-top: 1rem;">
-                    <p class="manifesto-desc">{{ commitment.description }}</p>
-                    <div class="manifesto-progress-wrapper mb-3">
-                        <div class="progress-label">
-                            <span>{% trans "Implementation Progress" %}</span>
-                            <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
-                        </div>
-                        <div class="wn-progress">
-                            <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-2" style="font-size: 0.85rem;">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook" onclick="event.stopPropagation();"><i class="bi bi-facebook"></i></a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)" onclick="event.stopPropagation();"><i class="bi bi-twitter-x"></i></a>
-                        <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp" onclick="event.stopPropagation();"><i class="bi bi-whatsapp"></i></a>
-                    </div>
-                    <div class="mt-auto pt-2">
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
-                            <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                        </div>
-                        {% for activity in commitment.top_5_verified_activities %}
-                        <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary" onclick="event.stopPropagation();">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                {{ activity.description|truncatewords:15 }}
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities yet.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endwith %}
         {% endif %}
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
-<!-- Government Parties — Tabbed Manifesto & Commitment Points -->
-<section class="container mt-5 mb-5">
-    {% for party in government_parties %}
-    <div class="wn-party-section animate-fade-in-up animate-delay-{{ forloop.counter }}">
-        <div class="wn-party-header">
-            {% if party.logo %}
-            <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="wn-party-logo">
-            {% else %}
-            <div class="wn-party-logo-placeholder">
-                <i class="bi bi-building"></i>
-            </div>
-            {% endif %}
-            <div>
-                <h4 class="fw-bold mb-1" style="font-size: 1.25rem;">
-                    {{ party.name }}
-                    <span class="wn-badge-gov ms-2">{% trans "In Government" %}</span>
-                </h4>
-                <p class="mb-0" style="font-size: 0.85rem; color: var(--wn-text-muted);">{{ party.description }}</p>
-            </div>
-        </div>
-
-        <!-- Tab Switcher -->
-        <div class="wn-tab-switcher mb-3">
-            <button class="wn-tab-btn active" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
-                <i class="bi bi-journal-text me-1"></i>{% trans "Manifesto Points" %}
-                <span class="wn-tab-count">{{ party.manifesto_points.all|length }}</span>
-            </button>
-            <button class="wn-tab-btn" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
-                <i class="bi bi-bookmark-star me-1"></i>{% trans "Commitments" %}
-                <span class="wn-tab-count">{{ party.commitments.all|length }}</span>
-            </button>
-        </div>
-
-        <!-- Manifesto Points Tab -->
-        <div id="manifesto-{{ party.id }}" class="wn-tab-panel">
-            <div class="row row-cols-1 row-cols-lg-2 g-3">
-                {% for point in party.manifesto_points.all %}
-                {% if not point.id|is_shown:shown_manifesto_ids %}
-                <div class="col manifesto-count-item">
-                    <div class="wn-manifesto-card" id="manifesto-pt-{{ point.id }}">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="manifesto-title">
-                                <a href="#manifesto-pt-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
-                                    <i class="bi bi-link-45deg"></i>
-                                </a>
-                                {{ point.title }}
-                                <span class="ms-2" style="font-size: 0.85rem;">
-                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                    <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                    <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'manifesto_detail' point.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                                </span>
-                            </div>
-                            {% if point.calculated_deadline %}
-                            <span class="wn-deadline-badge ms-2">
-                                <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
-                            </span>
-                            {% endif %}
-                        </div>
-                        <p class="manifesto-desc">{{ point.description }}</p>
-
-                        <div class="manifesto-progress-wrapper mb-3">
-                            <div class="progress-label">
-                                <span>{% trans "Implementation Progress" %}</span>
-                                <span class="progress-fraction">{{ point.progress_fraction }}</span>
-                            </div>
-                            <div class="wn-progress">
-                                <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                            </div>
-                        </div>
-
-                        <div class="mt-auto pt-2">
-                            <div class="d-flex align-items-center gap-1 mb-2"
-                                style="font-size: 0.78rem; font-weight: 600; color: var(--wn-emerald);">
-                                <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                            </div>
-                            {% load accounts_tags %}
-                            {% for activity in point.top_5_verified_activities %}
-                            <div class="wn-verified-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                                <div class="d-flex align-items-center mb-2">
-                                    {% with profile=activity.created_by|get_profile %}
-                                    {% if profile and profile.image %}
-                                    <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                    {% else %}
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                        {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                    </div>
-                                    {% endif %}
-                                    {% endwith %}
-                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                        {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                    </span>
-                                    <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                                </div>
-                                <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                    <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                        {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                    </a>
-                                </div>
-                                <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                    {{ activity.description|truncatewords:15 }}
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                                No verified activities yet.
-                            </p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                {% empty %}
-                <div class="col-12">
-                    <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
-                        {% trans "This party has not added any manifesto points yet." %}
-                    </p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Commitments Tab -->
-        <div id="commitment-{{ party.id }}" class="wn-tab-panel" style="display: none;">
-            <div class="row row-cols-1 row-cols-lg-2 g-3">
-                {% for commitment in party.commitments.all %}
-                {% if not commitment.id|is_shown:shown_commitment_ids %}
-                <div class="col commitment-count-item">
-                    <div class="wn-commitment-card" id="commitment-{{ commitment.id }}">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div class="manifesto-title">
-                                <a href="#commitment-{{ commitment.id }}" class="text-muted text-decoration-none" title="Link to this commitment">
-                                    <i class="bi bi-link-45deg"></i>
-                                </a>
-                                {{ commitment.title }}
-                                <span class="ms-2" style="font-size: 0.85rem;">
-                                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-1 text-decoration-none" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                    <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-1 text-decoration-none" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                    <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                                </span>
-                            </div>
-                            {% if commitment.calculated_deadline %}
-                            <span class="wn-deadline-badge wn-deadline-badge-violet ms-2">
-                                <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
-                            </span>
-                            {% endif %}
-                        </div>
-                        <p class="manifesto-desc">{{ commitment.description }}</p>
-
-                        <div class="manifesto-progress-wrapper mb-3">
-                            <div class="progress-label">
-                                <span>{% trans "Implementation Progress" %}</span>
-                                <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
-                            </div>
-                            <div class="wn-progress">
-                                <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
-                            </div>
-                        </div>
-
-                        <div class="mt-auto pt-2">
-                            <div class="d-flex align-items-center gap-1 mb-2"
-                                style="font-size: 0.78rem; font-weight: 600; color: var(--wn-violet);">
-                                <i class="bi bi-patch-check-fill"></i> {% trans "Verified Activities" %}
-                            </div>
-                            {% for activity in commitment.top_5_verified_activities %}
-                            <div class="wn-verified-item wn-verified-item-violet mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 10px; border: 1px solid var(--wn-border);">
-                                <div class="d-flex align-items-center mb-2">
-                                    {% with profile=activity.created_by|get_profile %}
-                                    {% if profile and profile.image %}
-                                    <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                    {% else %}
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
-                                        {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                    </div>
-                                    {% endif %}
-                                    {% endwith %}
-                                    <span style="font-size: 0.8rem; font-weight: 500; color: var(--wn-text-main);">
-                                        {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                    </span>
-                                    <span class="ms-auto" style="font-size: 0.7rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                                </div>
-                                <div class="vi-title" style="font-size: 0.85rem; font-weight: 600; color: var(--wn-text-main);">
-                                    <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                        {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                    </a>
-                                </div>
-                                <div class="vi-desc mt-1" style="font-size: 0.75rem; color: var(--wn-text-muted); line-height: 1.4;">
-                                    {{ activity.description|truncatewords:15 }}
-                                </div>
-                            </div>
-                            {% empty %}
-                            <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                                No verified activities yet.
-                            </p>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                {% empty %}
-                <div class="col-12">
-                    <p style="font-size: 0.85rem; color: var(--wn-text-light); font-style: italic;">
-                        {% trans "This party has not added any commitments yet." %}
-                    </p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-    {% empty %}
-    <div class="wn-empty-state">
-        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
-        <h4>{% trans "No parties in government" %}</h4>
-        <p class="mb-0">{% trans "Please mark parties as 'In Government' via the Admin panel." %}</p>
+        <a href="{% url 'manifesto_detail' point.id %}" class="p-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-colors text-decoration-none">
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
     </div>
     {% endfor %}
-</section>
 
-<style>
-    .wn-expandable-card .wn-expand-icon {
-        display: inline-block;
-        transition: transform 0.25s ease;
-    }
-    .wn-expandable-card.expanded .wn-expand-icon {
-        transform: rotate(90deg);
-    }
-    .wn-expand-detail {
-        overflow: hidden;
-        transition: max-height 0.35s ease, opacity 0.25s ease;
-        opacity: 0;
-        max-height: 0;
-    }
-    .wn-expandable-card.expanded .wn-expand-detail {
-        display: block !important;
-        opacity: 1;
-        max-height: 2000px;
-    }
-    .wn-expandable-card:hover {
-        border-color: rgba(59, 130, 246, 0.25);
-    }
-</style>
+    {% for commitment in in_progress_commitments %}
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
+      <div class="mb-6">
+        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
+          <a href="{% url 'commitment_detail' commitment.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ commitment.title }}</a>
+        </h3>
+        <div class="flex items-center gap-2 text-slate-500 text-sm mb-4">
+          <span class="material-symbols-outlined text-base">account_balance</span>
+          {% if commitment.party %}{{ commitment.party.name }}{% elif commitment.elected_member %}{{ commitment.elected_member.name }}{% endif %}
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between text-sm font-semibold mb-2">
+            <span class="text-slate-600">{% trans "Progress" %} ({{ commitment.progress_fraction }})</span>
+            <span class="text-secondary">{{ commitment.completion_percentage }}%</span>
+          </div>
+          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="bg-secondary h-full rounded-full" style="width: {{ commitment.completion_percentage }}%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
+        {% if commitment.calculated_deadline %}
+        <div class="text-xs">
+          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
+          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</p>
+        </div>
+        {% endif %}
+        <a href="{% url 'commitment_detail' commitment.id %}" class="p-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-colors text-decoration-none">
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Approaching Deadlines (both Manifestos & Commitments) -->
+  {% if mixed_upcoming_deadlines %}
+  <header class="flex justify-between items-end border-b-2 border-primary/10 pb-4 mt-12">
+    <div>
+      <span class="text-primary font-black uppercase tracking-widest text-sm">{% trans "Active Audit" %}</span>
+      <h2 class="text-3xl font-black font-headline">{% trans "Approaching Deadlines" %}</h2>
+    </div>
+    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">{{ mixed_upcoming_deadlines|length }} {% trans "upcoming" %}</span>
+  </header>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    {% for item in mixed_upcoming_deadlines %}
+    {% if item.item_type == 'manifesto' %}
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
+      <div class="mb-6">
+        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
+          <a href="{% url 'manifesto_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
+        </h3>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-primary">gavel</span>
+            <div>
+              <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
+              <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-secondary">construction</span>
+            <div>
+              <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
+              <p class="font-medium text-sm text-secondary">
+                {% if item.top_5_verified_activities %}
+                  {{ item.top_5_verified_activities.0.title }}
+                {% else %}
+                  {% trans "No verified action yet" %}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
+        {% if item.calculated_deadline %}
+        <div class="text-xs">
+          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
+          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
+        </div>
+        {% endif %}
+        <span class="text-xs font-black text-primary uppercase"><a href="{% url 'manifesto_detail' item.id %}" class="text-primary text-decoration-none">{% trans "Audit Detail" %} &rarr;</a></span>
+      </div>
+    </div>
+    {% elif item.item_type == 'commitment' %}
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
+      <div class="mb-6">
+        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
+          <a href="{% url 'commitment_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
+        </h3>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-primary">gavel</span>
+            <div>
+              <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
+              <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <span class="material-symbols-outlined text-secondary">construction</span>
+            <div>
+              <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
+              <p class="font-medium text-sm text-secondary">
+                {% if item.top_5_verified_activities %}
+                  {{ item.top_5_verified_activities.0.title }}
+                {% else %}
+                  {% trans "No verified action yet" %}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
+        {% if item.calculated_deadline %}
+        <div class="text-xs">
+          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
+          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
+        </div>
+        {% endif %}
+        <span class="text-xs font-black text-primary uppercase"><a href="{% url 'commitment_detail' item.id %}" class="text-primary text-decoration-none">{% trans "Audit Detail" %} &rarr;</a></span>
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Government Parties — Tabbed Manifesto & Commitment Points -->
+  <section class="mt-12 mb-12">
+    {% for party in government_parties %}
+    <div class="bg-surface-container-lowest border border-slate-200 rounded-xl p-4 md:p-8 shadow-sm mb-8 transition-all hover:shadow-md">
+      <div class="flex items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200">
+        {% if party.logo %}
+        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="w-12 h-12 md:w-16 md:h-16 object-contain rounded-md flex-shrink-0">
+        {% else %}
+        <div class="w-12 h-12 md:w-16 md:h-16 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl md:text-3xl">account_balance</span>
+        </div>
+        {% endif %}
+        <div class="min-w-0">
+          <h4 class="text-base md:text-xl font-bold font-headline mb-1">
+            {{ party.name }}
+            <span class="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ml-1 md:ml-2 align-middle">{% trans "In Govt" %}</span>
+          </h4>
+          <p class="text-xs md:text-sm text-slate-500 m-0 line-clamp-2">{{ party.description }}</p>
+        </div>
+      </div>
+
+      <!-- Tab Switcher -->
+      <div class="flex gap-1 md:gap-2 bg-slate-50 p-1 md:p-1.5 rounded-lg border border-slate-200 w-full md:w-fit mb-6 overflow-x-auto">
+        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all active bg-white shadow-sm text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
+          <span class="material-symbols-outlined text-[16px] md:text-[18px]">description</span> {% trans "Manifestos" %}
+          <span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ party.manifesto_points.all|length }}</span>
+        </button>
+        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
+          <span class="material-symbols-outlined text-[16px] md:text-[18px]">handshake</span> {% trans "Commitments" %}
+          <span class="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{{ party.commitments.all|length }}</span>
+        </button>
+      </div>
+
+      <!-- Manifesto Points Tab -->
+      <div id="manifesto-{{ party.id }}" class="wn-tab-panel transition-opacity duration-300">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {% for point in party.manifesto_points.all %}
+          {% if not point.id|is_shown:shown_manifesto_ids %}
+          <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm hover:border-primary/30 transition-all" id="manifesto-pt-{{ point.id }}">
+            <div class="flex justify-between items-start mb-4">
+              <div class="font-headline font-bold text-lg leading-tight">
+                <a href="{% url 'manifesto_detail' point.id %}" class="text-slate-900 text-decoration-none hover:text-primary transition-colors">{{ point.title }}</a>
+              </div>
+              {% if point.calculated_deadline %}
+              <span class="bg-rose-50 text-rose-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">event</span> {{ point.calculated_deadline|to_bs }}
+              </span>
+              {% endif %}
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-start gap-4">
+                <span class="material-symbols-outlined text-primary">gavel</span>
+                <div>
+                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
+                  <p class="font-medium text-sm text-slate-600">{{ point.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <span class="material-symbols-outlined text-secondary">construction</span>
+                <div>
+                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
+                  <p class="font-medium text-sm text-secondary">
+                    {% if point.top_5_verified_activities %}
+                      {{ point.top_5_verified_activities.0.title }}
+                    {% else %}
+                      {% trans "No verified action yet" %}
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <div class="flex justify-between text-xs font-bold mb-2">
+                <span class="text-slate-500 uppercase tracking-widest">{% trans "Progress" %}</span>
+                <span class="text-secondary">{{ point.completion_percentage }}%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-secondary h-full rounded-full" style="width: {{ point.completion_percentage }}%"></div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% empty %}
+          <div class="col-span-2 text-center py-8">
+            <p class="text-sm text-slate-500 italic">{% trans "This party has not added any manifesto points yet." %}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Commitments Tab -->
+      <div id="commitment-{{ party.id }}" class="wn-tab-panel transition-opacity duration-300" style="display: none;">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {% for commitment in party.commitments.all %}
+          {% if not commitment.id|is_shown:shown_commitment_ids %}
+          <div class="bg-white border border-slate-200 border-l-4 border-l-violet-500 rounded-lg p-6 shadow-sm hover:border-violet-300 transition-all" id="commitment-{{ commitment.id }}">
+            <div class="flex justify-between items-start mb-4">
+              <div class="font-headline font-bold text-lg leading-tight">
+                <a href="{% url 'commitment_detail' commitment.id %}" class="text-slate-900 text-decoration-none hover:text-violet-600 transition-colors">{{ commitment.title }}</a>
+              </div>
+              {% if commitment.calculated_deadline %}
+              <span class="bg-violet-50 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">event</span> {{ commitment.calculated_deadline|to_bs }}
+              </span>
+              {% endif %}
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex items-start gap-4">
+                <span class="material-symbols-outlined text-violet-500">gavel</span>
+                <div>
+                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
+                  <p class="font-medium text-sm text-slate-600">{{ commitment.description|truncatewords:20 }}</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <span class="material-symbols-outlined text-secondary">construction</span>
+                <div>
+                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
+                  <p class="font-medium text-sm text-secondary">
+                    {% if commitment.top_5_verified_activities %}
+                      {{ commitment.top_5_verified_activities.0.title }}
+                    {% else %}
+                      {% trans "No verified action yet" %}
+                    {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <div class="flex justify-between text-xs font-bold mb-2">
+                <span class="text-slate-500 uppercase tracking-widest">{% trans "Progress" %}</span>
+                <span class="text-violet-600">{{ commitment.completion_percentage }}%</span>
+              </div>
+              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                <div class="bg-violet-500 h-full rounded-full" style="width: {{ commitment.completion_percentage }}%"></div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+          {% empty %}
+          <div class="col-span-2 text-center py-8">
+            <p class="text-sm text-slate-500 italic">{% trans "This party has not added any commitments yet." %}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">inbox</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No parties in government" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "Please mark parties as 'In Government' via the Admin panel." %}</p>
+    </div>
+    {% endfor %}
+  </section>
+</div>
 
 <script>
-    function toggleExpand(card) {
-        card.classList.toggle('expanded');
-    }
-
-    function switchPartyTab(btn, showId, hideId) {
-        // Toggle active button
-        const parent = btn.parentElement;
-        parent.querySelectorAll('.wn-tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        // Toggle panels
-        document.getElementById(showId).style.display = '';
-        document.getElementById(hideId).style.display = 'none';
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        // Countdown timer
-        function updateCountdowns() {
-            const elements = document.querySelectorAll('.deadline-countdown');
-            const now = new Date().getTime();
-
-            elements.forEach(el => {
-                const deadlineDate = new Date(el.getAttribute('data-deadline'));
-                const deadlineTime = deadlineDate.getTime();
-                const distance = deadlineTime - now;
-
-                if (distance < 0) {
-                    el.innerHTML = "Deadline Passed";
-                    el.classList.add('passed');
-                    return;
-                }
-
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                let display = "";
-                if (days > 0) display += days + "d ";
-                display += hours + "h " + minutes + "m " + seconds + "s";
-                el.innerHTML = display;
-            });
-        }
-
-        updateCountdowns();
-        setInterval(updateCountdowns, 1000);
-
-        // Handle hash-based scrolling for commitments and manifesto anchors
-        const hash = window.location.hash;
-        if (hash) {
-            const target = document.querySelector(hash);
-            if (target) {
-                // If the target is inside a hidden tab, activate it first
-                const tabPanel = target.closest('.wn-tab-panel');
-                if (tabPanel && tabPanel.style.display === 'none') {
-                    const partySection = tabPanel.closest('.wn-party-section');
-                    if (partySection) {
-                        const tabBtns = partySection.querySelectorAll('.wn-tab-btn');
-                        const panels = partySection.querySelectorAll('.wn-tab-panel');
-                        panels.forEach(p => p.style.display = 'none');
-                        tabPanel.style.display = '';
-                        tabBtns.forEach(b => b.classList.remove('active'));
-                        // Find the button that corresponds to this panel
-                        tabBtns.forEach(b => {
-                            if (b.getAttribute('onclick').includes(tabPanel.id)) {
-                                b.classList.add('active');
-                            }
-                        });
-                    }
-                }
-                setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
-            }
-        }
+  function switchPartyTab(btn, showId, hideId) {
+    // Toggle active button
+    const parent = btn.parentElement;
+    const buttons = parent.querySelectorAll('.wn-tab-btn');
+    buttons.forEach(b => {
+      b.classList.remove('bg-white', 'shadow-sm', 'text-slate-900', 'active');
+      b.classList.add('text-slate-500');
+      // Style the counter badge appropriately
+      const badge = b.querySelector('span:last-child');
+      if (badge) {
+        badge.classList.remove('bg-primary', 'text-white');
+        badge.classList.add('bg-slate-200', 'text-slate-600');
+      }
     });
+
+    btn.classList.remove('text-slate-500');
+    btn.classList.add('bg-white', 'shadow-sm', 'text-slate-900', 'active');
+    const activeBadge = btn.querySelector('span:last-child');
+    if (activeBadge) {
+      activeBadge.classList.remove('bg-slate-200', 'text-slate-600');
+      activeBadge.classList.add('bg-primary', 'text-white');
+    }
+
+    // Toggle panels
+    document.getElementById(showId).style.display = '';
+    document.getElementById(hideId).style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Countdown timer logic
+    function updateCountdowns() {
+      const elements = document.querySelectorAll('.deadline-countdown');
+      const now = new Date().getTime();
+
+      elements.forEach(el => {
+        const deadlineDate = new Date(el.getAttribute('data-deadline'));
+        const deadlineTime = deadlineDate.getTime();
+        const distance = deadlineTime - now;
+
+        if (distance < 0) {
+          el.innerHTML = "Deadline Passed";
+          el.classList.add('text-rose-500');
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        let display = "";
+        if (days > 0) display += days + "d ";
+        display += hours + "h " + minutes + "m " + seconds + "s";
+        el.innerHTML = display;
+      });
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 1000);
+
+    // Hash-based scrolling
+    const hash = window.location.hash;
+    if (hash) {
+      const target = document.querySelector(hash);
+      if (target) {
+        const tabPanel = target.closest('.wn-tab-panel');
+        if (tabPanel && tabPanel.style.display === 'none') {
+          const partySection = tabPanel.closest('.wn-party-section, .bg-surface-container-lowest');
+          if (partySection) {
+            const tabBtns = partySection.querySelectorAll('.wn-tab-btn');
+            const panels = partySection.querySelectorAll('.wn-tab-panel');
+            panels.forEach(p => p.style.display = 'none');
+            tabPanel.style.display = '';
+
+            tabBtns.forEach(b => {
+              if (b.getAttribute('onclick').includes(tabPanel.id)) {
+                b.click();
+              }
+            });
+          }
+        }
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+      }
+    }
+  });
 </script>
 {% endblock %}

@@ -32,147 +32,421 @@
   <meta name="twitter:card" content="summary_large_image">
   {% endblock %}
 
-  {% bootstrap_css %}
-  {% bootstrap_javascript %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@anuz-pandey/nepali-date-picker/dist/nepali-date-picker.min.css">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@anuz-pandey/nepali-date-picker/dist/nepali-date-picker.min.css">
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "secondary-fixed-dim": "#b3c5ff",
+            "tertiary-container": "#c9a900",
+            "inverse-on-surface": "#f0f1f2",
+            "surface-tint": "#bf0030",
+            "surface-container-highest": "#e1e3e4",
+            "on-tertiary-fixed-variant": "#544600",
+            "on-background": "#191c1d",
+            "surface-container-lowest": "#ffffff",
+            "secondary": "#335ab4",
+            "on-surface": "#191c1d",
+            "on-error": "#ffffff",
+            "surface-dim": "#d9dadb",
+            "primary": "#b1002c",
+            "on-primary-fixed": "#40000a",
+            "primary-container": "#dc143c",
+            "on-surface-variant": "#5c3f3f",
+            "on-primary-fixed-variant": "#920022",
+            "tertiary-fixed-dim": "#e9c400",
+            "on-tertiary": "#ffffff",
+            "surface-container-low": "#f3f4f5",
+            "surface-container": "#edeeef",
+            "on-secondary-fixed-variant": "#12419b",
+            "inverse-surface": "#2e3132",
+            "inverse-primary": "#ffb3b3",
+            "tertiary-fixed": "#ffe16d",
+            "surface-container-high": "#e7e8e9",
+            "surface": "#f8f9fa",
+            "outline": "#916f6e",
+            "on-tertiary-container": "#4c3f00",
+            "on-secondary-fixed": "#001849",
+            "outline-variant": "#e6bdbc",
+            "secondary-container": "#7da0ff",
+            "on-secondary-container": "#003387",
+            "surface-bright": "#f8f9fa",
+            "error": "#ba1a1a",
+            "background": "#f8f9fa",
+            "on-tertiary-fixed": "#221b00",
+            "on-error-container": "#93000a",
+            "surface-variant": "#e1e3e4",
+            "on-primary-container": "#fff1f0",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "secondary-fixed": "#dae1ff",
+            "primary-fixed": "#ffdad9",
+            "primary-fixed-dim": "#ffb3b3",
+            "tertiary": "#705d00",
+            "error-container": "#ffdad6"
+          },
+          fontFamily: {
+            "headline": ["Be Vietnam Pro"],
+            "body": ["Public Sans"],
+            "label": ["Public Sans"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .gauge-gradient {
+      background: conic-gradient(from 180deg at 50% 50%, #b1002c 0%, #335ab4 75%, #f3f4f5 100%);
+    }
+    body { font-family: 'Public Sans', sans-serif; background-color: #f8f9fa; }
+    h1, h2, h3, .font-headline { font-family: 'Be Vietnam Pro', sans-serif; }
+
+    /* Nepali cultural background scene */
+    .nepal-scene-bg {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 260px; pointer-events: none; z-index: 0;
+      opacity: 0.025;
+    }
+    @media (max-width: 768px) { .nepal-scene-bg { height: 180px; opacity: 0.02; } }
+
+    /* Cultural border pattern for heroes */
+    .wn-cultural-border {
+      position: relative;
+      border-bottom: 3px solid #b1002c;
+    }
+    .wn-cultural-border::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0; right: 0; height: 3px;
+      background: repeating-linear-gradient(90deg, #b1002c 0px, #b1002c 12px, #003893 12px, #003893 24px, #b1002c 24px);
+    }
+
+    /* Hero mountain silhouette overlay */
+    .wn-hero-mountains {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,120 L100,80 L200,95 L300,40 L400,70 L500,20 L600,55 L700,30 L800,60 L900,25 L1000,50 L1100,75 L1200,45 L1200,120 Z' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E") no-repeat bottom center;
+      background-size: cover;
+      pointer-events: none;
+    }
+
+    /* Dropdown menus */
+    .nav-dropdown { position: relative; }
+    .nav-dropdown-menu {
+      position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      min-width: 200px; padding: 8px; margin-top: 8px;
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+      opacity: 0; visibility: hidden; transition: all 0.15s ease;
+    }
+    .nav-dropdown:hover .nav-dropdown-menu,
+    .nav-dropdown-menu:hover { opacity: 1; visibility: visible; }
+    .nav-dropdown-menu a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; color: #475569; text-decoration: none;
+      transition: all 0.1s ease;
+    }
+    .nav-dropdown-menu a:hover { background: #f8fafc; color: #b1002c; }
+    .nav-dropdown-menu a .material-symbols-outlined { font-size: 18px; color: #94a3b8; }
+    .nav-dropdown-menu a:hover .material-symbols-outlined { color: #b1002c; }
+
+    /* Consistent card style */
+    .wn-card {
+      background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .wn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); border-color: #cbd5e1; }
+  </style>
+
   {% block extra_head %}{% endblock %}
 </head>
 
-<body class="d-flex flex-column min-vh-100">
+<body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg sticky-top wn-navbar">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="/">
-        <img src="{% static 'logo.jpg' %}" alt="Watchdog Nepal Logo" width="30" height="30" style="border-radius: 50%;">
+  <!-- Nepal Cultural Scene Background (Himalayas + Grassland + Flag) -->
+  <svg class="nepal-scene-bg" viewBox="0 0 1600 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <!-- Sky gradient -->
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#003893"/>
+        <stop offset="100%" stop-color="#87CEEB"/>
+      </linearGradient>
+    </defs>
+    <rect width="1600" height="300" fill="url(#sky)"/>
+
+    <!-- Himalayan peaks (snow-capped) -->
+    <path d="M0,180 L80,120 L160,150 L240,60 L320,100 L400,30 L480,80 L560,50 L640,90 L720,40 L800,70 L880,45 L960,85 L1040,55 L1120,95 L1200,65 L1280,110 L1360,75 L1440,130 L1520,100 L1600,140 L1600,300 L0,300 Z" fill="#6B7280"/>
+    <!-- Snow caps -->
+    <path d="M240,60 L270,80 L210,80 Z" fill="white"/>
+    <path d="M400,30 L435,55 L365,55 Z" fill="white"/>
+    <path d="M560,50 L590,72 L530,72 Z" fill="white"/>
+    <path d="M720,40 L755,65 L685,65 Z" fill="white"/>
+    <path d="M880,45 L910,67 L850,67 Z" fill="white"/>
+    <path d="M1040,55 L1070,77 L1010,77 Z" fill="white"/>
+    <path d="M1200,65 L1230,87 L1170,87 Z" fill="white"/>
+
+    <!-- Middle hills -->
+    <path d="M0,210 L100,180 L200,195 L350,170 L500,190 L650,175 L800,200 L950,180 L1100,195 L1250,185 L1400,200 L1600,190 L1600,300 L0,300 Z" fill="#4B5563"/>
+
+    <!-- Grassland/terrace hills -->
+    <path d="M0,250 L150,235 L300,245 L450,230 L600,240 L750,225 L900,240 L1050,230 L1200,245 L1350,235 L1600,250 L1600,300 L0,300 Z" fill="#15803D"/>
+
+    <!-- Grassland foreground -->
+    <path d="M0,270 L200,260 L400,268 L600,258 L800,265 L1000,255 L1200,263 L1400,258 L1600,265 L1600,300 L0,300 Z" fill="#166534"/>
+
+    <!-- Nepal Flag (proper pennant shape, positioned right) -->
+    <g transform="translate(1380,60) scale(0.55)">
+      <!-- Flag pole -->
+      <rect x="-4" y="-10" width="6" height="240" fill="#5B4A2F" rx="2"/>
+      <!-- Blue border -->
+      <path d="M2,0 L140,70 L60,70 L140,140 L2,140 Z" fill="#003893"/>
+      <!-- Red fill -->
+      <path d="M8,8 L124,65 L60,65 L124,130 L8,130 Z" fill="#DC143C"/>
+      <!-- Moon (crescent) -->
+      <circle cx="52" cy="35" r="14" fill="white"/>
+      <circle cx="56" cy="31" r="11" fill="#DC143C"/>
+      <!-- Sun (12-point) -->
+      <circle cx="52" cy="100" r="12" fill="white"/>
+      <g transform="translate(52,100)" fill="white">
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(0)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(30)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(60)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(90)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(120)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(150)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(180)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(210)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(240)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(270)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(300)"/>
+        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(330)"/>
+      </g>
+    </g>
+
+    <!-- Stupa silhouette (left side, Nepali culture) -->
+    <g transform="translate(120,180)" fill="#374151">
+      <rect x="-8" y="-60" width="16" height="60"/>
+      <rect x="-20" y="-70" width="40" height="12" rx="2"/>
+      <polygon points="0,-100 -25,-70 25,-70"/>
+      <circle cx="0" cy="-105" r="6"/>
+      <rect x="-2" y="-120" width="4" height="10"/>
+    </g>
+
+    <!-- Temple silhouette (pagoda style) -->
+    <g transform="translate(1450,195)" fill="#374151">
+      <rect x="-12" y="-50" width="24" height="50"/>
+      <polygon points="-30,-50 30,-50 0,-70"/>
+      <polygon points="-22,-70 22,-70 0,-85"/>
+      <rect x="-1" y="-95" width="2" height="12"/>
+    </g>
+  </svg>
+
+  <!-- TopNavBar Implementation -->
+  <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+    <div class="flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full mx-auto">
+      <a href="/" class="text-2xl font-black text-red-700 dark:text-red-500 uppercase tracking-tighter font-headline text-decoration-none" style="text-decoration:none;">
+        <img src="{% static 'logo.jpg' %}" alt="Watchdog Nepal Logo" width="30" height="30" style="border-radius: 50%; display:inline-block; vertical-align:middle;" class="mr-2">
         {% trans "Watchdog Nepal" %}
       </a>
+      <div class="hidden md:flex items-center gap-5 lg:gap-7 font-headline font-bold tracking-tight text-[13px] lg:text-sm">
+        <a class="{% if request.resolver_match.url_name == 'home' %}text-red-700 border-b-2 border-red-700 pb-1{% else %}text-slate-600 hover:text-red-700 transition-colors{% endif %} py-1" style="text-decoration:none;" href="{% url 'home' %}">{% trans "Home" %}</a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-              href="{% url 'home' %}">
-              <i class="bi bi-house-door me-1"></i> {% trans "Home" %}
+        <!-- Tracking Dropdown -->
+        <div class="nav-dropdown">
+          <button class="flex items-center gap-1 py-1 {% if 'manifesto' in request.resolver_match.url_name or 'commitment' in request.resolver_match.url_name %}text-red-700 border-b-2 border-red-700 pb-1{% else %}text-slate-600 hover:text-red-700 transition-colors{% endif %}">
+            {% trans "Tracking" %} <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            <a href="{% url 'manifesto_list' %}">
+              <span class="material-symbols-outlined">description</span> {% trans "Manifestos" %}
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if 'party' in request.resolver_match.url_name %}active{% endif %}"
-              href="{% url 'party_list' %}">
-              <i class="bi bi-flag me-1"></i> {% trans "Parties" %}
+            <a href="{% url 'commitment_list' %}">
+              <span class="material-symbols-outlined">handshake</span> {% trans "Commitments" %}
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if 'member' in request.resolver_match.url_name %}active{% endif %}"
-              href="{% url 'elected_member_list' %}">
-              <i class="bi bi-people me-1"></i> {% trans "Members" %}
+            <a href="{% url 'activities_list' %}">
+              <span class="material-symbols-outlined">trending_up</span> {% trans "Activities" %}
             </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.resolver_match.url_name == 'activities_list' %}active{% endif %}"
-              href="{% url 'activities_list' %}">
-              <i class="bi bi-activity me-1"></i> {% trans "Activities" %}
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if 'petition' in request.resolver_match.url_name %}active{% endif %}"
-              href="{% url 'petition_list' %}">
-              <i class="bi bi-pencil-square me-1"></i> {% trans "Petitions" %}
-            </a>
-          </li>
-        </ul>
-
-        <div class="d-flex align-items-center gap-2">
-          <!-- Language Switcher -->
-          <form action="{% url 'set_language' %}" method="post" class="d-inline-flex m-0 align-items-center me-2">
-            {% csrf_token %}
-            <input name="next" type="hidden" value="{{ request.get_full_path }}">
-            <select name="language" onchange="this.form.submit()"
-              class="form-select form-select-sm wn-lang-select bg-dark text-white border-secondary shadow-none"
-              style="min-width: 100px;">
-              {% get_current_language as LANGUAGE_CODE %}
-              {% get_available_languages as LANGUAGES %}
-              {% for lang in LANGUAGES %}
-              <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
-                {{ lang.1 }}
-              </option>
-              {% endfor %}
-            </select>
-          </form>
-
-          {% if user.is_authenticated %}
-          <span class="navbar-text me-1">
-            <i class="bi bi-person-circle me-1"></i> {{ user.username }}
-          </span>
-          <a href="{% url 'dashboard' %}" class="btn btn-nav-outline">
-            <i class="bi bi-grid me-1"></i> {% trans "Dashboard" %}
-          </a>
-          <a href="{% url 'submit_activity' %}" class="btn btn-nav-success">
-            <i class="bi bi-plus-lg me-1"></i> {% trans "Submit" %}
-          </a>
-          <a href="{% url 'logout' %}" class="btn btn-nav-danger">{% trans "Logout" %}</a>
-          {% else %}
-          <a href="{% url 'login' %}" class="btn btn-nav-outline">{% trans "Login" %}</a>
-          <a href="{% url 'register' %}" class="btn btn-nav-primary">{% trans "Register" %}</a>
-          {% endif %}
+          </div>
         </div>
+
+        <!-- Politics Dropdown -->
+        <div class="nav-dropdown">
+          <button class="flex items-center gap-1 py-1 {% if 'party' in request.resolver_match.url_name or 'member' in request.resolver_match.url_name %}text-red-700 border-b-2 border-red-700 pb-1{% else %}text-slate-600 hover:text-red-700 transition-colors{% endif %}">
+            {% trans "Politics" %} <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            <a href="{% url 'party_list' %}">
+              <span class="material-symbols-outlined">groups</span> {% trans "Political Parties" %}
+            </a>
+            <a href="{% url 'elected_member_list' %}">
+              <span class="material-symbols-outlined">person</span> {% trans "Elected Members" %}
+            </a>
+          </div>
+        </div>
+
+        <a class="{% if 'petition' in request.resolver_match.url_name %}text-red-700 border-b-2 border-red-700 pb-1{% else %}text-slate-600 hover:text-red-700 transition-colors{% endif %} py-1" style="text-decoration:none;" href="{% url 'petition_list' %}">{% trans "Petitions" %}</a>
+      </div>
+      <div class="flex items-center gap-2 md:gap-4">
+        <!-- Language Switcher (hidden on mobile, shown in mobile drawer instead) -->
+        <form action="{% url 'set_language' %}" method="post" class="hidden md:block m-0">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          <select name="language" onchange="this.form.submit()" class="bg-surface-container-high border-none text-on-surface text-sm rounded-md py-1 px-2 focus:ring-secondary/20">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>{{ lang.1 }}</option>
+            {% endfor %}
+          </select>
+        </form>
+
+        {% if user.is_authenticated %}
+        <span class="hidden md:inline text-sm font-medium">{{ user.username }}</span>
+        <a href="{% url 'dashboard' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Dashboard">
+          <span class="material-symbols-outlined">dashboard</span>
+        </a>
+        <a href="{% url 'logout' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Logout">
+          <span class="material-symbols-outlined">logout</span>
+        </a>
+        <a href="{% url 'submit_activity' %}" class="hidden md:inline-flex bg-primary px-6 py-2 rounded-xl text-white font-headline font-bold hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
+          Submit
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 transition-all font-bold text-decoration-none" style="text-decoration:none;">Login</a>
+        <a href="{% url 'register' %}" class="hidden md:inline-flex bg-primary px-4 md:px-6 py-2 rounded-xl text-white font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
+          Register
+        </a>
+        {% endif %}
+
+        <!-- Mobile Hamburger Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" aria-label="Toggle menu">
+          <span class="material-symbols-outlined text-2xl" id="menu-icon">menu</span>
+        </button>
+      </div>
+    </div>
+    <div class="bg-slate-100 dark:bg-slate-800 h-[1px]"></div>
+
+    <!-- Mobile Menu Drawer -->
+    <div id="mobile-menu" class="md:hidden hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-100 shadow-lg">
+      <div class="flex flex-col px-5 py-4 gap-0.5 font-headline font-bold tracking-tight max-h-[80vh] overflow-y-auto">
+        <a class="py-2.5 px-4 rounded-lg {% if request.resolver_match.url_name == 'home' %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'home' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">home</span>{% trans "Home" %}
+        </a>
+
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Tracking" %}</p>
+        <a class="py-2.5 px-4 rounded-lg {% if 'manifesto' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'manifesto_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">description</span>{% trans "Manifestos" %}
+        </a>
+        <a class="py-2.5 px-4 rounded-lg {% if 'commitment' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'commitment_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">handshake</span>{% trans "Commitments" %}
+        </a>
+        <a class="py-2.5 px-4 rounded-lg {% if 'activities' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'activities_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">trending_up</span>{% trans "Activities" %}
+        </a>
+
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Politics" %}</p>
+        <a class="py-2.5 px-4 rounded-lg {% if 'party' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'party_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">groups</span>{% trans "Parties" %}
+        </a>
+        <a class="py-2.5 px-4 rounded-lg {% if 'member' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'elected_member_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">person</span>{% trans "Members" %}
+        </a>
+
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Civic" %}</p>
+        <a class="py-2.5 px-4 rounded-lg {% if 'petition' in request.resolver_match.url_name %}bg-red-50 text-red-700{% else %}text-slate-600 hover:bg-slate-50{% endif %} transition-colors text-sm" style="text-decoration:none;" href="{% url 'petition_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">campaign</span>{% trans "Petitions" %}
+        </a>
+        <div class="border-t border-slate-100 my-2"></div>
+        {% if user.is_authenticated %}
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'dashboard' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">dashboard</span>Dashboard
+        </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'submit_activity' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">add_circle</span>Submit Activity
+        </a>
+        <a class="py-3 px-4 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors" style="text-decoration:none;" href="{% url 'logout' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">logout</span>Logout
+        </a>
+        {% else %}
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'login' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">login</span>Login
+        </a>
+        <a class="py-3 px-4 rounded-lg bg-primary text-white hover:opacity-90 transition-colors text-center" style="text-decoration:none;" href="{% url 'register' %}">Register</a>
+        {% endif %}
+        <!-- Mobile Language Switcher -->
+        <div class="border-t border-slate-100 my-2"></div>
+        <form action="{% url 'set_language' %}" method="post" class="px-4 py-2">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.get_full_path }}">
+          <select name="language" onchange="this.form.submit()" class="w-full bg-slate-50 border border-slate-200 text-on-surface text-sm rounded-lg py-2 px-3">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang in LANGUAGES %}
+            <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>{{ lang.1 }}</option>
+            {% endfor %}
+          </select>
+        </form>
       </div>
     </div>
   </nav>
-  <div class="wn-nav-accent"></div>
+
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      const icon = document.getElementById('menu-icon');
+      menu.classList.toggle('hidden');
+      icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+    });
+  </script>
 
   <!-- Flash Messages -->
   {% if messages %}
-  <div class="container mt-3">
+  <div class="max-w-7xl mx-auto mt-24 px-8">
     {% for message in messages %}
-    <div
-      class="wn-alert {% if message.tags == 'success' %}wn-alert-success{% elif message.tags == 'error' %}wn-alert-danger{% else %}wn-alert-info{% endif %} alert alert-dismissible fade show"
-      role="alert">
-      <i
-        class="bi {% if message.tags == 'success' %}bi-check-circle-fill{% elif message.tags == 'error' %}bi-exclamation-triangle-fill{% else %}bi-info-circle-fill{% endif %} me-2"></i>
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-blue-100 text-blue-800 border-l-4 border-blue-500{% endif %} flex justify-between items-center">
+      <div class="flex items-center">
+        <span class="material-symbols-outlined mr-2">{% if message.tags == 'success' %}check_circle{% elif message.tags == 'error' %}error{% else %}info{% endif %}</span>
+        {{ message }}
+      </div>
+      <button onclick="this.parentElement.style.display='none'" class="text-gray-500 hover:text-gray-700">
+        <span class="material-symbols-outlined">close</span>
+      </button>
     </div>
     {% endfor %}
   </div>
   {% endif %}
 
   <!-- Main Content -->
-  <main class="flex-grow-1">
+  <main class="flex-1 {% if not messages %}pt-24{% endif %} pb-20">
     {% block content %}
     {% endblock %}
   </main>
 
-  <!-- Footer -->
-  <footer class="wn-footer mt-auto">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="footer-brand d-flex align-items-center gap-2">
-            <img src="{% static 'logo.jpg' %}" alt="Watchdog Nepal Logo" width="24" height="24" style="border-radius: 50%; filter: brightness(0) invert(1);">
-            {% trans "Watchdog Nepal" %}
-          </div>
-          <div class="footer-tagline mt-1">{% trans "Holding government accountable." %}</div>
-        </div>
-        <div class="col-md-4 mb-3 mb-md-0">
-          <div class="footer-links d-flex justify-content-center gap-3">
-            <a href="{% url 'party_list' %}">{% trans "Parties" %}</a>
-            <a href="{% url 'elected_member_list' %}">{% trans "Members" %}</a>
-            <a href="{% url 'activities_list' %}">{% trans "Activities" %}</a>
-          </div>
-        </div>
-        <div class="col-md-4 text-md-end">
-          <div class="footer-copy">
-            {% trans "Built with" %} <span style="color: var(--wn-rose);">❤</span> {% trans "for transparency" %}
-          </div>
-        </div>
+  <!-- Footer Implementation -->
+  <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 mt-24">
+    <div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 font-['Public_Sans'] text-xs uppercase tracking-widest">
+      <div class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-4">
+        <span>Simple Civic Nepal</span>
+        <span class="h-4 w-[1px] bg-slate-300"></span>
+        <span class="text-slate-500 font-normal normal-case tracking-normal">© 2024 The People's Ledger.</span>
+      </div>
+      <div class="flex flex-wrap gap-6 md:gap-8">
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'manifesto_list' %}">Manifestos</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'commitment_list' %}">Commitments</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'party_list' %}">Parties</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'elected_member_list' %}">Members</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'activities_list' %}">Activities</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'petition_list' %}">Petitions</a>
       </div>
     </div>
   </footer>

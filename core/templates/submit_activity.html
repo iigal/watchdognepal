@@ -1,182 +1,182 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load i18n widget_tweaks %}
 
-{% block title %}Submit Activity — Watchdog Nepal{% endblock %}
+{% block title %}{% trans "Submit Activity" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
+<div class="max-w-screen-md mx-auto px-4 md:px-8 pt-8 space-y-6">
 
-      <div class="wn-breadcrumb animate-fade-in-up">
-        <a href="{% url 'home' %}"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-slate-500">
+    <a href="{% url 'home' %}" class="hover:text-primary transition-colors flex items-center gap-1" style="text-decoration:none;">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>{% trans "Back to Home" %}
+    </a>
+  </nav>
+
+  <!-- Form Card -->
+  <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
+        <span class="material-symbols-outlined text-secondary text-[22px]">send</span>
       </div>
-
-      <div class="wn-submit-card animate-fade-in-up animate-delay-1">
-        <div class="card-body p-4 p-md-5">
-          <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.5rem;" class="mb-4">
-            <i class="bi bi-send me-2" style="color: var(--wn-blue);"></i>
-            Submit Government Activity
-          </h2>
-
-          <div class="wn-info-alert mb-4">
-            <i class="bi bi-info-circle-fill me-2" style="color: var(--wn-blue);"></i>
-            <strong>Important:</strong>
-            After the link is provided, we will verify and accept as soon as possible.
-            <code
-              style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">verified source</code>
-            or
-            <code
-              style="background: rgba(59,130,246,0.08); padding: 0.1rem 0.3rem; border-radius: 3px;">government</code>
-            domain.
-          </div>
-
-          <form method="POST" novalidate>
-            {% csrf_token %}
-            {% bootstrap_form form %}
-            <div class="d-grid mt-4">
-              <button type="submit" class="wn-btn-primary justify-content-center">
-                <i class="bi bi-send me-1"></i> Submit Activity
-              </button>
-            </div>
-          </form>
-        </div>
+      <div>
+        <h2 class="font-headline text-xl font-black text-on-surface tracking-tight">{% trans "Submit Government Activity" %}</h2>
       </div>
-
     </div>
+
+    <!-- Info Alert -->
+    <div class="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl mb-6">
+      <span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">info</span>
+      <p class="text-sm text-slate-700">
+        <strong>{% trans "Important:" %}</strong>
+        {% trans "After the link is provided, we will verify and accept as soon as possible." %}
+        <code class="bg-blue-100/50 px-1.5 py-0.5 rounded text-xs">{% trans "verified source" %}</code>
+        {% trans "or" %}
+        <code class="bg-blue-100/50 px-1.5 py-0.5 rounded text-xs">{% trans "government" %}</code>
+        {% trans "domain." %}
+      </p>
+    </div>
+
+    <form method="POST" novalidate class="space-y-5">
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          {{ field.label }}{% if field.field.required %} <span class="text-primary">*</span>{% endif %}
+        </label>
+        {% if field.errors %}
+        {% render_field field class="w-full px-4 py-2.5 text-sm bg-white border border-red-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-200" %}
+        {% for error in field.errors %}
+        <p class="text-xs text-red-500 mt-1">{{ error }}</p>
+        {% endfor %}
+        {% else %}
+        {% render_field field class="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20" %}
+        {% endif %}
+        {% if field.help_text %}
+        <p class="text-xs text-slate-400 mt-1">{{ field.help_text }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="pt-2">
+        <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-[18px]">send</span> {% trans "Submit Activity" %}
+        </button>
+      </div>
+    </form>
   </div>
+
 </div>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const partySelect = document.getElementById('id_party');
-    const memberSelect = document.getElementById('id_member');
-    const manifestoSelect = document.getElementById('id_manifesto_point');
-    const commitmentSelect = document.getElementById('id_commitment');
+document.addEventListener('DOMContentLoaded', function () {
+  const partySelect = document.getElementById('id_party');
+  const memberSelect = document.getElementById('id_member');
+  const manifestoSelect = document.getElementById('id_manifesto_point');
+  const commitmentSelect = document.getElementById('id_commitment');
 
-    if (!partySelect || !memberSelect || !manifestoSelect || !commitmentSelect) return;
+  if (!partySelect || !memberSelect || !manifestoSelect || !commitmentSelect) return;
 
-    function updateOptions() {
-      const partyId = partySelect.value;
-      const memberId = memberSelect.value;
+  function updateOptions() {
+    const partyId = partySelect.value;
+    const memberId = memberSelect.value;
 
-      if (!partyId) {
-        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-        return;
-      }
-
-      const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${memberId}`;
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          // Update manifestos
-          const currentManifesto = manifestoSelect.value;
-          manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-          let manifestoExists = false;
-          data.manifestos.forEach(m => {
-            const option = document.createElement('option');
-            option.value = m.id;
-            option.textContent = m.title;
-            if (m.id == currentManifesto) {
-              option.selected = true;
-              manifestoExists = true;
-            }
-            manifestoSelect.appendChild(option);
-          });
-          if (!manifestoExists) manifestoSelect.value = '';
-
-          // Update commitments
-          const currentCommitment = commitmentSelect.value;
-          commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-          let commitmentExists = false;
-          data.commitments.forEach(c => {
-            const option = document.createElement('option');
-            option.value = c.id;
-            option.textContent = c.title;
-            if (c.id == currentCommitment) {
-              option.selected = true;
-              commitmentExists = true;
-            }
-            commitmentSelect.appendChild(option);
-          });
-          if (!commitmentExists) commitmentSelect.value = '';
-        });
+    if (!partyId) {
+      manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+      commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+      return;
     }
 
-    function updateMembersAndOptions() {
-      const partyId = partySelect.value;
+    const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${memberId}`;
 
-      if (!partyId) {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const currentManifesto = manifestoSelect.value;
+        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+        let manifestoExists = false;
+        data.manifestos.forEach(m => {
+          const option = document.createElement('option');
+          option.value = m.id;
+          option.textContent = m.title;
+          if (m.id == currentManifesto) { option.selected = true; manifestoExists = true; }
+          manifestoSelect.appendChild(option);
+        });
+        if (!manifestoExists) manifestoSelect.value = '';
+
+        const currentCommitment = commitmentSelect.value;
+        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+        let commitmentExists = false;
+        data.commitments.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c.id;
+          option.textContent = c.title;
+          if (c.id == currentCommitment) { option.selected = true; commitmentExists = true; }
+          commitmentSelect.appendChild(option);
+        });
+        if (!commitmentExists) commitmentSelect.value = '';
+      });
+  }
+
+  function updateMembersAndOptions() {
+    const partyId = partySelect.value;
+
+    if (!partyId) {
+      memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
+      manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+      commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+      return;
+    }
+
+    const currentMember = memberSelect.value;
+    const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${currentMember}`;
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
         memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
-        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-        return;
-      }
-
-      const currentMember = memberSelect.value;
-      const url = `/api/manifesto-options/?party_id=${partyId}&member_id=${currentMember}`;
-
-      fetch(url)
-        .then(response => response.json())
-        .then(data => {
-          // Update members
-          memberSelect.innerHTML = '<option value="" selected>Select Member (Optional)</option>';
-          let memberExists = false;
-          data.members.forEach(m => {
-            const option = document.createElement('option');
-            option.value = m.id;
-            option.textContent = m.name;
-            if (m.id == currentMember) {
-              option.selected = true;
-              memberExists = true;
-            }
-            memberSelect.appendChild(option);
-          });
-          if (!memberExists) {
-            memberSelect.value = '';
-          }
-
-          // Update manifestos
-          const currentManifesto = manifestoSelect.value;
-          manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
-          let manifestoExists = false;
-          data.manifestos.forEach(m => {
-            const option = document.createElement('option');
-            option.value = m.id;
-            option.textContent = m.title;
-            if (m.id == currentManifesto) {
-              option.selected = true;
-              manifestoExists = true;
-            }
-            manifestoSelect.appendChild(option);
-          });
-          if (!manifestoExists) manifestoSelect.value = '';
-
-          // Update commitments
-          const currentCommitment = commitmentSelect.value;
-          commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
-          let commitmentExists = false;
-          data.commitments.forEach(c => {
-            const option = document.createElement('option');
-            option.value = c.id;
-            option.textContent = c.title;
-            if (c.id == currentCommitment) {
-              option.selected = true;
-              commitmentExists = true;
-            }
-            commitmentSelect.appendChild(option);
-          });
-          if (!commitmentExists) commitmentSelect.value = '';
+        let memberExists = false;
+        data.members.forEach(m => {
+          const option = document.createElement('option');
+          option.value = m.id;
+          option.textContent = m.name;
+          if (m.id == currentMember) { option.selected = true; memberExists = true; }
+          memberSelect.appendChild(option);
         });
-    }
+        if (!memberExists) memberSelect.value = '';
 
-    partySelect.addEventListener('change', () => {
-      memberSelect.value = ''; // Reset member when party changes
-      updateMembersAndOptions();
-    });
-    memberSelect.addEventListener('change', updateOptions);
+        const currentManifesto = manifestoSelect.value;
+        manifestoSelect.innerHTML = '<option value="" selected>---------</option>';
+        let manifestoExists = false;
+        data.manifestos.forEach(m => {
+          const option = document.createElement('option');
+          option.value = m.id;
+          option.textContent = m.title;
+          if (m.id == currentManifesto) { option.selected = true; manifestoExists = true; }
+          manifestoSelect.appendChild(option);
+        });
+        if (!manifestoExists) manifestoSelect.value = '';
+
+        const currentCommitment = commitmentSelect.value;
+        commitmentSelect.innerHTML = '<option value="" selected>---------</option>';
+        let commitmentExists = false;
+        data.commitments.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c.id;
+          option.textContent = c.title;
+          if (c.id == currentCommitment) { option.selected = true; commitmentExists = true; }
+          commitmentSelect.appendChild(option);
+        });
+        if (!commitmentExists) commitmentSelect.value = '';
+      });
+  }
+
+  partySelect.addEventListener('change', () => {
+    memberSelect.value = '';
+    updateMembersAndOptions();
   });
+  memberSelect.addEventListener('change', updateOptions);
+});
 </script>
 {% endblock %}
