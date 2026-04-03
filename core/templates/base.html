@@ -3,7 +3,7 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="html-root">
 
 <head>
   <!-- Google tag (gtag.js) -->
@@ -32,6 +32,15 @@
   <meta name="twitter:card" content="summary_large_image">
   {% endblock %}
 
+  <script>
+    // Dark mode init (must run before Tailwind loads to prevent flash)
+    (function() {
+      var s = localStorage.getItem('wn-theme');
+      if (s === 'dark' || (!s && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -108,8 +117,92 @@
     .gauge-gradient {
       background: conic-gradient(from 180deg at 50% 50%, #b1002c 0%, #335ab4 75%, #f3f4f5 100%);
     }
-    body { font-family: 'Public Sans', sans-serif; background-color: #f8f9fa; }
-    h1, h2, h3, .font-headline { font-family: 'Be Vietnam Pro', sans-serif; }
+    body {
+      font-family: 'Public Sans', sans-serif;
+      background-color: #f8f9fa;
+      font-size: 15px;
+      line-height: 1.65;
+      color: #191c1d;
+    }
+    h1, h2, h3, h4, h5, .font-headline { font-family: 'Be Vietnam Pro', sans-serif; }
+
+    /* Dark mode */
+    html.dark body { background-color: #111318; color: #e1e3e4; }
+    html.dark .wn-card {
+      background: #1c1f26; border-color: #2d3139;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    html.dark .wn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); border-color: #3d424a; }
+    html.dark .nav-dropdown-menu {
+      background: #1c1f26; border-color: #2d3139;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    html.dark .nav-dropdown-menu a { color: #c8cad0; }
+    html.dark .nav-dropdown-menu a:hover { background: #262a33; color: #ffb3b3; }
+    html.dark .nav-dropdown-menu a .material-symbols-outlined { color: #6b7280; }
+    html.dark .nav-dropdown-menu a:hover .material-symbols-outlined { color: #ffb3b3; }
+    html.dark .wn-sidebar-link { color: #c8cad0; }
+    html.dark .wn-sidebar-link:hover { background: #262a33; color: #ffb3b3; }
+    html.dark .wn-sidebar-link .material-symbols-outlined { color: #6b7280; }
+    html.dark .wn-sidebar-link:hover .material-symbols-outlined { color: #ffb3b3; }
+    html.dark .wn-sidebar-link.active { background: #2a1a1d; color: #ffb3b3; }
+    html.dark .wn-sidebar-link.active .material-symbols-outlined { color: #ffb3b3; }
+    html.dark .gauge-gradient {
+      background: conic-gradient(from 180deg at 50% 50%, #ff6680 0%, #6b8cff 75%, #2d3139 100%);
+    }
+    /* Dark mode: forms, inputs, selects */
+    html.dark input, html.dark select, html.dark textarea {
+      background-color: #1c1f26 !important; color: #e1e3e4 !important;
+      border-color: #2d3139 !important;
+    }
+    html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+      border-color: #4a5568 !important;
+    }
+    /* Dark mode: breadcrumbs and misc text */
+    html.dark .text-slate-500 { color: #6b7280; }
+    html.dark .text-slate-600 { color: #9ca3af; }
+    html.dark .text-slate-700 { color: #c8cad0; }
+    html.dark .text-slate-800 { color: #d1d5db; }
+    html.dark .text-slate-900 { color: #e5e7eb; }
+    html.dark .text-on-surface { color: #e1e3e4; }
+    html.dark .text-on-surface-variant { color: #9ca3af; }
+    html.dark .bg-slate-50 { background-color: #1c1f26; }
+    html.dark .bg-slate-100 { background-color: #262a33; }
+    html.dark .bg-white { background-color: #1c1f26; }
+    html.dark .border-slate-100 { border-color: #2d3139; }
+    html.dark .border-slate-200 { border-color: #2d3139; }
+    html.dark .wn-cultural-bg { opacity: 0.02; }
+
+    /* Share button styles */
+    .wn-share-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      text-decoration: none; transition: all 0.15s ease;
+    }
+    .wn-share-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .wn-share-btn svg { width: 16px; height: 16px; }
+    .wn-share-facebook { background: #1877F2; color: white; }
+    .wn-share-x { background: #000; color: white; }
+    html.dark .wn-share-x { background: #e7e9ea; color: #000; }
+    .wn-share-whatsapp { background: #25D366; color: white; }
+    .wn-share-copy { background: #e2e8f0; color: #475569; }
+    html.dark .wn-share-copy { background: #2d3139; color: #c8cad0; }
+
+    /* Inline share (for accordions) */
+    .wn-share-inline {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px; border-radius: 8px;
+      text-decoration: none; transition: all 0.15s ease;
+      font-size: 14px; font-weight: 700;
+    }
+    .wn-share-inline:hover { opacity: 0.8; transform: translateY(-1px); }
+    .wn-share-inline.facebook { background: #1877F2; color: white; }
+    .wn-share-inline.x-twitter { background: #000; color: white; }
+    html.dark .wn-share-inline.x-twitter { background: #e7e9ea; color: #000; }
+    .wn-share-inline.whatsapp { background: #25D366; color: white; }
+    .wn-share-inline.link { background: #e2e8f0; color: #64748b; }
+    html.dark .wn-share-inline.link { background: #2d3139; color: #94a3b8; }
 
     /* Cultural background layers */
     .wn-cultural-bg {
@@ -221,7 +314,7 @@
   </div>
 
   <!-- TopNavBar Implementation -->
-  <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+  <nav class="fixed top-0 w-full z-50 bg-white/90 dark:bg-[#111318]/90 backdrop-blur-md">
     <div class="flex justify-between items-center px-4 md:px-8 py-3 md:py-4 max-w-full mx-auto">
       <a href="/" class="text-2xl font-black text-red-700 dark:text-red-500 uppercase tracking-tighter font-headline text-decoration-none" style="text-decoration:none;">
         <img src="{% static 'logo.jpg' %}" alt="Watchdog Nepal Logo" width="30" height="30" style="border-radius: 50%; display:inline-block; vertical-align:middle;" class="mr-2">
@@ -279,9 +372,14 @@
           </select>
         </form>
 
+        <!-- Dark mode toggle -->
+        <button id="dark-toggle" class="hidden md:flex p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-all" title="Toggle dark mode" aria-label="Toggle dark mode">
+          <span class="material-symbols-outlined text-[20px]" id="dark-icon">dark_mode</span>
+        </button>
+
         {% if user.is_authenticated %}
-        <span class="hidden md:inline text-sm font-medium">{{ user.username }}</span>
-        <a href="{% url 'dashboard' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Dashboard">
+        <span class="hidden md:inline text-sm font-medium dark:text-slate-300">{{ user.username }}</span>
+        <a href="{% url 'dashboard' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Dashboard">
           <span class="material-symbols-outlined">dashboard</span>
         </a>
         <a href="{% url 'logout' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Logout">
@@ -352,8 +450,11 @@
         </a>
         <a class="py-3 px-4 rounded-lg bg-primary text-white hover:opacity-90 transition-colors text-center" style="text-decoration:none;" href="{% url 'register' %}">Register</a>
         {% endif %}
-        <!-- Mobile Language Switcher -->
-        <div class="border-t border-slate-100 my-2"></div>
+        <!-- Mobile Dark Mode + Language Switcher -->
+        <div class="border-t border-slate-100 dark:border-slate-700 my-2"></div>
+        <button id="dark-toggle-mobile" class="py-2.5 px-4 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm w-full text-left">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2" id="dark-icon-mobile">dark_mode</span>{% trans "Toggle Dark Mode" %}
+        </button>
         <form action="{% url 'set_language' %}" method="post" class="px-4 py-2">
           {% csrf_token %}
           <input name="next" type="hidden" value="{{ request.get_full_path }}">
@@ -375,6 +476,24 @@
       const icon = document.getElementById('menu-icon');
       menu.classList.toggle('hidden');
       icon.textContent = menu.classList.contains('hidden') ? 'menu' : 'close';
+    });
+
+    // Dark mode toggle
+    function toggleDarkMode() {
+      const html = document.getElementById('html-root');
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('wn-theme', isDark ? 'dark' : 'light');
+      updateDarkIcon();
+    }
+    function updateDarkIcon() {
+      const isDark = document.getElementById('html-root').classList.contains('dark');
+      const icons = document.querySelectorAll('#dark-icon, #dark-icon-mobile');
+      icons.forEach(icon => { icon.textContent = isDark ? 'light_mode' : 'dark_mode'; });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('dark-toggle')?.addEventListener('click', toggleDarkMode);
+      document.getElementById('dark-toggle-mobile')?.addEventListener('click', toggleDarkMode);
+      updateDarkIcon();
     });
   </script>
 
@@ -404,12 +523,54 @@
         {% endblock %}
       </main>
 
-      <!-- Sidebar (desktop only) -->
-      <aside class="hidden lg:block w-64 flex-shrink-0 space-y-5">
-        {% include 'includes/sidebar.html' %}
+      <!-- Sidebar (desktop - sticky) -->
+      <aside class="hidden lg:block w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-5 max-h-[calc(100vh-7rem)] overflow-y-auto pb-8 scrollbar-thin">
+          {% include 'includes/sidebar.html' %}
+        </div>
       </aside>
     </div>
   </div>
+
+  <!-- Mobile Bottom Sheet Sidebar -->
+  <div id="sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/40 z-[60] hidden transition-opacity" onclick="closeSidebarSheet()"></div>
+  <div id="sidebar-sheet" class="lg:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white dark:bg-[#1c1f26] rounded-t-2xl shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[75vh] overflow-y-auto">
+    <div class="flex items-center justify-center pt-3 pb-1">
+      <div class="w-10 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+    </div>
+    <div class="p-4 space-y-4">
+      {% include 'includes/sidebar.html' %}
+    </div>
+  </div>
+
+  <!-- Mobile Sidebar FAB -->
+  <button id="sidebar-fab" class="lg:hidden fixed bottom-5 right-5 z-50 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 active:scale-95 transition-all"
+          onclick="openSidebarSheet()" aria-label="Quick links">
+    <span class="material-symbols-outlined text-[22px]">menu_open</span>
+  </button>
+
+  <script>
+    function openSidebarSheet() {
+      document.getElementById('sidebar-overlay').classList.remove('hidden');
+      document.getElementById('sidebar-sheet').style.transform = 'translateY(0)';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebarSheet() {
+      document.getElementById('sidebar-overlay').classList.add('hidden');
+      document.getElementById('sidebar-sheet').style.transform = 'translateY(100%)';
+      document.body.style.overflow = '';
+    }
+    // Swipe down to close
+    (function() {
+      var sheet = document.getElementById('sidebar-sheet');
+      var startY = 0;
+      sheet?.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; });
+      sheet?.addEventListener('touchmove', function(e) {
+        var diff = e.touches[0].clientY - startY;
+        if (diff > 80) closeSidebarSheet();
+      });
+    })();
+  </script>
 
   <!-- Footer Implementation -->
   <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 mt-24">
