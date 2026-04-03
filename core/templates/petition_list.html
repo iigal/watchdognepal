@@ -4,126 +4,118 @@
 {% block title %}{% trans "Petitions" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<!-- Hero Banner -->
-<section class="wn-petition-hero">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-8">
-                <h1 class="animate-fade-in-up">
-                    <i class="bi bi-pencil-square me-2"></i>{% trans "Signature Petitions" %}
-                </h1>
-                <p class="animate-fade-in-up animate-delay-1">
-                    {% trans "Start a petition or support causes that matter. Your voice counts." %}
-                </p>
-            </div>
-            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                {% if user.is_authenticated %}
-                <a href="{% url 'petition_create' %}" class="btn wn-btn-primary animate-fade-in-up animate-delay-2">
-                    <i class="bi bi-plus-lg me-1"></i> {% trans "Start a Petition" %}
-                </a>
-                {% else %}
-                <a href="{% url 'login' %}" class="btn wn-btn-primary animate-fade-in-up animate-delay-2">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Login to Start" %}
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</section>
+<div class="max-w-screen-xl mx-auto px-6 pt-8 space-y-8">
 
-<div class="container py-4">
+  <!-- Hero Banner -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary-container text-white p-8 md:p-12 wn-cultural-border">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="font-headline text-3xl md:text-4xl font-black tracking-tight mb-2">
+          <span class="material-symbols-outlined text-3xl align-middle mr-2">campaign</span>{% trans "Signature Petitions" %}
+        </h1>
+        <p class="text-white/80 text-sm max-w-md">{% trans "Start a petition or support causes that matter. Your voice counts." %}</p>
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'petition_create' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit" style="text-decoration:none;">
+        <span class="material-symbols-outlined">add</span> {% trans "Start a Petition" %}
+      </a>
+      {% else %}
+      <a href="{% url 'login' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit" style="text-decoration:none;">
+        <span class="material-symbols-outlined">login</span> {% trans "Login to Start" %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
 
-    <!-- Filters -->
-    <div class="wn-filter-bar mb-4 animate-fade-in-up animate-delay-2">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-5">
-                <label class="form-label">{% trans "Search" %}</label>
-                <input type="text" name="q" class="form-control" placeholder="{% trans 'Search petitions...' %}"
-                    value="{{ search_query }}">
-            </div>
-            <div class="col-md-4">
-                <label class="form-label">{% trans "Category" %}</label>
-                <select name="category" class="form-select">
-                    <option value="">{% trans "All Categories" %}</option>
-                    {% for value, label in categories %}
-                    <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-apply w-100">
-                    <i class="bi bi-funnel me-1"></i> {% trans "Filter" %}
-                </button>
-            </div>
-        </form>
+  <!-- Filters -->
+  <form method="get" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+    <div class="flex flex-wrap items-end gap-4">
+      <div class="flex-1 min-w-[200px]">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Search" %}</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
+          <input type="text" name="q" value="{{ search_query }}" placeholder="{% trans 'Search petitions...' %}"
+                 class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20">
+        </div>
+      </div>
+      <div class="min-w-[160px]">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Category" %}</label>
+        <select name="category" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
+          <option value="">{% trans "All Categories" %}</option>
+          {% for value, label in categories %}
+          <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="px-5 py-2 bg-secondary text-white text-sm font-bold rounded-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">filter_list</span>
+        {% trans "Filter" %}
+      </button>
     </div>
+  </form>
 
-    <!-- Petition Grid -->
-    {% if petitions %}
-    <div class="row g-4">
-        {% for petition in petitions %}
-        <div class="col-md-6 col-lg-4 animate-fade-in-up animate-delay-{{ forloop.counter0|add:1 }}">
-            <a href="{% url 'petition_detail' petition_id=petition.id %}" class="text-decoration-none">
-                <div class="wn-petition-card h-100">
-                    {% if petition.image %}
-                    <div class="petition-card-image">
-                        <img src="{{ petition.image.url }}" alt="{{ petition.title }}">
-                    </div>
-                    {% endif %}
-                    <div class="petition-card-body">
-                        <div class="petition-card-category">
-                            <span class="wn-category-badge cat-{{ petition.category }}">
-                                {{ petition.get_category_display }}
-                            </span>
-                        </div>
-                        <h3 class="petition-card-title">{{ petition.title }}</h3>
-                        <p class="petition-card-target">
-                            <i class="bi bi-bullseye me-1"></i> {{ petition.target }}
-                        </p>
-                        <p class="petition-card-desc">{{ petition.description|truncatewords:25 }}</p>
-                        <div class="petition-progress-section">
-                            <div class="petition-progress-bar">
-                                <div class="petition-progress-fill" style="width: {{ petition.progress_percentage }}%">
-                                </div>
-                            </div>
-                            <div class="petition-progress-info">
-                                <span class="petition-signatures">
-                                    <i class="bi bi-pen me-1"></i>
-                                    <strong>{{ petition.signature_count }}</strong> {% trans "signatures" %}
-                                </span>
-                                <span class="petition-goal">
-                                    {% trans "Goal:" %} {{ petition.goal }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="petition-card-footer">
-                            <span class="petition-author">
-                                <i class="bi bi-person me-1"></i> {{ petition.created_by.username }}
-                            </span>
-                            <span class="petition-date">
-                                {{ petition.created_at|timesince }} {% trans "ago" %}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </a>
+  <!-- Petition Grid -->
+  {% if petitions %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for petition in petitions %}
+    <a href="{% url 'petition_detail' petition_id=petition.id %}" class="group block bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden" style="text-decoration:none;">
+      {% if petition.image %}
+      <div class="h-40 overflow-hidden bg-slate-100">
+        <img src="{{ petition.image.url }}" alt="{{ petition.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+      </div>
+      {% endif %}
+      <div class="p-5 space-y-3">
+        <span class="inline-block px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded
+          {% if petition.category == 'governance' %}bg-blue-100 text-blue-700
+          {% elif petition.category == 'infrastructure' %}bg-amber-100 text-amber-700
+          {% elif petition.category == 'education' %}bg-violet-100 text-violet-700
+          {% elif petition.category == 'health' %}bg-emerald-100 text-emerald-700
+          {% elif petition.category == 'environment' %}bg-green-100 text-green-700
+          {% elif petition.category == 'rights' %}bg-rose-100 text-rose-700
+          {% else %}bg-slate-100 text-slate-700{% endif %}">
+          {{ petition.get_category_display }}
+        </span>
+        <h3 class="font-body text-base font-bold text-on-surface group-hover:text-primary transition-colors line-clamp-2">{{ petition.title }}</h3>
+        <p class="text-xs text-slate-500 flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">adjust</span> {{ petition.target }}
+        </p>
+        <p class="text-sm text-slate-500 line-clamp-2">{{ petition.description|truncatewords:25 }}</p>
+
+        <!-- Progress -->
+        <div class="space-y-1.5">
+          <div class="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-primary rounded-full transition-all" style="width: {{ petition.progress_percentage }}%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] text-slate-400">
+            <span class="font-bold text-on-surface">{{ petition.signature_count }} {% trans "signatures" %}</span>
+            <span>{% trans "Goal:" %} {{ petition.goal }}</span>
+          </div>
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="text-center py-5">
-        <div class="wn-empty-state">
-            <i class="bi bi-pencil-square"></i>
-            <h3>{% trans "No petitions yet" %}</h3>
-            <p>{% trans "Be the first to start a petition and make your voice heard!" %}</p>
-            {% if user.is_authenticated %}
-            <a href="{% url 'petition_create' %}" class="btn wn-btn-primary">
-                <i class="bi bi-plus-lg me-1"></i> {% trans "Start a Petition" %}
-            </a>
-            {% endif %}
+
+        <div class="flex justify-between items-center text-[10px] text-slate-400 pt-2 border-t border-slate-100">
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[10px]">person</span> {{ petition.created_by.username }}
+          </span>
+          <span>{{ petition.created_at|timesince }} {% trans "ago" %}</span>
         </div>
-    </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+    <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">campaign</span>
+    <h4 class="text-lg font-bold text-slate-700">{% trans "No petitions yet" %}</h4>
+    <p class="text-slate-500 text-sm mb-4">{% trans "Be the first to start a petition and make your voice heard!" %}</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'petition_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white font-bold rounded-xl hover:opacity-90 transition-all" style="text-decoration:none;">
+      <span class="material-symbols-outlined text-[16px]">add</span> {% trans "Start a Petition" %}
+    </a>
     {% endif %}
+  </div>
+  {% endif %}
+
+  {% include 'includes/pagination.html' %}
 </div>
 {% endblock %}

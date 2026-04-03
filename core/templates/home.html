@@ -6,31 +6,31 @@
 {% block content %}
 
 <!-- Hero Section with Central Gauge -->
-<section class="max-w-5xl mx-auto mb-16 px-8">
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<section class="max-w-5xl mx-auto mb-12 md:mb-16 px-4 md:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
     <div class="lg:col-span-7">
-      <h1 class="text-6xl font-black font-headline text-on-surface leading-none mb-6">
+      <h1 class="text-3xl md:text-5xl lg:text-6xl font-black font-headline text-on-surface leading-none mb-4 md:mb-6">
         {% trans "Track Government" %} <br/><span class="text-primary">{% trans "Promises & Actions." %}</span>
       </h1>
-      <p class="text-xl text-on-surface-variant font-medium leading-relaxed max-w-lg mb-8">
+      <p class="text-base md:text-xl text-on-surface-variant font-medium leading-relaxed max-w-lg mb-6 md:mb-8">
         {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
         Hold your government accountable with data-driven transparency.{% endblocktrans %}
       </p>
-      <div class="flex gap-4">
-        <div class="bg-surface-container-low p-6 rounded-xl">
-          <span class="block text-primary font-black text-3xl">{{ total_manifesto_count }}</span>
-          <span class="text-xs uppercase tracking-widest font-bold opacity-60">{% trans "Manifesto Points" %}</span>
+      <div class="flex gap-3 md:gap-4">
+        <div class="bg-surface-container-low p-4 md:p-6 rounded-xl flex-1 md:flex-none">
+          <span class="block text-primary font-black text-2xl md:text-3xl">{{ total_manifesto_count }}</span>
+          <span class="text-[10px] md:text-xs uppercase tracking-widest font-bold opacity-60">{% trans "Manifesto Points" %}</span>
         </div>
-        <div class="bg-surface-container-low p-6 rounded-xl">
-          <span class="block text-secondary font-black text-3xl">{{ total_in_progress_count }}</span>
-          <span class="text-xs uppercase tracking-widest font-bold opacity-60">{% trans "In Progress" %}</span>
+        <div class="bg-surface-container-low p-4 md:p-6 rounded-xl flex-1 md:flex-none">
+          <span class="block text-secondary font-black text-2xl md:text-3xl">{{ total_in_progress_count }}</span>
+          <span class="text-[10px] md:text-xs uppercase tracking-widest font-bold opacity-60">{% trans "In Progress" %}</span>
         </div>
       </div>
     </div>
 
     <!-- Central Progress Gauge -->
     <div class="lg:col-span-5 flex flex-col items-center">
-      <div class="relative w-72 h-72">
+      <div class="relative w-48 h-48 md:w-72 md:h-72">
         <div class="absolute inset-0 rounded-full gauge-gradient opacity-10 blur-xl"></div>
         <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="42" fill="none" class="stroke-surface-container-highest" stroke-width="10"></circle>
@@ -39,8 +39,8 @@
         </svg>
         <div class="absolute inset-0 flex items-center justify-center">
           <div class="text-center">
-            <span class="block text-6xl font-black text-primary font-headline">{{ total_in_progress_count }}</span>
-            <span class="text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">{% trans "Active Track" %}</span>
+            <span class="block text-4xl md:text-6xl font-black text-primary font-headline">{{ total_in_progress_count }}</span>
+            <span class="text-[9px] md:text-[10px] uppercase tracking-[0.2em] font-black text-on-surface-variant">{% trans "Active Track" %}</span>
           </div>
         </div>
       </div>
@@ -49,7 +49,7 @@
 </section>
 
 <!-- In Progress Section (both Manifestos & Commitments) -->
-<div class="max-w-5xl mx-auto space-y-12 px-8">
+<div class="max-w-5xl mx-auto space-y-12 px-4 md:px-8">
   {% if in_progress_points or in_progress_commitments %}
   <header class="flex justify-between items-end border-b-2 border-primary/10 pb-4">
     <div>
@@ -63,16 +63,14 @@
     {% load accounts_tags %}
 
     {% for point in in_progress_points %}
-    <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="absolute top-0 right-0 p-4">
-        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase">{% trans "Manifesto" %}</span>
-      </div>
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
       <div class="mb-6">
-        <h3 class="text-xl font-black font-headline mb-2 leading-tight">
-          <a href="{% url 'manifesto_detail' point.id %}" class="text-on-surface text-decoration-none hover:underline">{{ point.title }}</a>
+        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
+          <a href="{% url 'manifesto_detail' point.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ point.title }}</a>
         </h3>
         <div class="flex items-center gap-2 text-slate-500 text-sm mb-4">
-          <span class="material-symbols-outlined text-base">building</span>
+          <span class="material-symbols-outlined text-base">account_balance</span>
           {% if point.party %}{{ point.party.name }}{% elif point.elected_member %}{{ point.elected_member.name }}{% endif %}
         </div>
         <div class="space-y-4">
@@ -100,16 +98,14 @@
     {% endfor %}
 
     {% for commitment in in_progress_commitments %}
-    <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="absolute top-0 right-0 p-4">
-        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase">{% trans "Commitment" %}</span>
-      </div>
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
       <div class="mb-6">
-        <h3 class="text-xl font-black font-headline mb-2 leading-tight">
-          <a href="{% url 'commitment_detail' commitment.id %}" class="text-on-surface text-decoration-none hover:underline">{{ commitment.title }}</a>
+        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
+          <a href="{% url 'commitment_detail' commitment.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ commitment.title }}</a>
         </h3>
         <div class="flex items-center gap-2 text-slate-500 text-sm mb-4">
-          <span class="material-symbols-outlined text-base">building</span>
+          <span class="material-symbols-outlined text-base">account_balance</span>
           {% if commitment.party %}{{ commitment.party.name }}{% elif commitment.elected_member %}{{ commitment.elected_member.name }}{% endif %}
         </div>
         <div class="space-y-4">
@@ -151,17 +147,15 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% for item in mixed_upcoming_deadlines %}
     {% if item.item_type == 'manifesto' %}
-    <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="absolute top-0 right-0 p-4">
-        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase">{% trans "Manifesto" %}</span>
-      </div>
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
       <div class="mb-6">
-        <h3 class="text-xl font-black font-headline mb-4 leading-tight">
-          <a href="{% url 'manifesto_detail' item.id %}" class="text-on-surface text-decoration-none hover:underline">{{ item.title }}</a>
+        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
+          <a href="{% url 'manifesto_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
         </h3>
         <div class="space-y-4">
           <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-primary">contract</span>
+            <span class="material-symbols-outlined text-primary">gavel</span>
             <div>
               <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
               <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
@@ -193,17 +187,15 @@
       </div>
     </div>
     {% elif item.item_type == 'commitment' %}
-    <div class="bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="absolute top-0 right-0 p-4">
-        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase">{% trans "Commitment" %}</span>
-      </div>
+    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
       <div class="mb-6">
-        <h3 class="text-xl font-black font-headline mb-4 leading-tight">
-          <a href="{% url 'commitment_detail' item.id %}" class="text-on-surface text-decoration-none hover:underline">{{ item.title }}</a>
+        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
+        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
+          <a href="{% url 'commitment_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
         </h3>
         <div class="space-y-4">
           <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-primary">contract</span>
+            <span class="material-symbols-outlined text-primary">gavel</span>
             <div>
               <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
               <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
@@ -242,33 +234,33 @@
   <!-- Government Parties — Tabbed Manifesto & Commitment Points -->
   <section class="mt-12 mb-12">
     {% for party in government_parties %}
-    <div class="bg-surface-container-lowest border border-slate-200 rounded-xl p-8 shadow-sm mb-8 transition-all hover:shadow-md">
-      <div class="flex items-center gap-6 mb-8 pb-6 border-b border-slate-200">
+    <div class="bg-surface-container-lowest border border-slate-200 rounded-xl p-4 md:p-8 shadow-sm mb-8 transition-all hover:shadow-md">
+      <div class="flex items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200">
         {% if party.logo %}
-        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="w-16 h-16 object-contain rounded-md">
+        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="w-12 h-12 md:w-16 md:h-16 object-contain rounded-md flex-shrink-0">
         {% else %}
-        <div class="w-16 h-16 rounded-md bg-slate-100 flex items-center justify-center text-slate-400">
-          <span class="material-symbols-outlined text-3xl">building</span>
+        <div class="w-12 h-12 md:w-16 md:h-16 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+          <span class="material-symbols-outlined text-2xl md:text-3xl">account_balance</span>
         </div>
         {% endif %}
-        <div>
-          <h4 class="text-xl font-bold font-headline mb-1">
+        <div class="min-w-0">
+          <h4 class="text-base md:text-xl font-bold font-headline mb-1">
             {{ party.name }}
-            <span class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest ml-2">{% trans "In Government" %}</span>
+            <span class="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ml-1 md:ml-2 align-middle">{% trans "In Govt" %}</span>
           </h4>
-          <p class="text-sm text-slate-500 m-0">{{ party.description }}</p>
+          <p class="text-xs md:text-sm text-slate-500 m-0 line-clamp-2">{{ party.description }}</p>
         </div>
       </div>
 
       <!-- Tab Switcher -->
-      <div class="flex gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-fit mb-6">
-        <button class="wn-tab-btn flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all active bg-white shadow-sm text-slate-900" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
-          <span class="material-symbols-outlined text-[18px]">journal_text</span> {% trans "Manifesto Points" %}
-          <span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full ml-1">{{ party.manifesto_points.all|length }}</span>
+      <div class="flex gap-1 md:gap-2 bg-slate-50 p-1 md:p-1.5 rounded-lg border border-slate-200 w-full md:w-fit mb-6 overflow-x-auto">
+        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all active bg-white shadow-sm text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
+          <span class="material-symbols-outlined text-[16px] md:text-[18px]">description</span> {% trans "Manifestos" %}
+          <span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ party.manifesto_points.all|length }}</span>
         </button>
-        <button class="wn-tab-btn flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold transition-all text-slate-500 hover:text-slate-900" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
-          <span class="material-symbols-outlined text-[18px]">bookmark_star</span> {% trans "Commitments" %}
-          <span class="bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded-full ml-1">{{ party.commitments.all|length }}</span>
+        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
+          <span class="material-symbols-outlined text-[16px] md:text-[18px]">handshake</span> {% trans "Commitments" %}
+          <span class="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{{ party.commitments.all|length }}</span>
         </button>
       </div>
 
@@ -284,14 +276,14 @@
               </div>
               {% if point.calculated_deadline %}
               <span class="bg-rose-50 text-rose-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">calendar_event</span> {{ point.calculated_deadline|to_bs }}
+                <span class="material-symbols-outlined text-[14px]">event</span> {{ point.calculated_deadline|to_bs }}
               </span>
               {% endif %}
             </div>
 
             <div class="space-y-4">
               <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-primary">contract</span>
+                <span class="material-symbols-outlined text-primary">gavel</span>
                 <div>
                   <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
                   <p class="font-medium text-sm text-slate-600">{{ point.description|truncatewords:20 }}</p>
@@ -343,14 +335,14 @@
               </div>
               {% if commitment.calculated_deadline %}
               <span class="bg-violet-50 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">calendar_event</span> {{ commitment.calculated_deadline|to_bs }}
+                <span class="material-symbols-outlined text-[14px]">event</span> {{ commitment.calculated_deadline|to_bs }}
               </span>
               {% endif %}
             </div>
 
             <div class="space-y-4">
               <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-violet-500">contract</span>
+                <span class="material-symbols-outlined text-violet-500">gavel</span>
                 <div>
                   <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
                   <p class="font-medium text-sm text-slate-600">{{ commitment.description|truncatewords:20 }}</p>

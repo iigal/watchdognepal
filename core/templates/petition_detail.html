@@ -1,192 +1,195 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load crispy_forms_tags %}
 
 {% block title %}{{ petition.title }} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row g-4">
-        <!-- Main Content -->
-        <div class="col-lg-8">
-            <div class="wn-petition-detail animate-fade-in-up">
-                <!-- Status badge -->
-                <div class="mb-3">
-                    <span class="wn-category-badge cat-{{ petition.category }}">
-                        {{ petition.get_category_display }}
-                    </span>
-                    {% if petition.status == 'achieved' %}
-                    <span class="wn-badge-verified ms-2"><i class="bi bi-trophy-fill me-1"></i> {% trans "Goal
-                        Achieved!" %}</span>
-                    {% elif petition.status == 'closed' %}
-                    <span class="wn-badge-unverified ms-2"><i class="bi bi-x-circle me-1"></i> {% trans "Closed"
-                        %}</span>
-                    {% endif %}
-                </div>
+<div class="max-w-screen-lg mx-auto px-4 md:px-8 pt-8 space-y-8">
 
-                <h1 class="petition-detail-title">{{ petition.title }}</h1>
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-slate-500">
+    <a href="{% url 'petition_list' %}" class="hover:text-primary transition-colors flex items-center gap-1" style="text-decoration:none;">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>{% trans "All Petitions" %}
+    </a>
+    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+    <span class="text-on-surface font-medium truncate">{{ petition.title|truncatewords:8 }}</span>
+  </nav>
 
-                <div class="petition-detail-meta">
-                    <span><i class="bi bi-person me-1"></i> {% trans "Started by" %} <strong>{{ petition.created_by.username }}</strong></span>
-                    <span><i class="bi bi-calendar me-1"></i> {{ petition.created_at|date:"M d, Y" }}</span>
-                    <span><i class="bi bi-bullseye me-1"></i> {% trans "Addressed to:" %} <strong>{{ petition.target }}</strong></span>
-                </div>
+  <div class="flex flex-col lg:flex-row gap-6">
 
-                {% if petition.image %}
-                <div class="petition-detail-image my-4">
-                    <img src="{{ petition.image.url }}" alt="{{ petition.title }}" class="img-fluid rounded-3">
-                </div>
-                {% endif %}
+    <!-- Main Content -->
+    <div class="flex-1 min-w-0 space-y-6">
 
-                <div class="petition-detail-body">
-                    {{ petition.description|linebreaks }}
-                </div>
-            </div>
-
-            <!-- Recent Signatures -->
-            <div class="wn-petition-signatures mt-4 animate-fade-in-up animate-delay-2">
-                <div class="wn-section-header">
-                    <div class="section-icon blue">
-                        <i class="bi bi-pen"></i>
-                    </div>
-                    <h3>{% trans "Recent Signatures" %}</h3>
-                    <span class="section-count">{{ total_signatures }}</span>
-                </div>
-
-                {% if signatures %}
-                <div class="signatures-list">
-                    {% for sig in signatures %}
-                    <div class="signature-item">
-                        <div class="signature-user">
-                            <div class="signature-avatar">{{ sig.user.username|first|upper }}</div>
-                            <div>
-                                <div class="signature-name">{{ sig.user.username }}</div>
-                                <div class="signature-time">{{ sig.signed_at|timesince }} {% trans "ago" %}</div>
-                            </div>
-                        </div>
-                        {% if sig.comment %}
-                        <p class="signature-comment">"{{ sig.comment }}"</p>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-muted">{% trans "No signatures yet. Be the first to sign!" %}</p>
-                {% endif %}
-            </div>
+      <!-- Petition Detail Card -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8">
+        <!-- Badges -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <span class="inline-block px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-slate-100 text-slate-600">{{ petition.get_category_display }}</span>
+          {% if petition.status == 'achieved' %}
+          <span class="inline-flex items-center gap-1 text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+            <span class="material-symbols-outlined text-[14px]">emoji_events</span> {% trans "Goal Achieved!" %}
+          </span>
+          {% elif petition.status == 'closed' %}
+          <span class="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+            <span class="material-symbols-outlined text-[14px]">block</span> {% trans "Closed" %}
+          </span>
+          {% endif %}
         </div>
 
-        <!-- Sidebar -->
-        <div class="col-lg-4">
-            <div class="wn-petition-sidebar animate-fade-in-up animate-delay-1">
-                <!-- Progress -->
-                <div class="petition-sidebar-progress">
-                    <div class="petition-sidebar-count">
-                        <span class="big-number">{{ total_signatures }}</span>
-                        <span class="goal-text">{% trans "of" %} {{ petition.goal }} {% trans "signatures" %}</span>
-                    </div>
-                    <div class="petition-progress-bar large">
-                        <div class="petition-progress-fill{% if petition.status == 'achieved' %} achieved{% endif %}"
-                            style="width: {{ petition.progress_percentage }}%"></div>
-                    </div>
-                    <div class="petition-sidebar-percentage">{{ petition.progress_percentage }}% {% trans "reached" %}
-                    </div>
-                </div>
+        <h1 class="font-headline text-xl md:text-2xl font-black text-on-surface tracking-tight mb-4">{{ petition.title }}</h1>
 
-                <!-- Sign Form -->
-                {% if petition.status == 'active' %}
-                {% if user.is_authenticated %}
-                {% if has_signed %}
-                <div class="petition-signed-state">
-                    <i class="bi bi-check-circle-fill"></i>
-                    <span>{% trans "You've signed this petition" %}</span>
-                </div>
-                {% elif petition.created_by == user %}
-                <div class="petition-own-state">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <span>{% trans "This is your petition" %}</span>
-                </div>
-                {% else %}
-                <form method="post" action="{% url 'petition_sign' petition_id=petition.id %}"
-                    class="petition-sign-form" id="signForm">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <textarea name="comment" class="form-control" rows="2"
-                            placeholder="{% trans 'Why do you support this? (optional)' %}"></textarea>
-                    </div>
-                    <button type="submit" class="btn wn-btn-sign w-100" id="signBtn">
-                        <i class="bi bi-pen me-1"></i> {% trans "Sign this Petition" %}
-                    </button>
-                </form>
-                {% endif %}
-                {% else %}
-                <a href="{% url 'login' %}" class="btn wn-btn-primary w-100">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> {% trans "Login to Sign" %}
-                </a>
-                {% endif %}
-                {% else %}
-                <div class="petition-closed-state">
-                    <i class="bi bi-lock-fill"></i>
-                    <span>{% trans "This petition is no longer accepting signatures" %}</span>
-                </div>
-                {% endif %}
-
-                <!-- Share -->
-                <div class="petition-share mt-3">
-                    <p class="share-label">{% trans "Share this petition" %}</p>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm wn-share-btn"
-                            onclick="navigator.clipboard.writeText(window.location.href); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!';">
-                            <i class="bi bi-link-45deg"></i> {% trans "Copy Link" %}
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="flex flex-wrap gap-4 text-xs text-slate-500 mb-6">
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">person</span> {% trans "Started by" %} <strong class="text-on-surface">{{ petition.created_by.username }}</strong></span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">calendar_today</span> {{ petition.created_at|date:"M d, Y" }}</span>
+          <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">target</span> {% trans "Addressed to:" %} <strong class="text-on-surface">{{ petition.target }}</strong></span>
         </div>
+
+        {% if petition.image %}
+        <div class="mb-6">
+          <img src="{{ petition.image.url }}" alt="{{ petition.title }}" class="w-full rounded-xl object-cover max-h-96">
+        </div>
+        {% endif %}
+
+        <div class="prose prose-slate max-w-none text-sm leading-relaxed text-slate-600">
+          {{ petition.description|linebreaks }}
+        </div>
+      </div>
+
+      <!-- Recent Signatures -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+            <span class="material-symbols-outlined text-secondary text-[20px]">draw</span>
+          </div>
+          <h3 class="font-headline font-bold text-on-surface text-base">{% trans "Recent Signatures" %}</h3>
+          <span class="bg-secondary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ total_signatures }}</span>
+        </div>
+
+        {% if signatures %}
+        <div class="space-y-4">
+          {% for sig in signatures %}
+          <div class="flex items-start gap-3 pb-4 {% if not forloop.last %}border-b border-slate-100{% endif %}">
+            <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold flex-shrink-0">{{ sig.user.username|first|upper }}</div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-baseline gap-2">
+                <span class="text-sm font-bold text-on-surface">{{ sig.user.username }}</span>
+                <span class="text-[10px] text-slate-400">{{ sig.signed_at|timesince }} {% trans "ago" %}</span>
+              </div>
+              {% if sig.comment %}
+              <p class="text-sm text-slate-500 mt-1 italic">"{{ sig.comment }}"</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-sm text-slate-400 italic text-center py-4">{% trans "No signatures yet. Be the first to sign!" %}</p>
+        {% endif %}
+      </div>
     </div>
+
+    <!-- Sidebar -->
+    <div class="w-full lg:w-80 flex-shrink-0 space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 sticky top-28">
+
+        <!-- Progress -->
+        <div class="text-center mb-5">
+          <span class="block text-3xl font-black text-primary font-headline" id="bigNumber">{{ total_signatures }}</span>
+          <span class="text-sm text-slate-500">{% trans "of" %} {{ petition.goal }} {% trans "signatures" %}</span>
+        </div>
+        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden mb-2">
+          <div class="petition-progress-fill h-full bg-secondary rounded-full transition-all{% if petition.status == 'achieved' %} bg-emerald-500{% endif %}" style="width: {{ petition.progress_percentage }}%"></div>
+        </div>
+        <p class="text-xs text-slate-500 text-center mb-6" id="progressText">{{ petition.progress_percentage }}% {% trans "reached" %}</p>
+
+        <!-- Sign Form -->
+        {% if petition.status == 'active' %}
+          {% if user.is_authenticated %}
+            {% if has_signed %}
+            <div class="flex items-center gap-2 justify-center text-emerald-600 bg-emerald-50 p-4 rounded-xl" id="signedState">
+              <span class="material-symbols-outlined">check_circle</span>
+              <span class="text-sm font-bold">{% trans "You've signed this petition" %}</span>
+            </div>
+            {% elif petition.created_by == user %}
+            <div class="flex items-center gap-2 justify-center text-secondary bg-blue-50 p-4 rounded-xl">
+              <span class="material-symbols-outlined">info</span>
+              <span class="text-sm font-bold">{% trans "This is your petition" %}</span>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'petition_sign' petition_id=petition.id %}" id="signForm" class="space-y-3">
+              {% csrf_token %}
+              <textarea name="comment" rows="2" placeholder="{% trans 'Why do you support this? (optional)' %}"
+                class="w-full px-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"></textarea>
+              <button type="submit" id="signBtn" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all">
+                <span class="material-symbols-outlined text-[18px]">draw</span> {% trans "Sign this Petition" %}
+              </button>
+            </form>
+            {% endif %}
+          {% else %}
+          <a href="{% url 'login' %}" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all" style="text-decoration:none;">
+            <span class="material-symbols-outlined text-[18px]">login</span> {% trans "Login to Sign" %}
+          </a>
+          {% endif %}
+        {% else %}
+        <div class="flex items-center gap-2 justify-center text-slate-500 bg-slate-50 p-4 rounded-xl">
+          <span class="material-symbols-outlined">lock</span>
+          <span class="text-sm font-bold">{% trans "This petition is no longer accepting signatures" %}</span>
+        </div>
+        {% endif %}
+
+        <!-- Share -->
+        <div class="mt-5 pt-5 border-t border-slate-100">
+          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">{% trans "Share this petition" %}</p>
+          <button onclick="navigator.clipboard.writeText(window.location.href); this.innerHTML='<span class=\'material-symbols-outlined text-[16px]\'>check</span> Copied!';"
+            class="inline-flex items-center gap-1.5 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
+            <span class="material-symbols-outlined text-[16px]">link</span> {% trans "Copy Link" %}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('signForm');
-        if (form) {
-            form.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const btn = document.getElementById('signBtn');
-                btn.disabled = true;
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Signing...';
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('signForm');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const btn = document.getElementById('signBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span> Signing...';
 
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
-                    },
-                    body: new FormData(form),
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update count
-                            document.querySelector('.big-number').textContent = data.signature_count;
-                            document.querySelector('.petition-sidebar-percentage').textContent = data.progress + '% reached';
-                            document.querySelectorAll('.petition-progress-fill').forEach(el => {
-                                el.style.width = data.progress + '%';
-                            });
-                            // Replace form with signed state
-                            form.outerHTML = '<div class="petition-signed-state"><i class="bi bi-check-circle-fill"></i><span>You\'ve signed this petition</span></div>';
-                        } else if (data.error) {
-                            btn.disabled = false;
-                            btn.innerHTML = '<i class="bi bi-pen me-1"></i> Sign this Petition';
-                            alert(data.error);
-                        }
-                    })
-                    .catch(() => {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-pen me-1"></i> Sign this Petition';
-                    });
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: new FormData(form),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            document.getElementById('bigNumber').textContent = data.signature_count;
+            document.getElementById('progressText').textContent = data.progress + '% reached';
+            document.querySelectorAll('.petition-progress-fill').forEach(el => {
+              el.style.width = data.progress + '%';
             });
-        }
+            form.outerHTML = '<div class="flex items-center gap-2 justify-center text-emerald-600 bg-emerald-50 p-4 rounded-xl"><span class="material-symbols-outlined">check_circle</span><span class="text-sm font-bold">You\'ve signed this petition</span></div>';
+          } else if (data.error) {
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">draw</span> Sign this Petition';
+            alert(data.error);
+          }
+        })
+        .catch(() => {
+          btn.disabled = false;
+          btn.innerHTML = '<span class="material-symbols-outlined text-[18px]">draw</span> Sign this Petition';
+        });
     });
+  }
+});
 </script>
 {% endblock %}
