@@ -60,8 +60,8 @@
 
       <!-- Title & Description -->
       <div>
-        <h1 class="font-headline text-2xl font-black text-on-surface leading-snug mb-3">{{ manifesto.title }}</h1>
-        <p class="text-slate-600 text-sm leading-relaxed">{{ manifesto.description }}</p>
+        <h1 class="font-headline text-2xl md:text-3xl font-black text-on-surface dark:text-white leading-snug mb-3">{{ manifesto.title }}</h1>
+        <p class="text-slate-600 dark:text-slate-400 text-base leading-relaxed">{{ manifesto.description }}</p>
       </div>
 
       <!-- Progress Bar -->
@@ -162,25 +162,8 @@
 
   <!-- Share Section -->
   <div class="wn-card rounded-xl p-6">
-    <h3 class="font-headline text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">{% trans "Share This Manifesto" %}</h3>
-    <div class="flex flex-wrap gap-2">
-      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
-         class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" style="text-decoration:none;">
-        {% trans "Facebook" %}
-      </a>
-      <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ manifesto.title|urlencode }}" target="_blank" rel="noopener noreferrer"
-         class="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition-colors" style="text-decoration:none;">
-        {% trans "Twitter" %}
-      </a>
-      <a href="https://wa.me/?text={{ manifesto.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
-         class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors" style="text-decoration:none;">
-        {% trans "WhatsApp" %}
-      </a>
-      <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Link',2000)"
-              class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors">
-        {% trans "Copy Link" %}
-      </button>
-    </div>
+    <h3 class="font-headline text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-4">{% trans "Share This" %}</h3>
+    {% include 'includes/share_buttons.html' with title=manifesto.title url=request.build_absolute_uri %}
   </div>
 
 </div>
