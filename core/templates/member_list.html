@@ -4,7 +4,7 @@
 {% block title %}{% trans "Elected Members" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="max-w-screen-xl mx-auto px-6 pt-8 space-y-8">
+<div class="space-y-6">
 
   <!-- Page Header -->
   <div class="space-y-2">
@@ -30,8 +30,38 @@
     {% endif %}
   </form>
 
+  <!-- Parliament Composition -->
+  {% if party_stats %}
+  <div class="wn-card rounded-xl p-5 space-y-3">
+    <div class="flex items-center justify-between">
+      <h3 class="font-headline text-base font-bold text-on-surface">{% trans "Parliament Composition" %}</h3>
+      <span class="text-xs text-slate-400">{{ total_member_count }} {% trans "members" %}</span>
+    </div>
+    <!-- Composition Bar -->
+    <div class="flex rounded-full overflow-hidden h-5">
+      {% for stat in party_stats %}
+      <div class="h-full transition-all hover:opacity-80" style="width: {{ stat.percentage }}%; background-color: {{ stat.color }};" title="{{ stat.party.name }}: {{ stat.count }} seats ({{ stat.percentage }}%)"></div>
+      {% endfor %}
+    </div>
+    <!-- Legend -->
+    <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+      {% for stat in party_stats %}
+      <a href="{% url 'party_detail' stat.party.id %}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity" style="text-decoration:none; color: inherit;">
+        {% if stat.party.logo %}
+        <img src="{{ stat.party.logo.url }}" alt="" class="w-4 h-4 rounded-full object-contain">
+        {% else %}
+        <span class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: {{ stat.color }};"></span>
+        {% endif %}
+        <span class="font-medium text-slate-700">{{ stat.party.name }}</span>
+        <span class="text-slate-400">({{ stat.count }})</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
   <!-- Member Grid -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for member in members %}
     <a href="{% url 'elected_member_detail' member.id %}" class="group block bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden" style="text-decoration:none;">
       <div class="relative h-44 bg-slate-100 overflow-hidden">
@@ -49,7 +79,12 @@
           <span class="material-symbols-outlined text-[12px]">location_on</span>
           {{ member.constituency }}
         </p>
-        <p class="text-xs text-secondary font-medium">{{ member.party.name }}</p>
+        <p class="text-xs text-secondary font-medium flex items-center gap-1">
+          {% if member.party.logo %}
+          <img src="{{ member.party.logo.url }}" alt="" class="w-3.5 h-3.5 rounded-full object-contain">
+          {% endif %}
+          {{ member.party.name }}
+        </p>
       </div>
     </a>
     {% empty %}

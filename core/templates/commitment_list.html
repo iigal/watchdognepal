@@ -4,29 +4,31 @@
 {% block title %}{% trans "Commitment Tracking" %} - Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="max-w-screen-lg mx-auto px-4 md:px-8 pt-8 space-y-8">
+<div class="space-y-6">
 
-  <!-- Hero + Stats with Cultural Elements -->
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary via-blue-700 to-secondary text-white p-6 md:p-10 wn-cultural-border">
-    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-0"></div>
+  <!-- Hero + Stats (compact) -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-secondary via-blue-700 to-secondary text-white p-4 md:p-6 wn-newari-border">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0"></div>
     <div class="wn-hero-mountains z-[1]"></div>
     <div class="relative z-10">
-      <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-[0.2em] inline-block mb-4">{% trans "Government Accountability" %}</span>
-      <h2 class="font-headline text-3xl md:text-4xl font-black leading-tight tracking-tighter uppercase mb-3">{% trans "Commitment Tracker" %}</h2>
-      <p class="text-white/70 font-body text-sm max-w-md mb-6">{% trans "Monitor every commitment made by elected officials. Track progress, deadlines, and verified actions." %}</p>
-
-      <div class="flex flex-wrap gap-3 md:gap-4">
-        <div class="bg-white/15 backdrop-blur-sm px-5 py-3 rounded-xl">
-          <span class="block text-2xl md:text-3xl font-black">{{ total_count }}</span>
-          <span class="text-[10px] uppercase tracking-widest font-bold text-white/70">{% trans "Total" %}</span>
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-[0.2em] inline-block mb-2">{% trans "Government Accountability" %}</span>
+          <h2 class="font-headline text-2xl md:text-3xl font-black leading-tight tracking-tighter uppercase">{% trans "Commitment Tracker" %}</h2>
         </div>
-        <div class="bg-white/15 backdrop-blur-sm px-5 py-3 rounded-xl">
-          <span class="block text-2xl md:text-3xl font-black text-emerald-300">{{ completed_count }}</span>
-          <span class="text-[10px] uppercase tracking-widest font-bold text-white/70">{% trans "Kept" %}</span>
-        </div>
-        <div class="bg-white/15 backdrop-blur-sm px-5 py-3 rounded-xl">
-          <span class="block text-2xl md:text-3xl font-black text-amber-300">{{ in_progress_count }}</span>
-          <span class="text-[10px] uppercase tracking-widest font-bold text-white/70">{% trans "Pending" %}</span>
+        <div class="flex gap-2 md:gap-3">
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black">{{ total_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Total" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black text-emerald-300">{{ completed_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Kept" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black text-amber-300">{{ in_progress_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Pending" %}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -66,16 +68,17 @@
   </form>
 
   <!-- Commitment Items -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     {% for commitment in commitments %}
     <div class="wn-card rounded-xl overflow-hidden border-l-4 border-l-secondary flex flex-col" id="commitment-{{ commitment.id }}">
       <div class="p-5 flex flex-col flex-1">
         <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             {% if commitment.elected_member %}
-            <span class="bg-secondary text-white px-2.5 py-0.5 rounded-full text-[9px] font-label font-bold uppercase tracking-widest">{{ commitment.elected_member.name }}</span>
-            {% else %}
-            <span class="bg-secondary text-white px-2.5 py-0.5 rounded-full text-[9px] font-label font-bold uppercase tracking-widest">{{ commitment.party.name }}</span>
+            {% include 'includes/member_badge.html' with member=commitment.elected_member %}
+            {% endif %}
+            {% if commitment.party %}
+            {% include 'includes/party_badge.html' with party=commitment.party %}
             {% endif %}
             {% if commitment.category and commitment.category != 'other' %}
             <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">{{ commitment.get_category_display }}</span>

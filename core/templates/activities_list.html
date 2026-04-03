@@ -5,23 +5,40 @@
 {% block title %}{% trans "Activities Feed" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="max-w-screen-md mx-auto px-6 pt-8 space-y-8">
+<div class="space-y-6">
 
-  <!-- Page Header -->
-  <div class="space-y-2">
-    <div class="flex items-center gap-3">
-      <span class="material-symbols-outlined text-secondary text-3xl">trending_up</span>
-      <div>
-        <h2 class="font-headline text-2xl font-black text-on-surface tracking-tight">{% trans "Government Activities" %}</h2>
-        <p class="text-sm text-slate-500">{% trans "Track and verify government actions across all levels" %}</p>
+  <!-- Hero + Stats (compact) -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-700 text-white p-4 md:p-6 wn-newari-border">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-0"></div>
+    <div class="wn-hero-mountains z-[1]"></div>
+    <div class="relative z-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-[0.2em] inline-block mb-2">{% trans "Citizen Verification" %}</span>
+          <h2 class="font-headline text-2xl md:text-3xl font-black leading-tight tracking-tighter uppercase">{% trans "Government Activities" %}</h2>
+        </div>
+        <div class="flex gap-2 md:gap-3">
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black">{{ total_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Total" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black text-emerald-300">{{ verified_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Verified" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black text-amber-300">{{ unverified_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Pending" %}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Filter Bar -->
   <form method="GET" class="wn-card rounded-xl p-4">
-    <div class="flex flex-wrap items-end gap-4">
-      <div class="flex-1 min-w-[120px]">
+    <div class="flex flex-wrap items-end gap-3">
+      <div class="flex-1 min-w-[110px]">
         <label for="level-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Level" %}</label>
         <select name="level" id="level-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option>All</option>
@@ -30,7 +47,7 @@
           <option {% if request.GET.level == 'Local' %}selected{% endif %}>Local</option>
         </select>
       </div>
-      <div class="flex-1 min-w-[120px]">
+      <div class="flex-1 min-w-[110px]">
         <label for="status-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Status" %}</label>
         <select name="status" id="status-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option>All</option>
@@ -38,7 +55,7 @@
           <option {% if request.GET.status == 'Unverified' %}selected{% endif %}>Unverified</option>
         </select>
       </div>
-      <div class="flex-1 min-w-[140px]">
+      <div class="flex-1 min-w-[130px]">
         <label for="sort-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Sort by" %}</label>
         <select name="sort" id="sort-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option {% if request.GET.sort == 'Newest' or not request.GET.sort %}selected{% endif %}>Newest</option>
@@ -47,83 +64,100 @@
           <option {% if request.GET.sort == 'Most Negative' %}selected{% endif %}>Most Negative</option>
         </select>
       </div>
-      <button type="submit" class="px-5 py-2 bg-secondary text-white text-sm font-bold rounded-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+      <button type="submit" class="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
         <span class="material-symbols-outlined text-[16px]">filter_list</span>
         {% trans "Apply" %}
       </button>
     </div>
   </form>
 
-  <!-- Activities List -->
-  <div class="space-y-4">
+  <!-- Activities Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     {% for activity in activities %}
-    <div class="wn-card rounded-xl p-5 {% if activity.status == 'verified' %}border-l-4 border-l-emerald-500{% else %}border-l-4 border-l-amber-400{% endif %}">
-      <div class="flex justify-between items-start flex-wrap gap-2 mb-2">
-        <h5 class="font-body text-base font-bold text-on-surface">{{ activity.title }}</h5>
-        <div class="flex gap-2 flex-wrap">
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded">
-            <span class="material-symbols-outlined text-[10px]">location_on</span>{{ activity.get_level_display }}
-          </span>
-          {% if activity.status == "verified" %}
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 rounded">
-            <span class="material-symbols-outlined text-[10px]">verified</span> {% trans "Verified" %}
-          </span>
-          {% else %}
-          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 rounded">
-            <span class="material-symbols-outlined text-[10px]">schedule</span> {% trans "Unverified" %}
-          </span>
-          {% endif %}
+    <div class="wn-card rounded-xl overflow-hidden flex flex-col {% if activity.status == 'verified' %}border-l-4 border-l-emerald-500{% else %}border-l-4 border-l-amber-400{% endif %}">
+      <div class="p-5 flex flex-col flex-1">
+        <!-- Top badges -->
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div class="flex gap-1.5 flex-wrap">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded">
+              <span class="material-symbols-outlined text-[10px]">location_on</span>{{ activity.get_level_display }}
+            </span>
+            {% if activity.status == "verified" %}
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 rounded">
+              <span class="material-symbols-outlined text-[10px]">verified</span> {% trans "Verified" %}
+            </span>
+            {% else %}
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 rounded">
+              <span class="material-symbols-outlined text-[10px]">schedule</span> {% trans "Unverified" %}
+            </span>
+            {% endif %}
+          </div>
         </div>
-      </div>
 
-      <p class="text-sm text-slate-600 mb-3 line-clamp-2">{{ activity.description }}</p>
+        <!-- Title -->
+        <h5 class="font-headline text-base font-bold text-on-surface mb-2 leading-snug">{{ activity.title }}</h5>
 
-      <div class="flex items-center gap-3 flex-wrap mb-3 text-xs text-slate-400">
-        <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined text-[12px]">person</span>{{ activity.created_by }}
-        </span>
-        <span>·</span>
-        <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined text-[12px]">calendar_month</span>{{ activity.created_at|to_bs }}
-        </span>
-      </div>
+        <!-- Description -->
+        <p class="text-sm text-slate-500 mb-3 line-clamp-2 flex-1">{{ activity.description }}</p>
 
-      {% if activity.manifesto_point %}
-      <div class="mb-3">
-        <a href="{% url 'manifesto_detail' activity.manifesto_point.id %}"
-           class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors" style="text-decoration:none;">
-          <span class="material-symbols-outlined text-[12px]">link</span>
-          {{ activity.manifesto_point.title }}
-          {% if activity.manifesto_point.party %}— {{ activity.manifesto_point.party.name }}{% endif %}
-        </a>
-      </div>
-      {% elif activity.commitment %}
-      <div class="mb-3">
-        <a href="{% url 'commitment_detail' activity.commitment.id %}"
-           class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors" style="text-decoration:none;">
-          <span class="material-symbols-outlined text-[12px]">link</span>
-          {{ activity.commitment.title }}
-          {% if activity.commitment.party %}— {{ activity.commitment.party.name }}{% endif %}
-        </a>
-      </div>
-      {% endif %}
+        <!-- Linked manifesto/commitment -->
+        {% if activity.manifesto_point %}
+        <div class="mb-3">
+          <a href="{% url 'manifesto_detail' activity.manifesto_point.id %}"
+             class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors" style="text-decoration:none;">
+            <span class="material-symbols-outlined text-[12px]">link</span>
+            {{ activity.manifesto_point.title|truncatewords:6 }}
+          </a>
+        </div>
+        {% elif activity.commitment %}
+        <div class="mb-3">
+          <a href="{% url 'commitment_detail' activity.commitment.id %}"
+             class="inline-flex items-center gap-1 px-3 py-1.5 bg-violet-50 text-violet-700 text-xs font-medium rounded-lg hover:bg-violet-100 transition-colors" style="text-decoration:none;">
+            <span class="material-symbols-outlined text-[12px]">link</span>
+            {{ activity.commitment.title|truncatewords:6 }}
+          </a>
+        </div>
+        {% endif %}
 
-      <div class="flex items-center gap-3">
-        <button class="vote-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-50 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
-                data-activity="{{ activity.id }}" data-type="up">
-          <span class="material-symbols-outlined text-[16px]">thumb_up</span>
-          <span class="vote-count">{{ activity.positive_votes }}</span>
-        </button>
-        <button class="vote-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-50 hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                data-activity="{{ activity.id }}" data-type="down">
-          <span class="material-symbols-outlined text-[16px]">thumb_down</span>
-          <span class="vote-count">{{ activity.negative_votes }}</span>
-        </button>
+        <!-- Party/Member badge -->
+        <div class="mb-3 flex items-center gap-2 flex-wrap">
+        {% if activity.manifesto_point.party %}
+          {% include 'includes/party_badge.html' with party=activity.manifesto_point.party %}
+        {% elif activity.manifesto_point.elected_member %}
+          {% include 'includes/member_badge.html' with member=activity.manifesto_point.elected_member %}
+        {% elif activity.commitment.party %}
+          {% include 'includes/party_badge.html' with party=activity.commitment.party %}
+        {% elif activity.commitment.elected_member %}
+          {% include 'includes/member_badge.html' with member=activity.commitment.elected_member %}
+        {% endif %}
+        </div>
+
+        <!-- Footer: meta + votes -->
+        <div class="flex items-center justify-between pt-3 border-t border-slate-100 mt-auto">
+          <div class="flex items-center gap-3 text-[10px] text-slate-400">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-[10px]">person</span>{{ activity.created_by }}
+            </span>
+            <span>{{ activity.created_at|to_bs }}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="vote-btn flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-slate-50 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                    data-activity="{{ activity.id }}" data-type="up">
+              <span class="material-symbols-outlined text-[14px]">thumb_up</span>
+              <span class="vote-count">{{ activity.positive_votes }}</span>
+            </button>
+            <button class="vote-btn flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-slate-50 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                    data-activity="{{ activity.id }}" data-type="down">
+              <span class="material-symbols-outlined text-[14px]">thumb_down</span>
+              <span class="vote-count">{{ activity.negative_votes }}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     {% empty %}
-    <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
-      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">clipboard</span>
+    <div class="col-span-full text-center py-16 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">trending_up</span>
       <h4 class="text-lg font-bold text-slate-700">{% trans "No activities found" %}</h4>
       <p class="text-slate-500 text-sm">{% trans "Try adjusting the filters or check back later." %}</p>
     </div>
@@ -150,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(r => r.json())
             .then(data => {
-                const card = this.closest('.bg-white');
+                const card = this.closest('.wn-card');
                 const counts = card.querySelectorAll('.vote-count');
                 counts[0].textContent = data.positive_votes;
                 counts[1].textContent = data.negative_votes;

@@ -4,25 +4,25 @@
 {% block title %}{% trans "Petitions" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="max-w-screen-xl mx-auto px-6 pt-8 space-y-8">
+<div class="space-y-6">
 
-  <!-- Hero Banner -->
-  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary-container text-white p-8 md:p-12 wn-cultural-border">
+  <!-- Hero Banner (compact) -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary to-primary-container text-white p-5 md:p-6 wn-newari-border">
     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
-        <h1 class="font-headline text-3xl md:text-4xl font-black tracking-tight mb-2">
-          <span class="material-symbols-outlined text-3xl align-middle mr-2">campaign</span>{% trans "Signature Petitions" %}
+        <h1 class="font-headline text-2xl md:text-3xl font-black tracking-tight mb-1">
+          <span class="material-symbols-outlined text-2xl align-middle mr-2">campaign</span>{% trans "Signature Petitions" %}
         </h1>
         <p class="text-white/80 text-sm max-w-md">{% trans "Start a petition or support causes that matter. Your voice counts." %}</p>
       </div>
       {% if user.is_authenticated %}
-      <a href="{% url 'petition_create' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit" style="text-decoration:none;">
-        <span class="material-symbols-outlined">add</span> {% trans "Start a Petition" %}
+      <a href="{% url 'petition_create' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit text-sm" style="text-decoration:none;">
+        <span class="material-symbols-outlined text-[18px]">add</span> {% trans "Start a Petition" %}
       </a>
       {% else %}
-      <a href="{% url 'login' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit" style="text-decoration:none;">
-        <span class="material-symbols-outlined">login</span> {% trans "Login to Start" %}
+      <a href="{% url 'login' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-primary font-headline font-bold rounded-xl hover:bg-white/90 active:scale-95 transition-all w-fit text-sm" style="text-decoration:none;">
+        <span class="material-symbols-outlined text-[18px]">login</span> {% trans "Login to Start" %}
       </a>
       {% endif %}
     </div>

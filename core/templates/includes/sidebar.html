@@ -1,0 +1,64 @@
+{% load i18n %}
+{% load static %}
+
+<!-- Quick Links -->
+<div class="wn-card rounded-xl p-4 space-y-1">
+  <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-3">{% trans "Quick Links" %}</h3>
+  <a href="{% url 'manifesto_list' %}" class="wn-sidebar-link {% if 'manifesto' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">description</span> {% trans "Manifestos" %}
+  </a>
+  <a href="{% url 'commitment_list' %}" class="wn-sidebar-link {% if 'commitment' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">handshake</span> {% trans "Commitments" %}
+  </a>
+  <a href="{% url 'activities_list' %}" class="wn-sidebar-link {% if 'activities' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">trending_up</span> {% trans "Activities" %}
+  </a>
+  <a href="{% url 'petition_list' %}" class="wn-sidebar-link {% if 'petition' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">campaign</span> {% trans "Petitions" %}
+  </a>
+  <div class="border-t border-slate-100 my-1"></div>
+  <a href="{% url 'party_list' %}" class="wn-sidebar-link {% if 'party' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">groups</span> {% trans "Parties" %}
+  </a>
+  <a href="{% url 'elected_member_list' %}" class="wn-sidebar-link {% if 'member' in request.resolver_match.url_name %}active{% endif %}">
+    <span class="material-symbols-outlined">person</span> {% trans "Members" %}
+  </a>
+</div>
+
+<!-- At a Glance -->
+<div class="wn-card rounded-xl p-4">
+  <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 px-1">{% trans "At a Glance" %}</h3>
+  <div class="space-y-3">
+    <div class="flex items-center justify-between px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Manifestos" %}</span>
+      <span class="text-sm font-black text-primary">{{ sidebar_manifesto_count }}</span>
+    </div>
+    <div class="flex items-center justify-between px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Commitments" %}</span>
+      <span class="text-sm font-black text-secondary">{{ sidebar_commitment_count }}</span>
+    </div>
+    <div class="flex items-center justify-between px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Active Petitions" %}</span>
+      <span class="text-sm font-black text-tertiary">{{ sidebar_petition_count }}</span>
+    </div>
+    <div class="flex items-center justify-between px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Parties" %}</span>
+      <span class="text-sm font-black text-slate-700">{{ sidebar_party_count }}</span>
+    </div>
+    <div class="flex items-center justify-between px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Members" %}</span>
+      <span class="text-sm font-black text-slate-700">{{ sidebar_member_count }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Announcements -->
+<div class="wn-card rounded-xl p-4">
+  <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 px-1">{% trans "Announcements" %}</h3>
+  <div class="text-xs text-slate-400 px-1 italic">{% trans "No announcements at this time." %}</div>
+</div>
+
+<!-- Cultural accent: small Nepal flag -->
+<div class="flex justify-center opacity-30 mt-4">
+  <img src="{% static 'images/nepal-flag.svg' %}" alt="" class="w-8 h-14">
+</div>

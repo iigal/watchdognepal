@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200" fill="none">
+  <!-- Nepal flag - double pennant shape -->
+  <!-- Blue border -->
+  <path d="M5 5 L115 55 L5 105 L115 155 L5 195 L5 5Z" fill="#003893" />
+  <!-- Red fill - upper pennant -->
+  <path d="M10 12 L105 55 L10 98Z" fill="#DC143C" />
+  <!-- Red fill - lower pennant -->
+  <path d="M10 102 L105 148 L10 190Z" fill="#DC143C" />
+  <!-- Moon (crescent + rays) in upper pennant -->
+  <g transform="translate(38, 45)">
+    <!-- Crescent moon -->
+    <circle cx="0" cy="0" r="10" fill="white" />
+    <circle cx="0" cy="-4" r="10" fill="#DC143C" />
+    <!-- Moon rays (8 small triangular rays above crescent) -->
+    <g fill="white">
+      <polygon points="0,-12 -2,-8 2,-8" />
+      <polygon points="-6,-11 -5.5,-7 -3,-9" />
+      <polygon points="6,-11 5.5,-7 3,-9" />
+      <polygon points="-9,-7 -6,-5 -7.5,-8.5" />
+      <polygon points="9,-7 6,-5 7.5,-8.5" />
+      <polygon points="-10,-3 -7,-3.5 -8.5,-6" />
+      <polygon points="10,-3 7,-3.5 8.5,-6" />
+      <polygon points="0,-14 -1.5,-10 1.5,-10" />
+    </g>
+  </g>
+  <!-- 12-pointed sun in lower pennant -->
+  <g transform="translate(38, 145)" fill="white">
+    <circle cx="0" cy="0" r="7" />
+    <polygon points="0,-14 -2.5,-5 2.5,-5" />
+    <polygon points="0,14 -2.5,5 2.5,5" />
+    <polygon points="-14,0 -5,-2.5 -5,2.5" />
+    <polygon points="14,0 5,-2.5 5,2.5" />
+    <polygon points="-12.1,-7 -4.3,-2.5 -2.5,-4.3" />
+    <polygon points="12.1,-7 4.3,-2.5 2.5,-4.3" />
+    <polygon points="-12.1,7 -4.3,2.5 -2.5,4.3" />
+    <polygon points="12.1,7 4.3,2.5 2.5,4.3" />
+    <polygon points="-7,-12.1 -2.5,-4.3 -4.3,-2.5" />
+    <polygon points="7,-12.1 2.5,-4.3 4.3,-2.5" />
+    <polygon points="-7,12.1 -2.5,4.3 -4.3,2.5" />
+    <polygon points="7,12.1 2.5,4.3 4.3,2.5" />
+  </g>
+</svg>

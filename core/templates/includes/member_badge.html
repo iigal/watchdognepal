@@ -1,0 +1,14 @@
+{% comment %}
+Usage: {% include 'includes/member_badge.html' with member=obj.elected_member %}
+Renders inline member badge with photo avatar and link to member detail.
+{% endcomment %}
+{% if member %}
+<a href="{% url 'elected_member_detail' member.id %}" class="inline-flex items-center gap-1.5 bg-primary/10 text-primary pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-widest hover:bg-primary/20 transition-colors" style="text-decoration:none;">
+  {% if member.image %}
+  <img src="{{ member.image.url }}" alt="" class="w-4 h-4 rounded-full object-cover flex-shrink-0">
+  {% else %}
+  <span class="w-4 h-4 rounded-full bg-primary text-white flex items-center justify-center text-[7px] flex-shrink-0">{{ member.name|first }}</span>
+  {% endif %}
+  {{ member.name|truncatewords:3 }}
+</a>
+{% endif %}

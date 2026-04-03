@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 24" preserveAspectRatio="none">
+  <!-- Newari architectural border pattern - inspired by traditional wooden lattice/jali work -->
+  <!-- Repeating unit: diamond lattice + arch motif + decorative elements -->
+  <defs>
+    <pattern id="newari-repeat" x="0" y="0" width="120" height="24" patternUnits="userSpaceOnUse">
+      <!-- Top tiered roof line -->
+      <rect x="0" y="0" width="120" height="2" fill="#8B4513" opacity="0.8" />
+      <rect x="0" y="2" width="120" height="1" fill="#A0522D" opacity="0.6" />
+
+      <!-- Diamond lattice pattern (jali) -->
+      <g stroke="#8B4513" stroke-width="0.8" fill="none" opacity="0.7">
+        <!-- Row of diamonds -->
+        <path d="M10 8 L15 4 L20 8 L15 12Z" />
+        <path d="M20 8 L25 4 L30 8 L25 12Z" />
+        <path d="M30 8 L35 4 L40 8 L35 12Z" />
+        <path d="M40 8 L45 4 L50 8 L45 12Z" />
+        <path d="M50 8 L55 4 L60 8 L55 12Z" />
+        <path d="M60 8 L65 4 L70 8 L65 12Z" />
+        <path d="M70 8 L75 4 L80 8 L75 12Z" />
+        <path d="M80 8 L85 4 L90 8 L85 12Z" />
+        <path d="M90 8 L95 4 L100 8 L95 12Z" />
+        <path d="M100 8 L105 4 L110 8 L105 12Z" />
+      </g>
+
+      <!-- Small flower rosettes at intersections -->
+      <g fill="#A0522D" opacity="0.5">
+        <circle cx="10" cy="8" r="1.5" />
+        <circle cx="30" cy="8" r="1.5" />
+        <circle cx="50" cy="8" r="1.5" />
+        <circle cx="70" cy="8" r="1.5" />
+        <circle cx="90" cy="8" r="1.5" />
+        <circle cx="110" cy="8" r="1.5" />
+      </g>
+
+      <!-- Arched motif accents -->
+      <g stroke="#8B4513" stroke-width="0.6" fill="none" opacity="0.5">
+        <path d="M15 14 Q20 10 25 14" />
+        <path d="M35 14 Q40 10 45 14" />
+        <path d="M55 14 Q60 10 65 14" />
+        <path d="M75 14 Q80 10 85 14" />
+        <path d="M95 14 Q100 10 105 14" />
+      </g>
+
+      <!-- Vine scrollwork along bottom -->
+      <g stroke="#6B3410" stroke-width="0.7" fill="none" opacity="0.4">
+        <path d="M0 18 Q10 15 20 18 Q30 21 40 18 Q50 15 60 18 Q70 21 80 18 Q90 15 100 18 Q110 21 120 18" />
+      </g>
+
+      <!-- Bottom decorative line -->
+      <rect x="0" y="21" width="120" height="1" fill="#A0522D" opacity="0.6" />
+      <rect x="0" y="22" width="120" height="2" fill="#8B4513" opacity="0.8" />
+    </pattern>
+  </defs>
+  <rect width="120" height="24" fill="url(#newari-repeat)" />
+</svg>

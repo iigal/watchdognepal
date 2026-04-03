@@ -13,6 +13,7 @@ def register_view(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
+            user_ip = get_client_ip(request)
             # Detect country and determine verification method
             country = get_country_from_ip(user_ip)
             is_nepal = country == 'Nepal'
