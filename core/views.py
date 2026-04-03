@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.cache import cache
+from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
@@ -153,8 +154,12 @@ def activities_list(request):
     else:  # newest first
         activities = activities.order_by('-created_at')
 
+    paginator = Paginator(activities, 20)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
     context = {
-        'activities': activities,
+        'activities': page_obj,
+        'page_obj': page_obj,
     }
     return render(request, 'activities_list.html', context)
 
@@ -237,8 +242,15 @@ def vote_activity(request, activity_id):
 
 
 def party_list(request):
-    parties = PoliticalParty.objects.all()
-    return render(request, 'party_list.html', {'parties': parties})
+    parties = PoliticalParty.objects.all().order_by('name')
+    q = request.GET.get('q', '').strip()
+    if q:
+        parties = parties.filter(
+            models.Q(name__icontains=q) | models.Q(description__icontains=q)
+        )
+    paginator = Paginator(parties, 12)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    return render(request, 'party_list.html', {'parties': page_obj, 'page_obj': page_obj, 'search_query': q})
 
 
 def party_detail(request, party_id):
@@ -253,8 +265,15 @@ def party_detail(request, party_id):
 
 
 def elected_member_list(request):
-    members = ElectedMember.objects.all().select_related('party')
-    return render(request, 'member_list.html', {'members': members})
+    members = ElectedMember.objects.all().select_related('party').order_by('name')
+    q = request.GET.get('q', '').strip()
+    if q:
+        members = members.filter(
+            models.Q(name__icontains=q) | models.Q(constituency__icontains=q) | models.Q(party__name__icontains=q)
+        )
+    paginator = Paginator(members, 16)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    return render(request, 'member_list.html', {'members': page_obj, 'page_obj': page_obj, 'search_query': q})
 
 
 def elected_member_detail(request, member_id):
@@ -285,8 +304,12 @@ def petition_list(request):
     if category:
         petitions = petitions.filter(category=category)
     
+    paginator = Paginator(petitions, 12)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
     context = {
-        'petitions': petitions,
+        'petitions': page_obj,
+        'page_obj': page_obj,
         'search_query': q,
         'selected_category': category,
         'categories': Petition.CATEGORY_CHOICES,
@@ -391,8 +414,45 @@ def dashboard(request):
 # ─── Manifesto Views ──────────────────────────────────────────
 
 def manifesto_list(request):
-    manifestos = ManifestoPoint.objects.prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party')
-    return render(request, 'manifesto_list.html', {'manifestos': manifestos})
+    manifestos = ManifestoPoint.objects.prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        manifestos = manifestos.filter(
+            models.Q(title__icontains=q) | models.Q(description__icontains=q)
+        )
+
+    category = request.GET.get('category', '')
+    if category:
+        manifestos = manifestos.filter(category=category)
+
+    status_filter = request.GET.get('status', '')
+    if status_filter == 'completed':
+        manifestos = manifestos.filter(is_completed=True)
+    elif status_filter == 'overdue':
+        manifestos = [m for m in manifestos if m.is_overdue]
+    elif status_filter == 'in_progress':
+        manifestos = [m for m in manifestos if not m.is_completed and not m.is_overdue]
+
+    paginator = Paginator(manifestos, 10)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    # Stats for the page
+    all_manifestos = ManifestoPoint.objects.all()
+    total_count = all_manifestos.count()
+    completed_count = all_manifestos.filter(is_completed=True).count()
+
+    return render(request, 'manifesto_list.html', {
+        'manifestos': page_obj,
+        'page_obj': page_obj,
+        'search_query': q,
+        'selected_category': category,
+        'selected_status': status_filter,
+        'categories': ManifestoPoint.CATEGORY_CHOICES,
+        'total_count': total_count,
+        'completed_count': completed_count,
+        'in_progress_count': total_count - completed_count,
+    })
 
 
 @require_POST
@@ -418,8 +478,17 @@ def toggle_submanifesto_completion(request, pk):
     })
 
 def manifesto_detail(request, pk):
-    manifesto = get_object_or_404(ManifestoPoint.objects.select_related('party', 'elected_member'), pk=pk)
-    return render(request, 'manifesto_detail.html', {'manifesto': manifesto})
+    manifesto = get_object_or_404(
+        ManifestoPoint.objects.select_related('party', 'elected_member', 'elected_member__party')
+        .prefetch_related('sub_manifestos', 'activities'),
+        pk=pk
+    )
+    context = {
+        'manifesto': manifesto,
+        'sub_manifestos': manifesto.sub_manifestos.all(),
+        'activities': manifesto.activities.filter(status='verified').order_by('-created_at')[:10],
+    }
+    return render(request, 'manifesto_detail.html', context)
 
 def manifesto_og_image(request, pk):
     point = get_object_or_404(ManifestoPoint, pk=pk)
@@ -434,8 +503,35 @@ def manifesto_og_image(request, pk):
 # ─── Commitment Views ─────────────────────────────────────────
 
 def commitment_list(request):
-    commitments = Commitment.objects.prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party')
-    return render(request, 'commitment_list.html', {'commitments': commitments})
+    commitments = Commitment.objects.prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
+
+    q = request.GET.get('q', '').strip()
+    if q:
+        commitments = commitments.filter(
+            models.Q(title__icontains=q) | models.Q(description__icontains=q)
+        )
+
+    category = request.GET.get('category', '')
+    if category:
+        commitments = commitments.filter(category=category)
+
+    paginator = Paginator(commitments, 10)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    all_commitments = Commitment.objects.all()
+    total_count = all_commitments.count()
+    completed_count = all_commitments.filter(is_completed=True).count()
+
+    return render(request, 'commitment_list.html', {
+        'commitments': page_obj,
+        'page_obj': page_obj,
+        'search_query': q,
+        'selected_category': category,
+        'categories': Commitment.CATEGORY_CHOICES,
+        'total_count': total_count,
+        'completed_count': completed_count,
+        'in_progress_count': total_count - completed_count,
+    })
 
 
 @require_POST
@@ -460,8 +556,17 @@ def toggle_subcommitment_completion(request, pk):
     })
 
 def commitment_detail(request, pk):
-    commitment = get_object_or_404(Commitment.objects.select_related('party', 'elected_member'), pk=pk)
-    return render(request, 'commitment_detail.html', {'commitment': commitment})
+    commitment = get_object_or_404(
+        Commitment.objects.select_related('party', 'elected_member', 'elected_member__party')
+        .prefetch_related('sub_commitments', 'activities'),
+        pk=pk
+    )
+    context = {
+        'commitment': commitment,
+        'sub_commitments': commitment.sub_commitments.all(),
+        'activities': commitment.activities.filter(status='verified').order_by('-created_at')[:10],
+    }
+    return render(request, 'commitment_detail.html', context)
 
 def commitment_og_image(request, pk):
     commitment = get_object_or_404(Commitment, pk=pk)

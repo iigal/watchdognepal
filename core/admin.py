@@ -45,8 +45,8 @@ class SubManifestoInline(admin.TabularInline):
 @admin.register(ManifestoPoint)
 class ManifestoPointAdmin(admin.ModelAdmin):
     form = ManifestoPointAdminForm
-    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
-    list_filter = ('party', 'elected_member', 'is_completed')
+    list_display = ('title', 'category', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
+    list_filter = ('category', 'party', 'elected_member', 'is_completed')
     search_fields = ('title', 'description')
     inlines = [SubManifestoInline]
 
@@ -72,8 +72,8 @@ class SubCommitmentInline(admin.TabularInline):
 @admin.register(Commitment)
 class CommitmentAdmin(admin.ModelAdmin):
     form = CommitmentAdminForm
-    list_display = ('title', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
-    list_filter = ('party', 'elected_member', 'is_completed')
+    list_display = ('title', 'category', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
+    list_filter = ('category', 'party', 'elected_member', 'is_completed')
     search_fields = ('title', 'description')
     inlines = [SubCommitmentInline]
 

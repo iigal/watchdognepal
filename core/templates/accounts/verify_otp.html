@@ -1,50 +1,56 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
+{% load i18n %}
 
-{% block title %}Verify Mobile Number — Watchdog Nepal{% endblock %}
+{% block title %}{% trans "Verify Mobile Number" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-5 col-md-7 col-sm-10">
+<div class="max-w-sm mx-auto px-4 md:px-8 pt-8 space-y-6">
 
-      <div class="text-center mb-4 animate-fade-in-up">
-        <h2 style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.75rem;">
-          Verify Mobile Number
-        </h2>
-        <p style="font-size: 0.88rem; color: var(--wn-text-muted);">
-          Please enter the 6-digit verification codes sent to <strong>{{ mobile }}</strong> and <strong>{{ email }}</strong>.
-        </p>
-      </div>
-
-      <div class="wn-auth-card animate-fade-in-up animate-delay-1">
-        <div class="card-body">
-
-          <form method="POST">
-            {% csrf_token %}
-            {% if method == 'sms' %}
-            <div class="mb-3">
-              <label for="mobile_otp" class="form-label fw-bold">Mobile Verification Code (sent to {{ mobile }})</label>
-              <input type="text" class="form-control text-center" id="mobile_otp" name="mobile_otp" placeholder="Enter 6-digit OTP from SMS" required maxlength="6" pattern="\d{6}">
-            </div>
-            {% else %}
-            <div class="mb-3">
-              <label for="email_otp" class="form-label fw-bold">Email Verification Code (sent to {{ email }})</label>
-              <input type="text" class="form-control text-center" id="email_otp" name="email_otp" placeholder="Enter 6-digit OTP from Email" required maxlength="6" pattern="\d{6}">
-            </div>
-            {% endif %}
-            
-            <div class="d-grid mt-4">
-              <button type="submit" class="wn-btn-primary justify-content-center w-100">
-                <i class="bi bi-check-circle me-1"></i> Verify Identity
-              </button>
-            </div>
-          </form>
-
-        </div>
-      </div>
-
+  <!-- Header -->
+  <div class="text-center space-y-2">
+    <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
+      <span class="material-symbols-outlined text-secondary text-3xl">verified_user</span>
     </div>
+    <h2 class="font-headline text-2xl font-black text-on-surface tracking-tight">{% trans "Verify Mobile Number" %}</h2>
+    <p class="text-sm text-slate-500">
+      {% trans "Please enter the 6-digit verification codes sent to" %} <strong class="text-on-surface">{{ mobile }}</strong> {% trans "and" %} <strong class="text-on-surface">{{ email }}</strong>.
+    </p>
   </div>
+
+  <!-- Verification Card -->
+  <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 md:p-8">
+
+    <form method="POST" class="space-y-5">
+      {% csrf_token %}
+
+      {% if method == 'sms' %}
+      <div>
+        <label for="mobile_otp" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          {% trans "Mobile Verification Code" %} <span class="normal-case tracking-normal font-normal">({% trans "sent to" %} {{ mobile }})</span>
+        </label>
+        <input type="text" id="mobile_otp" name="mobile_otp"
+          placeholder="{% trans 'Enter 6-digit OTP from SMS' %}"
+          required maxlength="6" pattern="\d{6}" inputmode="numeric"
+          class="w-full px-4 py-3 text-sm text-center tracking-[0.5em] font-bold bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+      {% else %}
+      <div>
+        <label for="email_otp" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          {% trans "Email Verification Code" %} <span class="normal-case tracking-normal font-normal">({% trans "sent to" %} {{ email }})</span>
+        </label>
+        <input type="text" id="email_otp" name="email_otp"
+          placeholder="{% trans 'Enter 6-digit OTP from Email' %}"
+          required maxlength="6" pattern="\d{6}" inputmode="numeric"
+          class="w-full px-4 py-3 text-sm text-center tracking-[0.5em] font-bold bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+      {% endif %}
+
+      <button type="submit" class="w-full flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all">
+        <span class="material-symbols-outlined text-[18px]">check_circle</span> {% trans "Verify Identity" %}
+      </button>
+    </form>
+
+  </div>
+
 </div>
 {% endblock %}

@@ -1,133 +1,162 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load nepali_dates %}
 
-{% block title %}Activities Feed — Watchdog Nepal{% endblock %}
+{% block title %}{% trans "Activities Feed" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="max-w-screen-md mx-auto px-6 pt-8 space-y-8">
 
   <!-- Page Header -->
-  <div class="wn-section-header animate-fade-in-up">
-    <div class="section-icon blue">
-      <i class="bi bi-activity"></i>
-    </div>
-    <div>
-      <h2 class="mb-0">Government Activities</h2>
-      <p class="mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
-        Track and verify government actions across all levels
-      </p>
+  <div class="space-y-2">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-secondary text-3xl">trending_up</span>
+      <div>
+        <h2 class="font-headline text-2xl font-black text-on-surface tracking-tight">{% trans "Government Activities" %}</h2>
+        <p class="text-sm text-slate-500">{% trans "Track and verify government actions across all levels" %}</p>
+      </div>
     </div>
   </div>
 
   <!-- Filter Bar -->
-  <div class="wn-filter-bar mb-4 animate-fade-in-up animate-delay-1">
-    <form method="GET" class="d-flex flex-wrap align-items-end gap-3">
-
-      <div>
-        <label for="level-select" class="form-label mb-1">Level</label>
-        <select name="level" id="level-select" class="form-select form-select-sm" style="min-width: 130px;">
+  <form method="GET" class="wn-card rounded-xl p-4">
+    <div class="flex flex-wrap items-end gap-4">
+      <div class="flex-1 min-w-[120px]">
+        <label for="level-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Level" %}</label>
+        <select name="level" id="level-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option>All</option>
           <option {% if request.GET.level == 'Federal' %}selected{% endif %}>Federal</option>
           <option {% if request.GET.level == 'Provincial' %}selected{% endif %}>Provincial</option>
           <option {% if request.GET.level == 'Local' %}selected{% endif %}>Local</option>
         </select>
       </div>
-
-      <div>
-        <label for="status-select" class="form-label mb-1">Status</label>
-        <select name="status" id="status-select" class="form-select form-select-sm" style="min-width: 130px;">
+      <div class="flex-1 min-w-[120px]">
+        <label for="status-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Status" %}</label>
+        <select name="status" id="status-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option>All</option>
           <option {% if request.GET.status == 'Verified' %}selected{% endif %}>Verified</option>
           <option {% if request.GET.status == 'Unverified' %}selected{% endif %}>Unverified</option>
         </select>
       </div>
-
-      <div>
-        <label for="sort-select" class="form-label mb-1">Sort by</label>
-        <select name="sort" id="sort-select" class="form-select form-select-sm" style="min-width: 150px;">
+      <div class="flex-1 min-w-[140px]">
+        <label for="sort-select" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Sort by" %}</label>
+        <select name="sort" id="sort-select" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-secondary/20">
           <option {% if request.GET.sort == 'Newest' or not request.GET.sort %}selected{% endif %}>Newest</option>
           <option {% if request.GET.sort == 'Oldest' %}selected{% endif %}>Oldest</option>
           <option {% if request.GET.sort == 'Most Positive' %}selected{% endif %}>Most Positive</option>
           <option {% if request.GET.sort == 'Most Negative' %}selected{% endif %}>Most Negative</option>
         </select>
       </div>
-
-      <button type="submit" class="btn btn-apply">
-        <i class="bi bi-funnel me-1"></i> Apply
+      <button type="submit" class="px-5 py-2 bg-secondary text-white text-sm font-bold rounded-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">filter_list</span>
+        {% trans "Apply" %}
       </button>
-    </form>
-  </div>
+    </div>
+  </form>
 
-  <!-- Activities -->
-  <div>
+  <!-- Activities List -->
+  <div class="space-y-4">
     {% for activity in activities %}
-    <div
-      class="wn-activity-card {% if activity.status == 'verified' %}verified{% else %}unverified{% endif %} animate-fade-in-up"
-      style="animation-delay: {{ forloop.counter0 }}00ms;">
-      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
-        <h5 class="activity-title mb-0">{{ activity.title }}</h5>
-        <div class="d-flex gap-2 flex-wrap">
-          <span class="wn-badge-level">
-            <i class="bi bi-geo-alt me-1"></i>{{ activity.get_level_display }}
+    <div class="wn-card rounded-xl p-5 {% if activity.status == 'verified' %}border-l-4 border-l-emerald-500{% else %}border-l-4 border-l-amber-400{% endif %}">
+      <div class="flex justify-between items-start flex-wrap gap-2 mb-2">
+        <h5 class="font-body text-base font-bold text-on-surface">{{ activity.title }}</h5>
+        <div class="flex gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded">
+            <span class="material-symbols-outlined text-[10px]">location_on</span>{{ activity.get_level_display }}
           </span>
           {% if activity.status == "verified" %}
-          <span class="wn-badge-verified">
-            <i class="bi bi-patch-check-fill"></i> Verified
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 rounded">
+            <span class="material-symbols-outlined text-[10px]">verified</span> {% trans "Verified" %}
           </span>
           {% else %}
-          <span class="wn-badge-unverified">
-            <i class="bi bi-clock"></i> Unverified
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-amber-100 text-amber-700 rounded">
+            <span class="material-symbols-outlined text-[10px]">schedule</span> {% trans "Unverified" %}
           </span>
           {% endif %}
         </div>
       </div>
 
-      <p class="activity-desc mb-2">{{ activity.description }}</p>
+      <p class="text-sm text-slate-600 mb-3 line-clamp-2">{{ activity.description }}</p>
 
-      <div class="d-flex align-items-center gap-2 flex-wrap mb-3"
-        style="font-size: 0.78rem; color: var(--wn-text-light);">
-        <span><i class="bi bi-person me-1"></i>{{ activity.created_by }}</span>
+      <div class="flex items-center gap-3 flex-wrap mb-3 text-xs text-slate-400">
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">person</span>{{ activity.created_by }}
+        </span>
         <span>·</span>
-        <span><i class="bi bi-calendar3 me-1"></i>{{ activity.created_at|to_bs }}</span>
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">calendar_month</span>{{ activity.created_at|to_bs }}
+        </span>
       </div>
 
       {% if activity.manifesto_point %}
       <div class="mb-3">
-        {% if activity.manifesto_point.party %}
-        <a href="{% url 'party_detail' activity.manifesto_point.party.id %}#heading{{ activity.manifesto_point.id }}"
-          class="wn-manifesto-chip">
-          <i class="bi bi-link-45deg"></i>
-          {{ activity.manifesto_point.title }} — {{ activity.manifesto_point.party.name }}
+        <a href="{% url 'manifesto_detail' activity.manifesto_point.id %}"
+           class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors" style="text-decoration:none;">
+          <span class="material-symbols-outlined text-[12px]">link</span>
+          {{ activity.manifesto_point.title }}
+          {% if activity.manifesto_point.party %}— {{ activity.manifesto_point.party.name }}{% endif %}
         </a>
-        {% else %}
-        <a href="{% url 'elected_member_detail' activity.manifesto_point.elected_member.id %}#heading{{ activity.manifesto_point.id }}"
-          class="wn-manifesto-chip">
-          <i class="bi bi-link-45deg"></i>
-          {{ activity.manifesto_point.title }} — {{ activity.manifesto_point.elected_member.name }}
+      </div>
+      {% elif activity.commitment %}
+      <div class="mb-3">
+        <a href="{% url 'commitment_detail' activity.commitment.id %}"
+           class="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg hover:bg-blue-100 transition-colors" style="text-decoration:none;">
+          <span class="material-symbols-outlined text-[12px]">link</span>
+          {{ activity.commitment.title }}
+          {% if activity.commitment.party %}— {{ activity.commitment.party.name }}{% endif %}
         </a>
-        {% endif %}
       </div>
       {% endif %}
 
-      <div class="d-flex align-items-center gap-3">
-        <div class="wn-vote-btn up">
-          <i class="bi bi-hand-thumbs-up"></i>
-          <span>{{ activity.positive_votes }}</span>
-        </div>
-        <div class="wn-vote-btn down">
-          <i class="bi bi-hand-thumbs-down"></i>
-          <span>{{ activity.negative_votes }}</span>
-        </div>
+      <div class="flex items-center gap-3">
+        <button class="vote-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-50 hover:bg-emerald-50 hover:text-emerald-600 transition-colors"
+                data-activity="{{ activity.id }}" data-type="up">
+          <span class="material-symbols-outlined text-[16px]">thumb_up</span>
+          <span class="vote-count">{{ activity.positive_votes }}</span>
+        </button>
+        <button class="vote-btn flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-50 hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                data-activity="{{ activity.id }}" data-type="down">
+          <span class="material-symbols-outlined text-[16px]">thumb_down</span>
+          <span class="vote-count">{{ activity.negative_votes }}</span>
+        </button>
       </div>
     </div>
     {% empty %}
-    <div class="wn-empty-state">
-      <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
-      <h4>No activities found</h4>
-      <p class="mb-0">Try adjusting the filters or check back later.</p>
+    <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">clipboard</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No activities found" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "Try adjusting the filters or check back later." %}</p>
     </div>
     {% endfor %}
   </div>
 
+  {% include 'includes/pagination.html' %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.vote-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const activityId = this.dataset.activity;
+            const voteType = this.dataset.type;
+            fetch(`/vote/${activityId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: `vote_type=${voteType}`
+            })
+            .then(r => r.json())
+            .then(data => {
+                const card = this.closest('.bg-white');
+                const counts = card.querySelectorAll('.vote-count');
+                counts[0].textContent = data.positive_votes;
+                counts[1].textContent = data.negative_votes;
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

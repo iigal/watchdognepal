@@ -37,8 +37,24 @@ class ElectedMember(models.Model):
         return reverse('elected_member_detail', kwargs={'member_id': self.id})
 
 class ManifestoPoint(models.Model):
+    CATEGORY_CHOICES = [
+        ('economy', 'Economy & Finance'),
+        ('infrastructure', 'Infrastructure & Development'),
+        ('education', 'Education'),
+        ('health', 'Health & Social Welfare'),
+        ('governance', 'Governance & Administration'),
+        ('environment', 'Environment & Climate'),
+        ('agriculture', 'Agriculture & Rural Development'),
+        ('technology', 'Technology & Innovation'),
+        ('defense', 'Defense & Security'),
+        ('foreign', 'Foreign Affairs'),
+        ('rights', 'Rights & Justice'),
+        ('other', 'Other'),
+    ]
+
     title = models.CharField(max_length=200)
     description = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other', blank=True)
     party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
     elected_member = models.ForeignKey(ElectedMember, on_delete=models.CASCADE, blank=True, null=True, related_name='manifesto_points')
     deadline = models.DateField(blank=True, null=True)
@@ -136,8 +152,11 @@ class SubManifesto(models.Model):
         return f"{self.parent.title} - {self.title}"
 
 class Commitment(models.Model):
+    CATEGORY_CHOICES = ManifestoPoint.CATEGORY_CHOICES
+
     title = models.CharField(max_length=200)
     description = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other', blank=True)
     party = models.ForeignKey(PoliticalParty, on_delete=models.CASCADE, blank=True, null=True, related_name='commitments')
     elected_member = models.ForeignKey(ElectedMember, on_delete=models.CASCADE, blank=True, null=True, related_name='commitments')
     deadline = models.DateField(blank=True, null=True)

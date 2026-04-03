@@ -1,365 +1,336 @@
 {% extends 'base.html' %}
-{% load nepali_dates %}
+{% load nepali_dates i18n accounts_tags %}
 
 {% block title %}{{ party.name }} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="max-w-screen-lg mx-auto px-4 md:px-8 pt-8 space-y-8">
 
-    <!-- Breadcrumb -->
-    <div class="wn-breadcrumb animate-fade-in-up">
-        <a href="{% url 'party_list' %}"><i class="bi bi-arrow-left me-1"></i>All Parties</a>
-    </div>
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-slate-500">
+    <a href="{% url 'party_list' %}" class="hover:text-primary transition-colors flex items-center gap-1" style="text-decoration:none;">
+      <span class="material-symbols-outlined text-[16px]">arrow_back</span>{% trans "All Parties" %}
+    </a>
+    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+    <span class="text-on-surface font-medium">{{ party.name }}</span>
+  </nav>
 
-    <!-- Party Header -->
-    <div class="wn-detail-header mb-4 animate-fade-in-up animate-delay-1">
-        {% if party.logo %}
-        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="detail-img">
-        {% else %}
-        <div class="detail-img-placeholder">
-            <i class="bi bi-building"></i>
-        </div>
+  <!-- Party Header -->
+  <div class="wn-card rounded-xl p-6 md:p-8">
+    <div class="flex items-start gap-5">
+      {% if party.logo %}
+      <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="w-16 h-16 md:w-20 md:h-20 object-contain rounded-lg flex-shrink-0">
+      {% else %}
+      <div class="w-16 h-16 md:w-20 md:h-20 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+        <span class="material-symbols-outlined text-3xl text-slate-400">account_balance</span>
+      </div>
+      {% endif %}
+      <div class="min-w-0">
+        <h2 class="font-headline text-xl md:text-2xl font-black text-on-surface mb-1">{{ party.name }}</h2>
+        {% if party.in_government %}
+        <span class="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest mb-2">{% trans "In Government" %}</span>
         {% endif %}
-        <div>
-            <h2 class="fw-bold mb-1" style="font-size: 1.5rem;">{{ party.name }}</h2>
-            {% if party.in_government %}
-            <span class="wn-badge-gov mb-2 d-inline-block">In Government</span>
-            {% endif %}
-            <p class="mb-0" style="font-size: 0.88rem; color: var(--wn-text-muted);">{{ party.description }}</p>
+        <p class="text-sm text-slate-500 leading-relaxed">{{ party.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Switcher -->
+  <div class="flex gap-1 bg-slate-50 p-1.5 rounded-lg border border-slate-200 w-full md:w-fit">
+    <button class="wn-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold transition-all bg-white shadow-sm text-slate-900 flex-1 md:flex-none justify-center" onclick="switchTab(this, 'manifesto-panel', 'commitment-panel')">
+      <span class="material-symbols-outlined text-[18px]">description</span> {% trans "Manifestos" %}
+      <span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full">{{ manifesto_points|length }}</span>
+    </button>
+    <button class="wn-tab-btn flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 flex-1 md:flex-none justify-center" onclick="switchTab(this, 'commitment-panel', 'manifesto-panel')">
+      <span class="material-symbols-outlined text-[18px]">handshake</span> {% trans "Commitments" %}
+      <span class="bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded-full">{{ commitments|length }}</span>
+    </button>
+  </div>
+
+  <!-- Manifesto Points Panel -->
+  <div id="manifesto-panel" class="space-y-4">
+    {% for point in manifesto_points %}
+    <div class="wn-card rounded-xl overflow-hidden" id="manifesto-{{ point.id }}">
+      <!-- Collapsible Header -->
+      <button class="accordion-toggle w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-slate-50 transition-colors" onclick="toggleAccordion(this)">
+        <div class="flex-1 min-w-0 pr-4">
+          <h4 class="font-headline font-bold text-on-surface text-base md:text-lg leading-snug">{{ point.title }}</h4>
+          {% if point.category and point.category != 'other' %}
+          <span class="inline-block px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-slate-100 text-slate-600 mt-1">{{ point.get_category_display }}</span>
+          {% endif %}
         </div>
-    </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          {% if point.calculated_deadline %}
+          <span class="hidden md:flex items-center gap-1 bg-rose-50 text-rose-600 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap">
+            <span class="material-symbols-outlined text-[12px]">event</span>{{ point.calculated_deadline|to_bs }}
+          </span>
+          {% endif %}
+          <span class="material-symbols-outlined text-slate-400 accordion-chevron transition-transform">expand_more</span>
+        </div>
+      </button>
 
-    <!-- Tab Switcher -->
-    <div class="wn-tab-switcher mb-3 animate-fade-in-up animate-delay-2">
-        <button class="wn-tab-btn active" onclick="switchTab(this, 'manifesto-panel', 'commitment-panel')">
-            <i class="bi bi-journal-text me-1"></i>Manifesto Points
-            <span class="wn-tab-count">{{ manifesto_points|length }}</span>
-        </button>
-        <button class="wn-tab-btn" onclick="switchTab(this, 'commitment-panel', 'manifesto-panel')">
-            <i class="bi bi-bookmark-star me-1"></i>Commitments
-            <span class="wn-tab-count">{{ commitments|length }}</span>
-        </button>
-    </div>
+      <!-- Collapsible Body -->
+      <div class="accordion-body hidden border-t border-slate-100">
+        <div class="p-5 md:p-6 space-y-5">
+          <!-- Share & Link -->
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <a href="#manifesto-{{ point.id }}" class="text-slate-400 hover:text-slate-600" title="{% trans 'Link to this point' %}">
+              <span class="material-symbols-outlined text-[18px]">link</span>
+            </a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-blue-600 hover:text-blue-700" style="text-decoration:none;" title="Facebook">
+              <span class="text-sm font-bold">f</span>
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-slate-800 hover:text-slate-900" style="text-decoration:none;" title="Twitter/X">
+              <span class="text-sm font-bold">X</span>
+            </a>
+            <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-green-600 hover:text-green-700" style="text-decoration:none;" title="WhatsApp">
+              <span class="material-symbols-outlined text-[18px]">chat</span>
+            </a>
+          </div>
 
-    <!-- Manifesto Points Panel -->
-    <div id="manifesto-panel" class="wn-tab-panel animate-fade-in-up animate-delay-3">
-        <div class="wn-accordion accordion" id="manifestoAccordion">
-            {% for point in manifesto_points %}
-            <div class="accordion-item" id="manifesto-{{ point.id }}">
-                <h2 class="accordion-header" id="heading{{ point.id }}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapse{{ point.id }}" aria-expanded="false"
-                        aria-controls="collapse{{ point.id }}">
-                        <span>{{ point.title }}</span>
-                        {% if point.calculated_deadline %}
-                        <span class="wn-deadline-badge ms-3">
-                            <i class="bi bi-calendar-event me-1"></i>{{ point.calculated_deadline|to_bs }}
-                        </span>
-                        {% endif %}
-                    </button>
-                </h2>
-                <div id="collapse{{ point.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ point.id }}"
-                    data-bs-parent="#manifestoAccordion">
-                    <div class="accordion-body">
-                        <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
-                            <a href="#manifesto-{{ point.id }}" class="text-muted text-decoration-none" title="Link to this point">
-                                <i class="bi bi-link-45deg fs-5"></i>
-                            </a>
-                            <span class="ms-3">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}&text={{ point.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                <a href="https://api.whatsapp.com/send?text={{ point.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{{ request.path }}%23manifesto-{{ point.id }}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                            </span>
-                        </div>
-                        <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
-                            {{ point.description }}
-                        </p>
+          <p class="text-sm text-slate-600 leading-relaxed">{{ point.description }}</p>
 
-                        <!-- Implementation Progress -->
-                        <div class="manifesto-progress-wrapper my-3">
-                            <div class="progress-label mb-2">
-                                <span>Implementation Progress</span>
-                                <span class="progress-fraction">{{ point.progress_fraction }}</span>
-                            </div>
-                            <div class="wn-progress">
-                                <div class="wn-progress-bar" style="width: {{ point.completion_percentage }}%"></div>
-                            </div>
-                        </div>
-
-                        <!-- Sub-manifestos -->
-                        {% if point.sub_manifestos.all %}
-                        <details class="sub-manifesto-details mb-4">
-                            <summary>View Sub-Manifestos</summary>
-                            <div class="sub-manifesto-list">
-                                {% for sub in point.sub_manifestos.all %}
-                                <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-{{ sub.id }}">
-                                    <div class="sub-manifesto-content">
-                                        <h4 class="">{{ sub.title }}</h4>
-                                        <div class="sub-manifesto-deadline">
-                                            <i class="bi bi-calendar3 me-1"></i> 
-                                            {{ sub.effective_deadline|to_bs|default:"No deadline" }}
-                                            {% if sub.is_inherited_deadline %}
-                                            <span class="deadline-inherited ms-1">(inherited)</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="sub-manifesto-actions">
-                                        <button class="status-toggle" 
-                                                data-pk="{{ sub.id }}" 
-                                                data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
-                                                {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
-                                            {% if sub.is_completed %}
-                                            <div class="status-badge status-complete">
-                                                <i class="bi bi-check-lg"></i>
-                                            </div>
-                                            {% elif sub.is_overdue %}
-                                            <div class="status-badge status-overdue">
-                                                <i class="bi bi-x-lg"></i>
-                                            </div>
-                                            {% else %}
-                                            <div class="status-badge status-pending">
-                                                <i class="bi bi-clock"></i>
-                                            </div>
-                                            {% endif %}
-                                        </button>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </details>
-                        {% endif %}
-
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 700; color: var(--wn-emerald);">
-                            <i class="bi bi-patch-check-fill"></i> Verified Activities
-                        </div>
-
-                        {% load accounts_tags %}
-                        {% for activity in point.top_5_verified_activities %}
-                        <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-primary); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
-                                {{ activity.description|truncatewords:20 }}
-                            </div>
-                            <div class="d-flex justify-content-between align-items-end mt-2">
-                                <span class="wn-badge-level" style="font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; background-color: var(--wn-bg-mute);">{{ activity.get_level_display }}</span>
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities for this point yet.
-                        </p>
-                        {% endfor %}
-                    </div>
-                </div>
+          <!-- Progress Bar -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-500 uppercase tracking-wider">{% trans "Progress" %}</span>
+              <span class="text-secondary">{{ point.progress_fraction }} ({{ point.completion_percentage }}%)</span>
             </div>
-            {% empty %}
-            <div class="wn-empty-state">
-                <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
-                <h4>No manifesto points</h4>
-                <p class="mb-0">No manifesto points found for this party.</p>
+            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full bg-secondary rounded-full transition-all" style="width: {{ point.completion_percentage }}%"></div>
+            </div>
+          </div>
+
+          <!-- Sub-Manifestos -->
+          {% if point.sub_manifestos.all %}
+          <div class="space-y-2">
+            <h6 class="text-xs font-bold uppercase tracking-widest text-slate-500">{% trans "Sub-Manifestos" %}</h6>
+            {% for sub in point.sub_manifestos.all %}
+            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-sm font-medium text-slate-800 {% if sub.is_completed %}line-through text-slate-400{% endif %}">{{ sub.title }}</span>
+                <span class="text-[10px] text-slate-500 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[10px]">calendar_month</span>
+                  {{ sub.effective_deadline|to_bs|default:"No deadline" }}
+                  {% if sub.is_inherited_deadline %}<span class="text-slate-400">(inherited)</span>{% endif %}
+                </span>
+              </div>
+              <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors"
+                      data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
+                      {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+                {% if sub.is_completed %}
+                <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                {% elif sub.is_overdue %}
+                <span class="material-symbols-outlined text-rose-500">cancel</span>
+                {% else %}
+                <span class="material-symbols-outlined text-slate-400 hover:text-blue-500">radio_button_unchecked</span>
+                {% endif %}
+              </button>
             </div>
             {% endfor %}
-        </div>
-    </div>
+          </div>
+          {% endif %}
 
-    <!-- Commitments Panel -->
-    <div id="commitment-panel" class="wn-tab-panel" style="display: none;">
-        <div class="wn-accordion accordion" id="commitmentAccordion">
-            {% for commitment in commitments %}
-            <div class="accordion-item" id="commitment-{{ commitment.id }}">
-                <h2 class="accordion-header" id="c-heading{{ commitment.id }}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#c-collapse{{ commitment.id }}" aria-expanded="false"
-                        aria-controls="c-collapse{{ commitment.id }}">
-                        <span>{{ commitment.title }}</span>
-                        {% if commitment.calculated_deadline %}
-                        <span class="wn-deadline-badge wn-deadline-badge-violet ms-3">
-                            <i class="bi bi-calendar-event me-1"></i>{{ commitment.calculated_deadline|to_bs }}
-                        </span>
-                        {% endif %}
-                    </button>
-                </h2>
-                <div id="c-collapse{{ commitment.id }}" class="accordion-collapse collapse" aria-labelledby="c-heading{{ commitment.id }}"
-                    data-bs-parent="#commitmentAccordion">
-                    <div class="accordion-body">
-                        <div class="mb-3 pb-2 border-bottom d-flex align-items-center">
-                            <a href="#commitment-{{ commitment.id }}" class="text-muted text-decoration-none" title="Link to this commitment">
-                                <i class="bi bi-link-45deg fs-5"></i>
-                            </a>
-                            <span class="ms-3">
-                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-primary me-2 text-decoration-none fs-5" title="Share on Facebook"><i class="bi bi-facebook"></i></a>
-                                <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-dark me-2 text-decoration-none fs-5" title="Share on X (Twitter)"><i class="bi bi-twitter-x"></i></a>
-                                <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-success text-decoration-none fs-5" title="Share on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-                            </span>
-                        </div>
-                        <p class="mb-3" style="font-size: 0.88rem; color: var(--wn-text-muted); line-height: 1.7;">
-                            {{ commitment.description }}
-                        </p>
-
-                        <div class="manifesto-progress-wrapper my-3">
-                            <div class="progress-label mb-2">
-                                <span>Implementation Progress</span>
-                                <span class="progress-fraction">{{ commitment.progress_fraction }}</span>
-                            </div>
-                            <div class="wn-progress">
-                                <div class="wn-progress-bar wn-progress-bar-violet" style="width: {{ commitment.completion_percentage }}%"></div>
-                            </div>
-                        </div>
-
-                        <!-- Sub-commitments -->
-                        {% if commitment.sub_commitments.all %}
-                        <details class="sub-manifesto-details mb-4">
-                            <summary>View Sub-Commitments</summary>
-                            <div class="sub-manifesto-list">
-                                {% for sub in commitment.sub_commitments.all %}
-                                <div class="sub-manifesto-item {% if sub.is_overdue %}overdue{% endif %}" id="sub-c-{{ sub.id }}">
-                                    <div class="sub-manifesto-content">
-                                        <h4 class="">{{ sub.title }}</h4>
-                                        <div class="sub-manifesto-deadline">
-                                            <i class="bi bi-calendar3 me-1"></i> 
-                                            {{ sub.effective_deadline|to_bs|default:"No deadline" }}
-                                            {% if sub.is_inherited_deadline %}
-                                            <span class="deadline-inherited ms-1">(inherited)</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                    <div class="sub-manifesto-actions">
-                                        <button class="status-toggle" 
-                                                data-pk="{{ sub.id }}" 
-                                                data-url="{% url 'toggle_subcommitment_completion' sub.id %}"
-                                                {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
-                                            {% if sub.is_completed %}
-                                            <div class="status-badge status-complete">
-                                                <i class="bi bi-check-lg"></i>
-                                            </div>
-                                            {% elif sub.is_overdue %}
-                                            <div class="status-badge status-overdue">
-                                                <i class="bi bi-x-lg"></i>
-                                            </div>
-                                            {% else %}
-                                            <div class="status-badge status-pending">
-                                                <i class="bi bi-clock"></i>
-                                            </div>
-                                            {% endif %}
-                                        </button>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </details>
-                        {% endif %}
-
-                        <div class="d-flex align-items-center gap-1 mb-2"
-                            style="font-size: 0.78rem; font-weight: 700; color: var(--wn-violet);">
-                            <i class="bi bi-patch-check-fill"></i> Verified Activities
-                        </div>
-
-                        {% for activity in commitment.top_5_verified_activities %}
-                        <div class="wn-activity-item mb-2" style="background: var(--wn-bg); border-radius: 6px; padding: 12px; border: 1px solid var(--wn-border);">
-                            <div class="d-flex align-items-center mb-2">
-                                {% with profile=activity.created_by|get_profile %}
-                                {% if profile and profile.image %}
-                                <img src="{{ profile.image.url }}" alt="{{ activity.created_by.username }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
-                                {% else %}
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; background-color: var(--wn-violet); color: white; font-size: 10px; font-weight: bold;">
-                                    {{ activity.created_by.first_name|first|default:activity.created_by.username|first|upper }}
-                                </div>
-                                {% endif %}
-                                {% endwith %}
-                                <span style="font-size: 0.85rem; font-weight: 500; color: var(--wn-text-main);">
-                                    {{ activity.created_by.first_name }} {{ activity.created_by.last_name|default:activity.created_by.username }}
-                                </span>
-                                <span class="ms-auto" style="font-size: 0.75rem; color: var(--wn-text-light);">{{ activity.created_at|to_bs }}</span>
-                            </div>
-                            <div class="vi-title" style="font-size: 0.95rem; font-weight: 600; color: var(--wn-text-main);">
-                                <a href="{{ activity.source_link }}" target="_blank" style="text-decoration: none; color: inherit;" class="hover-primary">
-                                    {{ activity.title }} <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>
-                                </a>
-                            </div>
-                            <div class="vi-desc mt-1 mb-2" style="font-size: 0.85rem; color: var(--wn-text-muted); line-height: 1.5;">
-                                {{ activity.description|truncatewords:20 }}
-                            </div>
-                        </div>
-                        {% empty %}
-                        <p style="font-size: 0.82rem; color: var(--wn-text-light); text-align: center; margin-top: 10px;">
-                            No verified activities for this commitment yet.
-                        </p>
-                        {% endfor %}
-                    </div>
+          <!-- Verified Activities -->
+          <div class="space-y-2">
+            <div class="flex items-center gap-1 text-xs font-bold text-emerald-600">
+              <span class="material-symbols-outlined text-[14px]">verified</span> {% trans "Verified Activities" %}
+            </div>
+            {% for activity in point.top_5_verified_activities %}
+            <div class="bg-slate-50 rounded-lg p-3 border border-slate-100">
+              <div class="flex items-center gap-2 mb-1">
+                {% with profile=activity.created_by|get_profile %}
+                {% if profile and profile.image %}
+                <img src="{{ profile.image.url }}" alt="" class="w-5 h-5 rounded-full object-cover">
+                {% else %}
+                <div class="w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-[9px] font-bold">
+                  {{ activity.created_by.username|first|upper }}
                 </div>
+                {% endif %}
+                {% endwith %}
+                <span class="text-xs font-medium text-slate-700">{{ activity.created_by.username }}</span>
+                <span class="text-[10px] text-slate-400 ml-auto">{{ activity.created_at|to_bs }}</span>
+              </div>
+              <a href="{{ activity.source_link }}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-on-surface hover:text-primary transition-colors" style="text-decoration:none;">
+                {{ activity.title }} <span class="material-symbols-outlined text-[12px] align-middle">open_in_new</span>
+              </a>
+              <p class="text-xs text-slate-500 mt-1">{{ activity.description|truncatewords:20 }}</p>
             </div>
             {% empty %}
-            <div class="wn-empty-state">
-                <div class="empty-icon"><i class="bi bi-clipboard-x"></i></div>
-                <h4>No commitments</h4>
-                <p class="mb-0">No commitments found for this party.</p>
+            <p class="text-xs text-slate-400 italic text-center py-2">{% trans "No verified activities for this point yet." %}</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">description</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No manifesto points" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "No manifesto points found for this party." %}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Commitments Panel -->
+  <div id="commitment-panel" class="space-y-4" style="display: none;">
+    {% for commitment in commitments %}
+    <div class="bg-white border border-slate-200 border-l-4 border-l-violet-500 rounded-xl shadow-sm overflow-hidden" id="commitment-{{ commitment.id }}">
+      <button class="accordion-toggle w-full flex items-center justify-between p-5 md:p-6 text-left hover:bg-slate-50 transition-colors" onclick="toggleAccordion(this)">
+        <div class="flex-1 min-w-0 pr-4">
+          <h4 class="font-headline font-bold text-on-surface text-base md:text-lg leading-snug">{{ commitment.title }}</h4>
+          {% if commitment.category and commitment.category != 'other' %}
+          <span class="inline-block px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-violet-100 text-violet-700 mt-1">{{ commitment.get_category_display }}</span>
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          {% if commitment.calculated_deadline %}
+          <span class="hidden md:flex items-center gap-1 bg-violet-50 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap">
+            <span class="material-symbols-outlined text-[12px]">event</span>{{ commitment.calculated_deadline|to_bs }}
+          </span>
+          {% endif %}
+          <span class="material-symbols-outlined text-slate-400 accordion-chevron transition-transform">expand_more</span>
+        </div>
+      </button>
+
+      <div class="accordion-body hidden border-t border-slate-100">
+        <div class="p-5 md:p-6 space-y-5">
+          <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
+            <a href="#commitment-{{ commitment.id }}" class="text-slate-400 hover:text-slate-600"><span class="material-symbols-outlined text-[18px]">link</span></a>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-blue-600 hover:text-blue-700" style="text-decoration:none;"><span class="text-sm font-bold">f</span></a>
+            <a href="https://twitter.com/intent/tweet?url={{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}&text={{ commitment.title|urlencode }}" target="_blank" class="text-slate-800" style="text-decoration:none;"><span class="text-sm font-bold">X</span></a>
+            <a href="https://api.whatsapp.com/send?text={{ commitment.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'commitment_detail' commitment.id %}" target="_blank" class="text-green-600" style="text-decoration:none;"><span class="material-symbols-outlined text-[18px]">chat</span></a>
+          </div>
+
+          <p class="text-sm text-slate-600 leading-relaxed">{{ commitment.description }}</p>
+
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs font-bold">
+              <span class="text-slate-500 uppercase tracking-wider">{% trans "Progress" %}</span>
+              <span class="text-violet-600">{{ commitment.progress_fraction }} ({{ commitment.completion_percentage }}%)</span>
+            </div>
+            <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div class="h-full bg-violet-500 rounded-full transition-all" style="width: {{ commitment.completion_percentage }}%"></div>
+            </div>
+          </div>
+
+          {% if commitment.sub_commitments.all %}
+          <div class="space-y-2">
+            <h6 class="text-xs font-bold uppercase tracking-widest text-slate-500">{% trans "Sub-Commitments" %}</h6>
+            {% for sub in commitment.sub_commitments.all %}
+            <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-sm font-medium text-slate-800 {% if sub.is_completed %}line-through text-slate-400{% endif %}">{{ sub.title }}</span>
+                <span class="text-[10px] text-slate-500 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[10px]">calendar_month</span>
+                  {{ sub.effective_deadline|to_bs|default:"No deadline" }}
+                  {% if sub.is_inherited_deadline %}<span class="text-slate-400">(inherited)</span>{% endif %}
+                </span>
+              </div>
+              <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors"
+                      data-url="{% url 'toggle_subcommitment_completion' sub.id %}"
+                      {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+                {% if sub.is_completed %}
+                <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                {% elif sub.is_overdue %}
+                <span class="material-symbols-outlined text-rose-500">cancel</span>
+                {% else %}
+                <span class="material-symbols-outlined text-slate-400 hover:text-violet-500">radio_button_unchecked</span>
+                {% endif %}
+              </button>
             </div>
             {% endfor %}
+          </div>
+          {% endif %}
+
+          <div class="space-y-2">
+            <div class="flex items-center gap-1 text-xs font-bold text-violet-600">
+              <span class="material-symbols-outlined text-[14px]">verified</span> {% trans "Verified Activities" %}
+            </div>
+            {% for activity in commitment.top_5_verified_activities %}
+            <div class="bg-slate-50 rounded-lg p-3 border border-slate-100">
+              <div class="flex items-center gap-2 mb-1">
+                {% with profile=activity.created_by|get_profile %}
+                {% if profile and profile.image %}
+                <img src="{{ profile.image.url }}" alt="" class="w-5 h-5 rounded-full object-cover">
+                {% else %}
+                <div class="w-5 h-5 rounded-full bg-violet-500 text-white flex items-center justify-center text-[9px] font-bold">
+                  {{ activity.created_by.username|first|upper }}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <span class="text-xs font-medium text-slate-700">{{ activity.created_by.username }}</span>
+                <span class="text-[10px] text-slate-400 ml-auto">{{ activity.created_at|to_bs }}</span>
+              </div>
+              <a href="{{ activity.source_link }}" target="_blank" rel="noopener noreferrer" class="text-sm font-semibold text-on-surface hover:text-violet-600 transition-colors" style="text-decoration:none;">
+                {{ activity.title }} <span class="material-symbols-outlined text-[12px] align-middle">open_in_new</span>
+              </a>
+              <p class="text-xs text-slate-500 mt-1">{{ activity.description|truncatewords:20 }}</p>
+            </div>
+            {% empty %}
+            <p class="text-xs text-slate-400 italic text-center py-2">{% trans "No verified activities for this commitment yet." %}</p>
+            {% endfor %}
+          </div>
         </div>
+      </div>
     </div>
+    {% empty %}
+    <div class="text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">handshake</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No commitments" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "No commitments found for this party." %}</p>
+    </div>
+    {% endfor %}
+  </div>
 </div>
- 
+
+<style>
+  .accordion-toggle[aria-expanded="true"] .accordion-chevron { transform: rotate(180deg); }
+</style>
+
 <script>
 function switchTab(btn, showId, hideId) {
     const parent = btn.parentElement;
-    parent.querySelectorAll('.wn-tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    parent.querySelectorAll('.wn-tab-btn').forEach(b => {
+      b.classList.remove('bg-white', 'shadow-sm', 'text-slate-900');
+      b.classList.add('text-slate-500');
+      const badge = b.querySelector('span:last-child');
+      if (badge) { badge.classList.remove('bg-primary', 'text-white'); badge.classList.add('bg-slate-200', 'text-slate-600'); }
+    });
+    btn.classList.remove('text-slate-500');
+    btn.classList.add('bg-white', 'shadow-sm', 'text-slate-900');
+    const activeBadge = btn.querySelector('span:last-child');
+    if (activeBadge) { activeBadge.classList.remove('bg-slate-200', 'text-slate-600'); activeBadge.classList.add('bg-primary', 'text-white'); }
     document.getElementById(showId).style.display = '';
     document.getElementById(hideId).style.display = 'none';
 }
 
+function toggleAccordion(btn) {
+    const body = btn.nextElementSibling;
+    const chevron = btn.querySelector('.accordion-chevron');
+    const isOpen = !body.classList.contains('hidden');
+    body.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', !isOpen);
+    chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    const toggles = document.querySelectorAll('.status-toggle');
-    toggles.forEach(toggle => {
+    document.querySelectorAll('.status-toggle').forEach(toggle => {
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
-            const url = this.getAttribute('data-url');
-            fetch(url, {
+            fetch(this.getAttribute('data-url'), {
                 method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                }
-            });
+                headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+            }).then(r => r.json()).then(data => { if (data.success) location.reload(); });
         });
     });
 
-    // Handle hash-based tab switching
     const hash = window.location.hash;
     if (hash && hash.startsWith('#commitment-')) {
-        const commitmentBtn = document.querySelector('.wn-tab-btn:nth-child(2)');
-        if (commitmentBtn) commitmentBtn.click();
-        setTimeout(() => {
-            const target = document.querySelector(hash);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 300);
+        document.querySelector('.wn-tab-btn:nth-child(2)')?.click();
+        setTimeout(() => { document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
+    } else if (hash) {
+        setTimeout(() => { document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
     }
 });
 </script>

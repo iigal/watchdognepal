@@ -16,15 +16,196 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5 py-5 text-center" style="min-height: 50vh; display: flex; flex-direction: column; justify-content: center;">
-    <div class="spinner-border text-primary mx-auto mb-3" role="status">
-        <span class="visually-hidden">Loading...</span>
+<div class="max-w-screen-md mx-auto px-6 pt-8 space-y-8">
+
+  <!-- Breadcrumb -->
+  <nav class="flex items-center gap-2 text-sm text-slate-500">
+    <a href="{% url 'home' %}" class="hover:text-primary transition-colors" style="text-decoration:none;">{% trans "Home" %}</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+    <a href="{% url 'manifesto_list' %}" class="hover:text-primary transition-colors" style="text-decoration:none;">{% trans "Manifestos" %}</a>
+    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+    <span class="text-on-surface font-medium truncate max-w-[200px]">{{ manifesto.title }}</span>
+  </nav>
+
+  <!-- Header Card -->
+  <div class="wn-card rounded-xl overflow-hidden">
+    <!-- Status Banner -->
+    <div class="{% if manifesto.is_completed %}bg-emerald-500{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-white">
+        <span class="material-symbols-outlined text-[18px]">
+          {% if manifesto.is_completed %}check_circle{% elif manifesto.is_overdue %}warning{% else %}pending{% endif %}
+        </span>
+        <span class="text-sm font-bold uppercase tracking-wider">
+          {% if manifesto.is_completed %}{% trans "Kept" %}{% elif manifesto.is_overdue %}{% trans "Delayed" %}{% else %}{% trans "In Progress" %}{% endif %}
+        </span>
+      </div>
+      <span class="text-white/80 text-sm font-medium">{{ manifesto.completion_percentage }}% {% trans "complete" %}</span>
     </div>
-    <h4>{% trans "Redirecting to manifesto..." %}</h4>
-    <p class="text-muted">{% trans "If you are not redirected automatically" %}, <a href="/#manifesto-{{ manifesto.id }}" class="text-decoration-none">{% trans "click here" %}</a>.</p>
+
+    <div class="p-6 space-y-6">
+      <!-- Party/Member Badge -->
+      <div class="flex items-center gap-3">
+        {% if manifesto.party and manifesto.party.logo %}
+        <img src="{{ manifesto.party.logo.url }}" alt="{{ manifesto.party.name }}" class="w-8 h-8 rounded-full object-cover">
+        {% endif %}
+        <div>
+          {% if manifesto.elected_member %}
+          <a href="{% url 'elected_member_detail' manifesto.elected_member.id %}" class="text-sm font-bold text-secondary hover:underline" style="text-decoration:none;">{{ manifesto.elected_member.name }}</a>
+          <span class="text-xs text-slate-400 ml-1">{{ manifesto.elected_member.constituency }}</span>
+          {% elif manifesto.party %}
+          <a href="{% url 'party_detail' manifesto.party.id %}" class="text-sm font-bold text-secondary hover:underline" style="text-decoration:none;">{{ manifesto.party.name }}</a>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Title & Description -->
+      <div>
+        <h1 class="font-headline text-2xl font-black text-on-surface leading-snug mb-3">{{ manifesto.title }}</h1>
+        <p class="text-slate-600 text-sm leading-relaxed">{{ manifesto.description }}</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-end">
+          <span class="text-xs text-slate-500">{% trans "Progress" %}</span>
+          <span class="text-sm font-bold text-on-surface">{{ manifesto.progress_fraction }} {% trans "completed" %}</span>
+        </div>
+        <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full {% if manifesto.is_completed %}bg-emerald-500{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} rounded-full transition-all" style="width: {{ manifesto.completion_percentage }}%"></div>
+        </div>
+      </div>
+
+      <!-- Deadline -->
+      {% if manifesto.calculated_deadline %}
+      <div class="flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-lg border border-slate-100">
+        <span class="material-symbols-outlined text-[18px] {% if manifesto.is_overdue %}text-rose-500{% else %}text-slate-400{% endif %}">calendar_month</span>
+        <div>
+          <span class="text-xs text-slate-500 uppercase tracking-wider">{% trans "Deadline" %}</span>
+          <p class="text-sm font-medium {% if manifesto.is_overdue %}text-rose-600{% else %}text-on-surface{% endif %}">
+            {{ manifesto.calculated_deadline }}
+            {% if manifesto.is_overdue %}<span class="text-rose-500 text-xs ml-1">({% trans "Overdue" %})</span>{% endif %}
+          </p>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Sub-Manifestos -->
+  {% if sub_manifestos %}
+  <div class="wn-card rounded-xl p-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <h3 class="font-headline text-lg font-bold text-on-surface">{% trans "Sub-Manifestos" %}</h3>
+      <span class="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-full">{{ manifesto.progress_fraction }}</span>
+    </div>
+    <div class="space-y-2">
+      {% for sub in sub_manifestos %}
+      <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
+        <div class="flex flex-col gap-1">
+          <span class="text-sm font-medium text-slate-800 {% if sub.is_completed %}line-through text-slate-400{% endif %}">{{ sub.title }}</span>
+          <span class="text-[10px] text-slate-500 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[10px]">calendar_month</span>
+            {{ sub.effective_deadline|default:"No deadline" }}
+            {% if sub.is_overdue %}<span class="text-rose-500 font-bold ml-1">{% trans "Overdue" %}</span>{% endif %}
+          </span>
+        </div>
+        <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors"
+                data-pk="{{ sub.id }}"
+                data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
+                {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
+          {% if sub.is_completed %}
+          <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+          {% elif sub.is_overdue %}
+          <span class="material-symbols-outlined text-rose-500">cancel</span>
+          {% else %}
+          <span class="material-symbols-outlined text-slate-400 hover:text-blue-500">radio_button_unchecked</span>
+          {% endif %}
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Verified Activities -->
+  {% if activities %}
+  <div class="wn-card rounded-xl p-6 space-y-4">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-emerald-500 text-[20px]">verified</span>
+      <h3 class="font-headline text-lg font-bold text-on-surface">{% trans "Verified Activities" %}</h3>
+    </div>
+    <div class="space-y-3">
+      {% for activity in activities %}
+      <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors">
+        <div class="flex items-start justify-between gap-3">
+          <div class="flex-1">
+            <h5 class="text-sm font-bold text-on-surface">{{ activity.title }}</h5>
+            <p class="text-xs text-slate-500 mt-1 line-clamp-2">{{ activity.description }}</p>
+          </div>
+          {% if activity.source_link %}
+          <a href="{{ activity.source_link }}" target="_blank" rel="noopener noreferrer" class="text-secondary hover:text-secondary/80 transition-colors flex-shrink-0" title="{% trans 'View source' %}">
+            <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+          </a>
+          {% endif %}
+        </div>
+        <div class="flex items-center gap-3 mt-2 text-[10px] text-slate-400">
+          <span>{{ activity.created_at|date:"M d, Y" }}</span>
+          <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[10px]">thumb_up</span> {{ activity.positive_votes }}
+          </span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Share Section -->
+  <div class="wn-card rounded-xl p-6">
+    <h3 class="font-headline text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">{% trans "Share This Manifesto" %}</h3>
+    <div class="flex flex-wrap gap-2">
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
+         class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" style="text-decoration:none;">
+        {% trans "Facebook" %}
+      </a>
+      <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ manifesto.title|urlencode }}" target="_blank" rel="noopener noreferrer"
+         class="flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-900 transition-colors" style="text-decoration:none;">
+        {% trans "Twitter" %}
+      </a>
+      <a href="https://wa.me/?text={{ manifesto.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
+         class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors" style="text-decoration:none;">
+        {% trans "WhatsApp" %}
+      </a>
+      <button onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Link',2000)"
+              class="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-200 transition-colors">
+        {% trans "Copy Link" %}
+      </button>
+    </div>
+  </div>
+
 </div>
+
 <script>
-    // Automatically redirect the user to the homepage anchored to the manifesto point
-    window.location.replace("/#manifesto-{{ manifesto.id }}");
+document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.status-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const url = this.getAttribute('data-url');
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) { location.reload(); }
+            });
+        });
+    });
+});
 </script>
 {% endblock %}

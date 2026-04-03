@@ -1,54 +1,64 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Political Parties — Watchdog Nepal{% endblock %}
+{% block title %}{% trans "Political Parties" %} — Watchdog Nepal{% endblock %}
 
 {% block content %}
-<div class="container mt-4 mb-5">
+<div class="max-w-screen-xl mx-auto px-6 pt-8 space-y-8">
 
-    <!-- Page Header -->
-    <div class="wn-section-header animate-fade-in-up">
-        <div class="section-icon blue">
-            <i class="bi bi-flag"></i>
-        </div>
-        <div>
-            <h2 class="mb-0">Political Parties</h2>
-            <p class="mb-0" style="font-size: 0.82rem; color: var(--wn-text-muted);">
-                Parties represented in Parliament
-            </p>
-        </div>
+  <!-- Page Header -->
+  <div class="space-y-2">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-secondary text-3xl">groups</span>
+      <div>
+        <h2 class="font-headline text-2xl font-black text-on-surface tracking-tight">{% trans "Political Parties" %}</h2>
+        <p class="text-sm text-slate-500">{% trans "Parties represented in Parliament" %}</p>
+      </div>
     </div>
+  </div>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-        {% for party in parties %}
-        <div class="col animate-fade-in-up" style="animation-delay: {{ forloop.counter0 }}00ms;">
-            <div class="wn-party-card">
-                <div class="card-logo-area">
-                    {% if party.logo %}
-                    <img src="{{ party.logo.url }}" alt="{{ party.name }}">
-                    {% else %}
-                    <i class="bi bi-building" style="font-size: 3rem; color: var(--wn-text-light);"></i>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <h5>{{ party.name }}</h5>
-                    <p class="text-truncate">{{ party.description }}</p>
-                    <div class="mt-auto pt-2">
-                        <a href="{% url 'party_detail' party.id %}" class="wn-btn-view">
-                            View Manifestos <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="wn-empty-state">
-                <div class="empty-icon"><i class="bi bi-flag"></i></div>
-                <h4>No parties found</h4>
-                <p class="mb-0">Parties will appear here once added via the admin panel.</p>
-            </div>
-        </div>
-        {% endfor %}
+  <!-- Search -->
+  <form method="GET" class="flex items-center gap-3 max-w-md">
+    <div class="relative flex-1">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">search</span>
+      <input type="text" name="q" value="{{ search_query }}" placeholder="{% trans 'Search parties...' %}"
+             class="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary transition-colors">
     </div>
+    <button type="submit" class="px-5 py-2.5 bg-secondary text-white text-sm font-bold rounded-xl hover:opacity-90 active:scale-95 transition-all">{% trans "Search" %}</button>
+    {% if search_query %}
+    <a href="{% url 'party_list' %}" class="text-sm text-slate-500 hover:text-primary transition-colors" style="text-decoration:none;">{% trans "Clear" %}</a>
+    {% endif %}
+  </form>
+
+  <!-- Party Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for party in parties %}
+    <a href="{% url 'party_detail' party.id %}" class="group block bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden" style="text-decoration:none;">
+      <div class="flex items-center justify-center h-36 bg-slate-50 border-b border-slate-100">
+        {% if party.logo %}
+        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="max-h-24 max-w-[120px] object-contain group-hover:scale-105 transition-transform">
+        {% else %}
+        <span class="material-symbols-outlined text-5xl text-slate-300">account_balance</span>
+        {% endif %}
+      </div>
+      <div class="p-5 space-y-2">
+        <h5 class="font-headline font-bold text-on-surface text-base group-hover:text-primary transition-colors">{{ party.name }}</h5>
+        <p class="text-sm text-slate-500 line-clamp-2">{{ party.description|default:"No description available." }}</p>
+        <div class="flex items-center gap-1 text-secondary text-xs font-bold uppercase tracking-widest pt-2">
+          <span>{% trans "View Manifestos" %}</span>
+          <span class="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">groups</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No parties found" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "Parties will appear here once added via the admin panel." %}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% include 'includes/pagination.html' %}
 </div>
 {% endblock %}
