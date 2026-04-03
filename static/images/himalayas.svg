@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMax slice">
+  <!-- Himalayan mountain range silhouette with snow caps -->
+
+  <!-- Sky gradient -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#87CEEB" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#B0D4E8" stop-opacity="0.1" />
+    </linearGradient>
+    <linearGradient id="mountain-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a5568" />
+      <stop offset="100%" stop-color="#2d3748" />
+    </linearGradient>
+    <linearGradient id="mountain-mid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#718096" />
+      <stop offset="100%" stop-color="#4a5568" />
+    </linearGradient>
+    <linearGradient id="snow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e2e8f0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Clouds layer -->
+  <g opacity="0.15">
+    <ellipse cx="200" cy="220" rx="120" ry="25" fill="white" />
+    <ellipse cx="500" cy="230" rx="150" ry="30" fill="white" />
+    <ellipse cx="800" cy="215" rx="130" ry="28" fill="white" />
+    <ellipse cx="1050" cy="225" rx="110" ry="22" fill="white" />
+  </g>
+
+  <!-- Far mountains (lighter) -->
+  <path d="M0 300 L0 200 L80 160 L150 190 L220 130 L300 170 L380 110 L450 150 L520 100 L580 140 L650 80 L720 130 L790 90 L860 140 L930 70 L1000 120 L1070 85 L1130 130 L1200 100 L1200 300Z"
+        fill="url(#mountain-mid)" opacity="0.4" />
+
+  <!-- Mid mountains -->
+  <path d="M0 300 L0 220 L60 180 L120 200 L200 140 L260 175 L340 120 L400 155 L480 95 L540 135 L600 85 L680 125 L740 75 L800 110 L880 60 L940 100 L1000 55 L1060 90 L1120 65 L1200 110 L1200 300Z"
+        fill="url(#mountain-dark)" opacity="0.6" />
+
+  <!-- Snow caps on mid mountains -->
+  <g fill="url(#snow)" opacity="0.7">
+    <!-- Everest-like peak -->
+    <path d="M480 95 L460 115 L475 108 L480 95 L485 108 L500 115Z" />
+    <!-- Peak 2 -->
+    <path d="M600 85 L585 102 L595 96 L600 85 L605 96 L615 102Z" />
+    <!-- Peak 3 -->
+    <path d="M740 75 L725 95 L735 88 L740 75 L745 88 L755 95Z" />
+    <!-- Main peak (tallest - Sagarmatha) -->
+    <path d="M880 60 L860 85 L870 75 L878 68 L880 60 L882 68 L890 75 L900 85Z" />
+    <!-- Peak 5 -->
+    <path d="M1000 55 L982 78 L992 70 L1000 55 L1008 70 L1018 78Z" />
+    <!-- Peak 6 -->
+    <path d="M1120 65 L1105 82 L1115 76 L1120 65 L1125 76 L1135 82Z" />
+  </g>
+
+  <!-- Foreground hills (darkest) -->
+  <path d="M0 300 L0 250 L100 230 L200 245 L350 220 L450 240 L600 215 L700 235 L850 210 L950 230 L1100 215 L1200 240 L1200 300Z"
+        fill="#1a202c" opacity="0.3" />
+
+  <!-- Snow on foreground ridges -->
+  <g fill="white" opacity="0.15">
+    <path d="M350 220 L330 228 L345 224 L350 220 L355 224 L370 228Z" />
+    <path d="M600 215 L585 222 L595 218 L600 215 L605 218 L615 222Z" />
+    <path d="M850 210 L835 218 L845 214 L850 210 L855 214 L865 218Z" />
+  </g>
+</svg>

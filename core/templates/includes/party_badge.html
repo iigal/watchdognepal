@@ -1,0 +1,14 @@
+{% comment %}
+Usage: {% include 'includes/party_badge.html' with party=obj.party %}
+Renders inline party badge with logo avatar and link to party detail.
+{% endcomment %}
+{% if party %}
+<a href="{% url 'party_detail' party.id %}" class="inline-flex items-center gap-1.5 bg-secondary/10 text-secondary pl-1 pr-2.5 py-0.5 rounded-full text-[10px] font-label font-bold uppercase tracking-widest hover:bg-secondary/20 transition-colors" style="text-decoration:none;">
+  {% if party.logo %}
+  <img src="{{ party.logo.url }}" alt="" class="w-4 h-4 rounded-full object-contain bg-white flex-shrink-0">
+  {% else %}
+  <span class="w-4 h-4 rounded-full bg-secondary text-white flex items-center justify-center text-[7px] flex-shrink-0">{{ party.name|first }}</span>
+  {% endif %}
+  {{ party.name|truncatewords:3 }}
+</a>
+{% endif %}

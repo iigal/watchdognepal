@@ -111,15 +111,42 @@
     body { font-family: 'Public Sans', sans-serif; background-color: #f8f9fa; }
     h1, h2, h3, .font-headline { font-family: 'Be Vietnam Pro', sans-serif; }
 
-    /* Nepali cultural background scene */
-    .nepal-scene-bg {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: 260px; pointer-events: none; z-index: 0;
-      opacity: 0.025;
+    /* Cultural background layers */
+    .wn-cultural-bg {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.035;
     }
-    @media (max-width: 768px) { .nepal-scene-bg { height: 180px; opacity: 0.02; } }
+    .wn-cultural-bg .wn-bg-himalayas {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 300px;
+    }
+    .wn-cultural-bg .wn-bg-rhododendron {
+      position: absolute; bottom: 20px; left: 20px; width: 180px; height: 180px; opacity: 0.8;
+    }
+    .wn-cultural-bg .wn-bg-flag {
+      position: absolute; top: 50%; right: 30px; transform: translateY(-50%); width: 80px; height: 140px; opacity: 0.6;
+    }
+    @media (max-width: 768px) {
+      .wn-cultural-bg { opacity: 0.02; }
+      .wn-cultural-bg .wn-bg-rhododendron,
+      .wn-cultural-bg .wn-bg-flag { display: none; }
+    }
 
-    /* Cultural border pattern for heroes */
+    /* Newari border pattern for heroes */
+    .wn-newari-border {
+      position: relative;
+    }
+    .wn-newari-border::before,
+    .wn-newari-border::after {
+      content: '';
+      position: absolute; left: 0; right: 0; height: 6px;
+      background: repeating-linear-gradient(90deg,
+        #b1002c 0px, #b1002c 4px, transparent 4px, transparent 8px,
+        #003893 8px, #003893 12px, transparent 12px, transparent 16px);
+      opacity: 0.6;
+    }
+    .wn-newari-border::before { top: 0; border-radius: 12px 12px 0 0; }
+    .wn-newari-border::after { bottom: 0; border-radius: 0 0 12px 12px; }
+
+    /* Cultural border pattern for heroes (legacy compat) */
     .wn-cultural-border {
       position: relative;
       border-bottom: 3px solid #b1002c;
@@ -137,6 +164,19 @@
       background-size: cover;
       pointer-events: none;
     }
+
+    /* Sidebar styles */
+    .wn-sidebar-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; color: #475569; text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .wn-sidebar-link:hover { background: #f8fafc; color: #b1002c; }
+    .wn-sidebar-link .material-symbols-outlined { font-size: 18px; color: #94a3b8; }
+    .wn-sidebar-link:hover .material-symbols-outlined { color: #b1002c; }
+    .wn-sidebar-link.active { background: #fef2f2; color: #b1002c; }
+    .wn-sidebar-link.active .material-symbols-outlined { color: #b1002c; }
 
     /* Dropdown menus */
     .nav-dropdown { position: relative; }
@@ -173,83 +213,12 @@
 
 <body class="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
 
-  <!-- Nepal Cultural Scene Background (Himalayas + Grassland + Flag) -->
-  <svg class="nepal-scene-bg" viewBox="0 0 1600 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-    <!-- Sky gradient -->
-    <defs>
-      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#003893"/>
-        <stop offset="100%" stop-color="#87CEEB"/>
-      </linearGradient>
-    </defs>
-    <rect width="1600" height="300" fill="url(#sky)"/>
-
-    <!-- Himalayan peaks (snow-capped) -->
-    <path d="M0,180 L80,120 L160,150 L240,60 L320,100 L400,30 L480,80 L560,50 L640,90 L720,40 L800,70 L880,45 L960,85 L1040,55 L1120,95 L1200,65 L1280,110 L1360,75 L1440,130 L1520,100 L1600,140 L1600,300 L0,300 Z" fill="#6B7280"/>
-    <!-- Snow caps -->
-    <path d="M240,60 L270,80 L210,80 Z" fill="white"/>
-    <path d="M400,30 L435,55 L365,55 Z" fill="white"/>
-    <path d="M560,50 L590,72 L530,72 Z" fill="white"/>
-    <path d="M720,40 L755,65 L685,65 Z" fill="white"/>
-    <path d="M880,45 L910,67 L850,67 Z" fill="white"/>
-    <path d="M1040,55 L1070,77 L1010,77 Z" fill="white"/>
-    <path d="M1200,65 L1230,87 L1170,87 Z" fill="white"/>
-
-    <!-- Middle hills -->
-    <path d="M0,210 L100,180 L200,195 L350,170 L500,190 L650,175 L800,200 L950,180 L1100,195 L1250,185 L1400,200 L1600,190 L1600,300 L0,300 Z" fill="#4B5563"/>
-
-    <!-- Grassland/terrace hills -->
-    <path d="M0,250 L150,235 L300,245 L450,230 L600,240 L750,225 L900,240 L1050,230 L1200,245 L1350,235 L1600,250 L1600,300 L0,300 Z" fill="#15803D"/>
-
-    <!-- Grassland foreground -->
-    <path d="M0,270 L200,260 L400,268 L600,258 L800,265 L1000,255 L1200,263 L1400,258 L1600,265 L1600,300 L0,300 Z" fill="#166534"/>
-
-    <!-- Nepal Flag (proper pennant shape, positioned right) -->
-    <g transform="translate(1380,60) scale(0.55)">
-      <!-- Flag pole -->
-      <rect x="-4" y="-10" width="6" height="240" fill="#5B4A2F" rx="2"/>
-      <!-- Blue border -->
-      <path d="M2,0 L140,70 L60,70 L140,140 L2,140 Z" fill="#003893"/>
-      <!-- Red fill -->
-      <path d="M8,8 L124,65 L60,65 L124,130 L8,130 Z" fill="#DC143C"/>
-      <!-- Moon (crescent) -->
-      <circle cx="52" cy="35" r="14" fill="white"/>
-      <circle cx="56" cy="31" r="11" fill="#DC143C"/>
-      <!-- Sun (12-point) -->
-      <circle cx="52" cy="100" r="12" fill="white"/>
-      <g transform="translate(52,100)" fill="white">
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(0)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(30)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(60)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(90)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(120)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(150)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(180)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(210)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(240)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(270)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(300)"/>
-        <polygon points="0,-20 2,-7 -2,-7" transform="rotate(330)"/>
-      </g>
-    </g>
-
-    <!-- Stupa silhouette (left side, Nepali culture) -->
-    <g transform="translate(120,180)" fill="#374151">
-      <rect x="-8" y="-60" width="16" height="60"/>
-      <rect x="-20" y="-70" width="40" height="12" rx="2"/>
-      <polygon points="0,-100 -25,-70 25,-70"/>
-      <circle cx="0" cy="-105" r="6"/>
-      <rect x="-2" y="-120" width="4" height="10"/>
-    </g>
-
-    <!-- Temple silhouette (pagoda style) -->
-    <g transform="translate(1450,195)" fill="#374151">
-      <rect x="-12" y="-50" width="24" height="50"/>
-      <polygon points="-30,-50 30,-50 0,-70"/>
-      <polygon points="-22,-70 22,-70 0,-85"/>
-      <rect x="-1" y="-95" width="2" height="12"/>
-    </g>
-  </svg>
+  <!-- Nepali Cultural Background -->
+  <div class="wn-cultural-bg" aria-hidden="true">
+    <img src="{% static 'images/himalayas.svg' %}" alt="" class="wn-bg-himalayas" loading="lazy">
+    <img src="{% static 'images/rhododendron.svg' %}" alt="" class="wn-bg-rhododendron" loading="lazy">
+    <img src="{% static 'images/nepal-flag.svg' %}" alt="" class="wn-bg-flag" loading="lazy">
+  </div>
 
   <!-- TopNavBar Implementation -->
   <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
@@ -409,28 +378,38 @@
     });
   </script>
 
-  <!-- Flash Messages -->
-  {% if messages %}
-  <div class="max-w-7xl mx-auto mt-24 px-8">
-    {% for message in messages %}
-    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-blue-100 text-blue-800 border-l-4 border-blue-500{% endif %} flex justify-between items-center">
-      <div class="flex items-center">
-        <span class="material-symbols-outlined mr-2">{% if message.tags == 'success' %}check_circle{% elif message.tags == 'error' %}error{% else %}info{% endif %}</span>
-        {{ message }}
+  <!-- Main Layout Container -->
+  <div class="max-w-screen-xl mx-auto px-4 md:px-8 pt-24 pb-20 relative z-10">
+    <!-- Flash Messages -->
+    {% if messages %}
+    <div class="mb-6">
+      {% for message in messages %}
+      <div class="mb-3 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% elif message.tags == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-blue-100 text-blue-800 border-l-4 border-blue-500{% endif %} flex justify-between items-center">
+        <div class="flex items-center">
+          <span class="material-symbols-outlined mr-2">{% if message.tags == 'success' %}check_circle{% elif message.tags == 'error' %}error{% else %}info{% endif %}</span>
+          {{ message }}
+        </div>
+        <button onclick="this.parentElement.style.display='none'" class="text-gray-500 hover:text-gray-700">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
-      <button onclick="this.parentElement.style.display='none'" class="text-gray-500 hover:text-gray-700">
-        <span class="material-symbols-outlined">close</span>
-      </button>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
-  {% endif %}
+    {% endif %}
 
-  <!-- Main Content -->
-  <main class="flex-1 {% if not messages %}pt-24{% endif %} pb-20">
-    {% block content %}
-    {% endblock %}
-  </main>
+    <div class="flex gap-8">
+      <!-- Main Content -->
+      <main class="flex-1 min-w-0">
+        {% block content %}
+        {% endblock %}
+      </main>
+
+      <!-- Sidebar (desktop only) -->
+      <aside class="hidden lg:block w-64 flex-shrink-0 space-y-5">
+        {% include 'includes/sidebar.html' %}
+      </aside>
+    </div>
+  </div>
 
   <!-- Footer Implementation -->
   <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 mt-24">
