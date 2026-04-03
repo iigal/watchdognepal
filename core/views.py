@@ -138,7 +138,11 @@ def activities_list(request):
     status = request.GET.get('status')
     sort = request.GET.get('sort', 'newest')
 
-    activities = Activity.objects.all()
+    activities = Activity.objects.select_related(
+        'manifesto_point__party', 'manifesto_point__elected_member',
+        'commitment__party', 'commitment__elected_member',
+        'created_by'
+    )
 
     if level and level != 'All':
         activities = activities.filter(level__iexact=level)
@@ -157,9 +161,13 @@ def activities_list(request):
     paginator = Paginator(activities, 20)
     page_obj = paginator.get_page(request.GET.get('page'))
 
+    all_activities = Activity.objects.all()
     context = {
         'activities': page_obj,
         'page_obj': page_obj,
+        'total_count': all_activities.count(),
+        'verified_count': all_activities.filter(status='verified').count(),
+        'unverified_count': all_activities.filter(status='unverified').count(),
     }
     return render(request, 'activities_list.html', context)
 
@@ -273,7 +281,30 @@ def elected_member_list(request):
         )
     paginator = Paginator(members, 16)
     page_obj = paginator.get_page(request.GET.get('page'))
-    return render(request, 'member_list.html', {'members': page_obj, 'page_obj': page_obj, 'search_query': q})
+
+    # Parliament composition stats
+    party_stats = PoliticalParty.objects.annotate(
+        member_count=models.Count('members')
+    ).filter(member_count__gt=0).order_by('-member_count')
+
+    total_members = ElectedMember.objects.count()
+    party_stat_list = []
+    colors = ['#b1002c', '#335ab4', '#705d00', '#15803d', '#7c3aed', '#ea580c', '#0891b2', '#be185d', '#4f46e5', '#059669']
+    for i, party in enumerate(party_stats):
+        party_stat_list.append({
+            'party': party,
+            'count': party.member_count,
+            'percentage': round((party.member_count / total_members) * 100, 1) if total_members else 0,
+            'color': colors[i % len(colors)],
+        })
+
+    return render(request, 'member_list.html', {
+        'members': page_obj,
+        'page_obj': page_obj,
+        'search_query': q,
+        'party_stats': party_stat_list,
+        'total_member_count': total_members,
+    })
 
 
 def elected_member_detail(request, member_id):
