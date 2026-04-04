@@ -10,44 +10,62 @@
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-center">
     <div class="lg:col-span-7">
       <h1 class="text-2xl md:text-4xl lg:text-5xl font-black font-headline text-on-surface leading-none mb-3 md:mb-4">
-        {% trans "Track Government" %} <br/><span class="text-primary">{% trans "Promises & Actions." %}</span>
+        {% trans "Track Government" %} <br /><span class="text-primary">{% trans "Promises & Actions." %}</span>
       </h1>
       <p class="text-sm md:text-base text-on-surface-variant font-medium leading-relaxed max-w-lg mb-4 md:mb-6">
         {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
         Hold your government accountable with data-driven transparency.{% endblocktrans %}
       </p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-primary font-black text-xl md:text-2xl">{{ total_manifesto_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Manifestos" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Manifestos" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-secondary font-black text-xl md:text-2xl">{{ total_commitment_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Commitments" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
-          <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
-        </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
-          <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete" %}</span>
-        </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Deadline Passed" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "In Progress" %}</span>
+        </div>
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_count }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Complete" %}</span>
+        </div>
+
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ total_registered_users }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Active Users" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Active Users" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Git Commits" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
-          <span class="block text-slate-700 font-black text-[15px] md:text-[18px] mt-1 mb-1">{{ last_updated_date|date:"j M Y"|default:"N/A" }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Last Updated" %}</span>
+        <div
+          class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-slate-700 font-black text-[15px] md:text-[18px] mt-1 mb-1">
+            {{ last_updated_date|date:"j M Y"|default:"N/A" }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">
+            {% trans "Last Updated" %}</span>
         </div>
       </div>
     </div>
@@ -57,11 +75,16 @@
       <div class="relative w-48 h-48 md:w-64 md:h-64">
         <canvas id="overviewDonutChart"></canvas>
       </div>
-      <div class="mt-4 flex flex-wrap justify-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 text-center">
-        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500"></span>{% trans "Complete" %}</span>
-        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-400"></span>{% trans "Approaching" %}</span>
-        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-500"></span>{% trans "In Progress" %}</span>
-        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-rose-500"></span>{% trans "Missed" %}</span>
+      <div
+        class="mt-4 flex flex-wrap justify-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 text-center">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500"></span>
+          {% trans "Complete" %}</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-400"></span>
+          {% trans "Approaching" %}</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-500"></span>
+          {% trans "In Progress" %}</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-rose-500"></span>
+          {% trans "Missed" %}</span>
       </div>
     </div>
   </div>
@@ -75,18 +98,20 @@
       <span class="text-primary font-black uppercase tracking-widest text-sm">{% trans "Active Track" %}</span>
       <h2 class="text-3xl font-black font-headline">{% trans "In Progress" %}</h2>
     </div>
-    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">{{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
+    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">
+      {{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% load accounts_tags %}
 
     {% for point in in_progress_points %}
-      {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' %}
+    {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' %}
     {% endfor %}
 
     {% for commitment in in_progress_commitments %}
-      {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' %}
+    {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail'
+    %}
     {% endfor %}
   </div>
   {% endif %}
@@ -98,16 +123,17 @@
       <span class="text-primary font-black uppercase tracking-widest text-sm">{% trans "Active Audit" %}</span>
       <h2 class="text-3xl font-black font-headline">{% trans "Approaching Deadlines" %}</h2>
     </div>
-    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">{{ mixed_upcoming_deadlines|length }} {% trans "upcoming" %}</span>
+    <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">
+      {{ mixed_upcoming_deadlines|length }} {% trans "upcoming" %}</span>
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% for item in mixed_upcoming_deadlines %}
-      {% if item.item_type == 'manifesto' %}
-        {% include 'includes/home_card.html' with item=item item_type='manifesto' detail_url_name='manifesto_detail' %}
-      {% elif item.item_type == 'commitment' %}
-        {% include 'includes/home_card.html' with item=item item_type='commitment' detail_url_name='commitment_detail' %}
-      {% endif %}
+    {% if item.item_type == 'manifesto' %}
+    {% include 'includes/home_card.html' with item=item item_type='manifesto' detail_url_name='manifesto_detail' %}
+    {% elif item.item_type == 'commitment' %}
+    {% include 'includes/home_card.html' with item=item item_type='commitment' detail_url_name='commitment_detail' %}
+    {% endif %}
     {% endfor %}
   </div>
   {% endif %}
@@ -115,33 +141,45 @@
   <!-- Government Parties — Tabbed Manifesto & Commitment Points -->
   <section class="mt-12 mb-12">
     {% for party in government_parties %}
-    <div class="bg-surface-container-lowest border border-slate-200 rounded-xl p-4 md:p-8 shadow-sm mb-8 transition-all hover:shadow-md">
+    <div
+      class="bg-surface-container-lowest border border-slate-200 rounded-xl p-4 md:p-8 shadow-sm mb-8 transition-all hover:shadow-md">
       <div class="flex items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-8 pb-4 md:pb-6 border-b border-slate-200">
         {% if party.logo %}
-        <img src="{{ party.logo.url }}" alt="{{ party.name }}" class="w-12 h-12 md:w-16 md:h-16 object-contain rounded-md flex-shrink-0">
+        <img src="{{ party.logo.url }}" alt="{{ party.name }}"
+          class="w-12 h-12 md:w-16 md:h-16 object-contain rounded-md flex-shrink-0">
         {% else %}
-        <div class="w-12 h-12 md:w-16 md:h-16 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+        <div
+          class="w-12 h-12 md:w-16 md:h-16 rounded-md bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
           <span class="material-symbols-outlined text-2xl md:text-3xl">account_balance</span>
         </div>
         {% endif %}
         <div class="min-w-0">
           <h4 class="text-base md:text-xl font-bold font-headline mb-1">
             {{ party.name }}
-            <span class="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ml-1 md:ml-2 align-middle">{% trans "In Govt" %}</span>
+            <span
+              class="inline-block bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-[9px] md:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ml-1 md:ml-2 align-middle">
+              {% trans "In Govt" %}</span>
           </h4>
           <p class="text-xs md:text-sm text-slate-500 m-0 line-clamp-2">{{ party.description }}</p>
         </div>
       </div>
 
       <!-- Tab Switcher -->
-      <div class="flex gap-1 md:gap-2 bg-slate-50 p-1 md:p-1.5 rounded-lg border border-slate-200 w-full md:w-fit mb-6 overflow-x-auto">
-        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all active bg-white shadow-sm text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
+      <div
+        class="flex gap-1 md:gap-2 bg-slate-50 p-1 md:p-1.5 rounded-lg border border-slate-200 w-full md:w-fit mb-6 overflow-x-auto">
+        <button
+          class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all active bg-white shadow-sm text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center"
+          onclick="switchPartyTab(this, 'manifesto-{{ party.id }}', 'commitment-{{ party.id }}')">
           <span class="material-symbols-outlined text-[16px] md:text-[18px]">description</span> {% trans "Manifestos" %}
-          <span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">{{ party.manifesto_points.all|length }}</span>
+          <span class="bg-primary text-white text-[10px] px-1.5 py-0.5 rounded-full">
+            {{ party.manifesto_points.all|length }}</span>
         </button>
-        <button class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center" onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
+        <button
+          class="wn-tab-btn flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-md text-xs md:text-sm font-semibold transition-all text-slate-500 hover:text-slate-900 whitespace-nowrap flex-1 md:flex-none justify-center"
+          onclick="switchPartyTab(this, 'commitment-{{ party.id }}', 'manifesto-{{ party.id }}')">
           <span class="material-symbols-outlined text-[16px] md:text-[18px]">handshake</span> {% trans "Commitments" %}
-          <span class="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">{{ party.commitments.all|length }}</span>
+          <span class="bg-slate-200 text-slate-600 text-[10px] px-1.5 py-0.5 rounded-full">
+            {{ party.commitments.all|length }}</span>
         </button>
       </div>
 
@@ -150,12 +188,14 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {% for point in party.manifesto_points.all %}
           {% if not point.id|is_shown:shown_manifesto_ids %}
-            {% url 'manifesto_detail' point.id as m_url %}
-            {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' id_attr='manifesto-pt-'|add:point.id|stringformat:"s" %}
+          {% url 'manifesto_detail' point.id as m_url %}
+          {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail'
+          id_attr='manifesto-pt-'|add:point.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
-            <p class="text-sm text-slate-500 italic">{% trans "This party has not added any manifesto points yet." %}</p>
+            <p class="text-sm text-slate-500 italic">{% trans "This party has not added any manifesto points yet." %}
+            </p>
           </div>
           {% endfor %}
         </div>
@@ -166,7 +206,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {% for commitment in party.commitments.all %}
           {% if not commitment.id|is_shown:shown_commitment_ids %}
-            {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' id_attr='commitment-'|add:commitment.id|stringformat:"s" %}
+          {% include 'includes/home_card.html' with item=commitment item_type='commitment'
+          detail_url_name='commitment_detail' id_attr='commitment-'|add:commitment.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
@@ -226,95 +267,95 @@
           datasets: [{
             data: [
               {{ total_completed_count }},
-              {{ total_missed_count }},
+          {{ total_missed_count }},
               {{ total_approaching_count }},
               {{ total_in_progress_count }}
             ],
-            backgroundColor: [
-              '#10b981', // emerald-500
-              '#f43f5e', // rose-500
-              '#fbbf24', // amber-400
-              '#3b82f6'  // blue-500
-            ],
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
+    backgroundColor: [
+      '#10b981', // emerald-500
+      '#f43f5e', // rose-500
+      '#fbbf24', // amber-400
+      '#3b82f6'  // blue-500
+    ],
+      borderWidth: 0,
+        hoverOffset: 4
+  }]
         },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '75%',
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return ' ' + context.label + ': ' + context.raw;
-                }
-              }
-            }
+    options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '75%',
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            return ' ' + context.label + ': ' + context.raw;
           }
         }
-      });
-    }
-
-    // Countdown timer logic
-    function updateCountdowns() {
-      const elements = document.querySelectorAll('.deadline-countdown');
-      const now = new Date().getTime();
-
-      elements.forEach(el => {
-        const deadlineDate = new Date(el.getAttribute('data-deadline'));
-        const deadlineTime = deadlineDate.getTime();
-        const distance = deadlineTime - now;
-
-        if (distance < 0) {
-          el.innerHTML = "Deadline Passed";
-          el.classList.add('text-rose-500');
-          return;
-        }
-
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-        let display = "";
-        if (days > 0) display += days + "d ";
-        display += hours + "h " + minutes + "m " + seconds + "s";
-        el.innerHTML = display;
-      });
-    }
-
-    updateCountdowns();
-    setInterval(updateCountdowns, 1000);
-
-    // Hash-based scrolling
-    const hash = window.location.hash;
-    if (hash) {
-      const target = document.querySelector(hash);
-      if (target) {
-        const tabPanel = target.closest('.wn-tab-panel');
-        if (tabPanel && tabPanel.style.display === 'none') {
-          const partySection = tabPanel.closest('.wn-party-section, .bg-surface-container-lowest');
-          if (partySection) {
-            const tabBtns = partySection.querySelectorAll('.wn-tab-btn');
-            const panels = partySection.querySelectorAll('.wn-tab-panel');
-            panels.forEach(p => p.style.display = 'none');
-            tabPanel.style.display = '';
-
-            tabBtns.forEach(b => {
-              if (b.getAttribute('onclick').includes(tabPanel.id)) {
-                b.click();
-              }
-            });
-          }
-        }
-        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
       }
     }
+  }
+      });
+    }
+
+  // Countdown timer logic
+  function updateCountdowns() {
+    const elements = document.querySelectorAll('.deadline-countdown');
+    const now = new Date().getTime();
+
+    elements.forEach(el => {
+      const deadlineDate = new Date(el.getAttribute('data-deadline'));
+      const deadlineTime = deadlineDate.getTime();
+      const distance = deadlineTime - now;
+
+      if (distance < 0) {
+        el.innerHTML = "Deadline Passed";
+        el.classList.add('text-rose-500');
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      let display = "";
+      if (days > 0) display += days + "d ";
+      display += hours + "h " + minutes + "m " + seconds + "s";
+      el.innerHTML = display;
+    });
+  }
+
+  updateCountdowns();
+  setInterval(updateCountdowns, 1000);
+
+  // Hash-based scrolling
+  const hash = window.location.hash;
+  if (hash) {
+    const target = document.querySelector(hash);
+    if (target) {
+      const tabPanel = target.closest('.wn-tab-panel');
+      if (tabPanel && tabPanel.style.display === 'none') {
+        const partySection = tabPanel.closest('.wn-party-section, .bg-surface-container-lowest');
+        if (partySection) {
+          const tabBtns = partySection.querySelectorAll('.wn-tab-btn');
+          const panels = partySection.querySelectorAll('.wn-tab-panel');
+          panels.forEach(p => p.style.display = 'none');
+          tabPanel.style.display = '';
+
+          tabBtns.forEach(b => {
+            if (b.getAttribute('onclick').includes(tabPanel.id)) {
+              b.click();
+            }
+          });
+        }
+      }
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+    }
+  }
   });
 </script>
 {% endblock %}
