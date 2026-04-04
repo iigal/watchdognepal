@@ -40,10 +40,17 @@ def home(request):
     total_approaching_count = 0
 
     import subprocess
+    import os
+    from django.conf import settings
     try:
-        git_commit_count = subprocess.check_output(['git', 'rev-list', '--count', 'HEAD']).decode('utf-8').strip()
-    except Exception:
-        git_commit_count = "0"
+        git_commit_count = subprocess.check_output(
+            ['git', 'rev-list', '--count', 'HEAD'], 
+            cwd=settings.BASE_DIR,
+            stderr=subprocess.STDOUT
+        ).decode('utf-8').strip()
+    except Exception as e:
+        print("Git Commit Count Error:", e)
+        git_commit_count = "0" 
 
     from django.contrib.auth.models import User
     total_registered_users = User.objects.count()
