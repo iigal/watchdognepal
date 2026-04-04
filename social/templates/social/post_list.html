@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Social Posts" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-8 space-y-6">
+
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <h1 class="text-2xl font-black font-headline text-on-surface">
+      <span class="material-symbols-outlined align-middle mr-1" style="font-size:28px">grid_view</span>
+      {% trans "Social Posts" %}
+    </h1>
+    <a href="{% url 'social:dashboard' %}" class="text-sm font-bold text-primary hover:text-primary/80">
+      ← {% trans "Dashboard" %}
+    </a>
+  </div>
+
+  <!-- Filter -->
+  <form method="get" class="flex flex-wrap gap-2">
+    <select name="status"
+      class="bg-surface-container border border-outline/20 rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-primary/30">
+      <option value="">{% trans "All Statuses" %}</option>
+      {% for val, label in status_choices %}
+      <option value="{{ val }}" {% if val == status_filter %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit"
+      class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
+      {% trans "Filter" %}
+    </button>
+  </form>
+
+  <!-- Post Grid -->
+  {% if page_obj %}
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for post in page_obj %}
+    <a href="{% url 'social:post_detail' pk=post.pk %}"
+      class="bg-surface-container rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all group">
+      <!-- Thumbnail -->
+      <div class="aspect-square bg-surface-container-highest overflow-hidden relative">
+        {% if post.branded_image %}
+        <img src="{{ post.branded_image.url }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+        {% elif post.original_image %}
+        <img src="{{ post.original_image.url }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform opacity-60">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-surface-variant/30" style="font-size:48px">
+            {% if post.is_image %}image{% else %}movie{% endif %}
+          </span>
+        </div>
+        {% endif %}
+        <!-- Type badge -->
+        <span class="absolute top-2 left-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase
+          {% if post.is_image %}bg-blue-500 text-white{% else %}bg-purple-500 text-white{% endif %}">
+          {{ post.get_post_type_display }}
+        </span>
+        <!-- Status badge -->
+        <span class="absolute top-2 right-2 px-2 py-0.5 rounded text-[10px] font-bold uppercase
+          {% if post.status == 'published' %}bg-blue-500 text-white
+          {% elif post.status == 'approved' %}bg-emerald-500 text-white
+          {% elif post.status == 'pending' %}bg-amber-500 text-white
+          {% elif post.status == 'rejected' %}bg-rose-500 text-white
+          {% else %}bg-slate-500 text-white{% endif %}">
+          {{ post.get_status_display }}
+        </span>
+      </div>
+      <!-- Info -->
+      <div class="p-4">
+        <h3 class="text-sm font-bold text-on-surface truncate">{{ post.title }}</h3>
+        <p class="text-xs text-on-surface-variant/60 mt-1">
+          {{ post.created_by.username }} • {{ post.created_at|timesince }} ago
+        </p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center gap-2 pt-4">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      ← {% trans "Previous" %}
+    </a>
+    {% endif %}
+    <span class="px-4 py-2 text-sm text-on-surface-variant">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      {% trans "Next" %} →
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-16">
+    <span class="material-symbols-outlined text-6xl text-on-surface-variant/30" style="font-size:64px">inbox</span>
+    <p class="text-on-surface-variant/50 text-sm mt-4">{% trans "No posts yet." %}</p>
+    <a href="{% url 'social:create_image' %}" class="mt-4 inline-block bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90">
+      {% trans "Create Your First Post" %}
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

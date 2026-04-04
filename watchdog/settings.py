@@ -73,6 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'core',
     'accounts',
+    'social',
     'widget_tweaks',
     'django_bootstrap5',
     "crispy_bootstrap5",

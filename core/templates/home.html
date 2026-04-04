@@ -85,7 +85,7 @@
       <h2 class="text-3xl font-black font-headline">{% trans "In Progress" %}</h2>
     </div>
     <span class="bg-surface-container-highest text-on-surface-variant px-4 py-1 rounded-full font-bold text-sm">
-      {{ in_progress_points|length|add:in_progress_commitments|length }} {% trans "active" %}</span>
+      {{ total_in_progress_count }} {% trans "active" %}</span>
   </header>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">

@@ -75,6 +75,8 @@ urlpatterns = [
     path('commitments/<int:pk>/', commitment_detail, name='commitment_detail'),
     path('subcommitment/toggle/<int:pk>/', toggle_subcommitment_completion, name='toggle_subcommitment_completion'),
     path('og/commitment/<int:pk>.png', commitment_og_image, name='commitment_og_image'),
+    # Social Media
+    path('social/', include('social.urls')),
 ]
 
 if settings.DEBUG:

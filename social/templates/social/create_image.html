@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Image Post" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 space-y-6">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-black font-headline text-on-surface">
+      <span class="material-symbols-outlined align-middle mr-1" style="font-size:28px">image</span>
+      {% trans "Create Image Post" %}
+    </h1>
+    <a href="{% url 'social:dashboard' %}" class="text-sm font-bold text-primary hover:text-primary/80">
+      ← {% trans "Back" %}
+    </a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="imagePostForm" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Template & Aspect Ratio -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-surface-container rounded-xl p-4">
+        <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+          {% trans "Template" %}
+        </label>
+        <select name="template_choice" id="id_template_choice"
+          class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30">
+          <option value="keyword_highlight">{% trans "Template A: Keyword Highlight" %}</option>
+          <option value="red_box_title">{% trans "Template B: Red Box Title" %}</option>
+        </select>
+      </div>
+      <div class="bg-surface-container rounded-xl p-4">
+        <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+          {% trans "Aspect Ratio" %}
+        </label>
+        <select name="aspect_ratio" id="id_aspect_ratio"
+          class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30">
+          <option value="1:1">{% trans "Square (1:1) — 1080×1080" %}</option>
+          <option value="4:5">{% trans "Portrait (4:5) — 1080×1350" %}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Title -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Title" %} *
+      </label>
+      <input type="text" name="title" id="id_title" required
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Enter post title' %}">
+    </div>
+
+    <!-- Caption with AI Generate -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs uppercase tracking-wider font-bold text-on-surface-variant">
+          {% trans "Caption" %}
+        </label>
+        <button type="button" id="generateCaptionBtn"
+          class="inline-flex items-center gap-1.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
+          <span class="material-symbols-outlined" style="font-size:14px">auto_awesome</span>
+          {% trans "AI Generate" %}
+        </button>
+      </div>
+      <textarea name="caption" id="id_caption" rows="4"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Write your caption here or use AI to generate one...' %}"></textarea>
+      <div id="captionLoading" class="hidden text-center py-2">
+        <span class="text-xs text-on-surface-variant animate-pulse">{% trans "Generating caption with AI..." %}</span>
+      </div>
+    </div>
+
+    <!-- Keywords (Template A only) -->
+    <div class="bg-surface-container rounded-xl p-4" id="keywordsSection">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Keywords to Highlight" %}
+        <span class="text-[10px] opacity-50 normal-case">({% trans "Template A only" %})</span>
+      </label>
+      <input type="text" name="keywords" id="id_keywords"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'e.g., corruption, accountability, development' %}">
+    </div>
+
+    <!-- Description (Template B only) -->
+    <div class="bg-surface-container rounded-xl p-4 hidden" id="descriptionSection">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Description" %}
+        <span class="text-[10px] opacity-50 normal-case">({% trans "Template B only" %})</span>
+      </label>
+      <textarea name="description" id="id_description" rows="2"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Short description for the red box template' %}"></textarea>
+    </div>
+
+    <!-- Image Upload with Cropper -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Upload Image" %} *
+      </label>
+      <input type="file" name="original_image" id="id_original_image" accept="image/*" required
+        class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-primary file:text-white hover:file:opacity-90">
+
+      <!-- Cropper Preview -->
+      <div id="cropperContainer" class="mt-4 hidden">
+        <div class="max-h-[500px] overflow-hidden rounded-lg">
+          <img id="cropperImage" src="" alt="Preview" class="max-w-full">
+        </div>
+        <div class="flex gap-2 mt-3">
+          <button type="button" id="cropBtn"
+            class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">crop</span>
+            {% trans "Crop & Apply" %}
+          </button>
+          <button type="button" id="resetCropBtn"
+            class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-lg text-sm font-bold hover:opacity-80 transition-opacity">
+            {% trans "Reset" %}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="flex justify-end gap-3">
+      <a href="{% url 'social:dashboard' %}"
+        class="bg-surface-container-highest text-on-surface-variant px-6 py-3 rounded-xl text-sm font-bold hover:opacity-80 transition-opacity">
+        {% trans "Cancel" %}
+      </a>
+      <button type="submit"
+        class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">send</span>
+        {% trans "Submit for Review" %}
+      </button>
+    </div>
+  </form>
+
+</div>
+
+<!-- Cropper.js CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+<script>
+(function() {
+  const templateSelect = document.getElementById('id_template_choice');
+  const keywordsSection = document.getElementById('keywordsSection');
+  const descriptionSection = document.getElementById('descriptionSection');
+  const aspectSelect = document.getElementById('id_aspect_ratio');
+  const fileInput = document.getElementById('id_original_image');
+  const cropperContainer = document.getElementById('cropperContainer');
+  const cropperImage = document.getElementById('cropperImage');
+  const generateBtn = document.getElementById('generateCaptionBtn');
+  let cropper = null;
+
+  // Toggle template-specific fields
+  templateSelect.addEventListener('change', function() {
+    if (this.value === 'keyword_highlight') {
+      keywordsSection.classList.remove('hidden');
+      descriptionSection.classList.add('hidden');
+    } else {
+      keywordsSection.classList.add('hidden');
+      descriptionSection.classList.remove('hidden');
+    }
+  });
+
+  // Get aspect ratio for Cropper.js
+  function getAspectRatio() {
+    const val = aspectSelect.value;
+    if (val === '4:5') return 4 / 5;
+    return 1; // 1:1
+  }
+
+  // Image upload → Cropper
+  fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      cropperImage.src = ev.target.result;
+      cropperContainer.classList.remove('hidden');
+
+      if (cropper) cropper.destroy();
+
+      cropper = new Cropper(cropperImage, {
+        aspectRatio: getAspectRatio(),
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Aspect ratio change updates cropper
+  aspectSelect.addEventListener('change', function() {
+    if (cropper) {
+      cropper.setAspectRatio(getAspectRatio());
+    }
+  });
+
+  // Crop & apply
+  document.getElementById('cropBtn').addEventListener('click', function() {
+    if (!cropper) return;
+
+    const canvas = cropper.getCroppedCanvas({
+      width: aspectSelect.value === '4:5' ? 1080 : 1080,
+      height: aspectSelect.value === '4:5' ? 1350 : 1080,
+    });
+
+    canvas.toBlob(function(blob) {
+      const file = new File([blob], 'cropped.jpg', { type: 'image/jpeg' });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+
+      cropper.destroy();
+      cropperContainer.classList.add('hidden');
+    }, 'image/jpeg', 0.95);
+  });
+
+  // Reset crop
+  document.getElementById('resetCropBtn').addEventListener('click', function() {
+    if (cropper) cropper.reset();
+  });
+
+  // AI Caption Generation
+  generateBtn.addEventListener('click', function() {
+    const title = document.getElementById('id_title').value;
+    if (!title) {
+      alert('Please enter a title first.');
+      return;
+    }
+
+    const description = document.getElementById('id_description').value || '';
+    const loading = document.getElementById('captionLoading');
+    const captionField = document.getElementById('id_caption');
+
+    generateBtn.disabled = true;
+    loading.classList.remove('hidden');
+
+    fetch("{% url 'social:generate_caption' %}", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+      },
+      body: JSON.stringify({ title: title, description: description }),
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.caption) {
+        captionField.value = data.caption;
+      } else {
+        alert('Error: ' + (data.error || 'Unknown error'));
+      }
+    })
+    .catch(err => alert('Network error: ' + err))
+    .finally(() => {
+      generateBtn.disabled = false;
+      loading.classList.add('hidden');
+    });
+  });
+})();
+</script>
+{% endblock %}

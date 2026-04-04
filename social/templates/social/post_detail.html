@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ post.title }} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
+          {% if post.status == 'published' %}bg-blue-500/10 text-blue-600
+          {% elif post.status == 'approved' %}bg-emerald-500/10 text-emerald-600
+          {% elif post.status == 'pending' %}bg-amber-500/10 text-amber-600
+          {% elif post.status == 'rejected' %}bg-rose-500/10 text-rose-600
+          {% else %}bg-slate-500/10 text-slate-500{% endif %}">
+          {{ post.get_status_display }}
+        </span>
+        <span class="text-xs text-on-surface-variant">{{ post.get_post_type_display }}</span>
+      </div>
+      <h1 class="text-2xl font-black font-headline text-on-surface">{{ post.title }}</h1>
+      <p class="text-xs text-on-surface-variant/60 mt-1">
+        {% trans "By" %} {{ post.created_by.username }} • {{ post.created_at|date:"j M Y, H:i" }}
+      </p>
+    </div>
+    <a href="{% url 'social:post_list' %}" class="text-sm font-bold text-primary hover:text-primary/80">
+      ← {% trans "All Posts" %}
+    </a>
+  </div>
+
+  <!-- Media Preview -->
+  <div class="bg-surface-container rounded-2xl p-4 shadow-sm">
+    {% if post.branded_image %}
+    <img src="{{ post.branded_image.url }}" alt="{{ post.title }}"
+      class="w-full max-h-[600px] object-contain rounded-xl mx-auto">
+    {% elif post.video_file %}
+    <video controls class="w-full max-h-[600px] rounded-xl mx-auto">
+      <source src="{{ post.video_file.url }}" type="video/mp4">
+    </video>
+    {% elif post.original_image %}
+    <img src="{{ post.original_image.url }}" alt="{{ post.title }}"
+      class="w-full max-h-[600px] object-contain rounded-xl mx-auto">
+    {% else %}
+    <div class="text-center py-16 text-on-surface-variant/30">
+      <span class="material-symbols-outlined" style="font-size:64px">image_not_supported</span>
+      <p class="mt-2 text-sm">{% trans "No media attached" %}</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Caption -->
+  {% if post.caption %}
+  <div class="bg-surface-container rounded-2xl p-6 shadow-sm">
+    <h2 class="text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">{% trans "Caption" %}</h2>
+    <p class="text-sm text-on-surface whitespace-pre-wrap">{{ post.caption }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Metadata -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="bg-surface-container rounded-xl p-3 text-center">
+      <span class="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">{% trans "Template" %}</span>
+      <span class="text-sm font-bold text-on-surface mt-1">{{ post.get_template_choice_display }}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-3 text-center">
+      <span class="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">{% trans "Ratio" %}</span>
+      <span class="text-sm font-bold text-on-surface mt-1">{{ post.get_aspect_ratio_display }}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-3 text-center">
+      <span class="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">{% trans "Approved By" %}</span>
+      <span class="text-sm font-bold text-on-surface mt-1">{{ post.approved_by.username|default:"—" }}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-3 text-center">
+      <span class="block text-xs font-bold text-on-surface-variant/60 uppercase tracking-wider">{% trans "Published" %}</span>
+      <span class="text-sm font-bold text-on-surface mt-1">{{ post.published_at|date:"j M Y"|default:"—" }}</span>
+    </div>
+  </div>
+
+  <!-- Published Platforms -->
+  {% if post.publish_targets %}
+  <div class="bg-emerald-500/10 rounded-xl p-4 flex items-center gap-3">
+    <span class="material-symbols-outlined text-emerald-500" style="font-size:20px">check_circle</span>
+    <span class="text-sm font-bold text-emerald-600">
+      {% trans "Published to:" %} {{ post.publish_targets|join:", " }}
+    </span>
+  </div>
+  {% endif %}
+
+  {% if post.publish_errors %}
+  <div class="bg-rose-500/10 rounded-xl p-4">
+    <span class="text-xs font-bold text-rose-500 uppercase tracking-wider">{% trans "Publishing Errors" %}</span>
+    <p class="text-sm text-rose-600 mt-1 whitespace-pre-wrap">{{ post.publish_errors }}</p>
+  </div>
+  {% endif %}
+
+  {% if post.rejection_reason %}
+  <div class="bg-rose-500/10 rounded-xl p-4">
+    <span class="text-xs font-bold text-rose-500 uppercase tracking-wider">{% trans "Rejection Reason" %}</span>
+    <p class="text-sm text-rose-600 mt-1">{{ post.rejection_reason }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Approval Actions -->
+  {% if can_approve %}
+  <div class="bg-surface-container rounded-2xl p-6 shadow-sm">
+    <h2 class="text-lg font-bold font-headline text-on-surface mb-4">{% trans "Review Actions" %}</h2>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <form method="post" action="{% url 'social:approve_post' pk=post.pk %}">
+        {% csrf_token %}
+        <button type="submit"
+          class="bg-emerald-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-emerald-600 transition-colors">
+          <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">check</span>
+          {% trans "Approve" %}
+        </button>
+      </form>
+      <form method="post" action="{% url 'social:approve_post' pk=post.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="publish_now" value="1">
+        <button type="submit"
+          class="bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-600 transition-colors">
+          <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">rocket_launch</span>
+          {% trans "Approve & Publish Now" %}
+        </button>
+      </form>
+      <button type="button" onclick="document.getElementById('rejectForm').classList.toggle('hidden')"
+        class="bg-rose-500 text-white px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-rose-600 transition-colors">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">close</span>
+        {% trans "Reject" %}
+      </button>
+    </div>
+
+    <form method="post" action="{% url 'social:reject_post' pk=post.pk %}" id="rejectForm" class="hidden mt-4">
+      {% csrf_token %}
+      <textarea name="reason" rows="2" placeholder="{% trans 'Reason for rejection...' %}"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm mb-2"></textarea>
+      <button type="submit"
+        class="bg-rose-500 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-rose-600 transition-colors">
+        {% trans "Confirm Rejection" %}
+      </button>
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

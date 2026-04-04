@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Create Reel" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 space-y-6">
+
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-black font-headline text-on-surface">
+      <span class="material-symbols-outlined align-middle mr-1" style="font-size:28px">movie</span>
+      {% trans "Create Reel" %}
+    </h1>
+    <a href="{% url 'social:dashboard' %}" class="text-sm font-bold text-primary hover:text-primary/80">
+      ← {% trans "Back" %}
+    </a>
+  </div>
+
+  <!-- ffmpeg.wasm Loading Indicator -->
+  <div id="ffmpegLoading"
+    class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center hidden">
+    <span class="material-symbols-outlined text-amber-500 animate-spin" style="font-size:24px">sync</span>
+    <p class="text-sm font-bold text-amber-600 mt-2" id="ffmpegLoadingText">{% trans "Loading video processor..." %}</p>
+    <div class="w-full h-2 bg-surface-container-highest rounded-full mt-2 overflow-hidden">
+      <div id="ffmpegProgress" class="h-full bg-amber-500 rounded-full transition-all" style="width:0%"></div>
+    </div>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" id="reelForm" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Title -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Title" %} *
+      </label>
+      <input type="text" name="title" id="id_title" required
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Enter reel title' %}">
+    </div>
+
+    <!-- Caption -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Caption" %}
+      </label>
+      <textarea name="caption" id="id_caption" rows="3"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Write caption...' %}"></textarea>
+    </div>
+
+    <!-- Image/Clip Uploads for Slideshow -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Upload Images for Slideshow" %}
+      </label>
+      <input type="file" id="slideshowImages" accept="image/*" multiple
+        class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-purple-500 file:text-white hover:file:opacity-90">
+      <p class="text-xs text-on-surface-variant/60 mt-1">{% trans "Select multiple images. Each will display for 3 seconds in the reel." %}</p>
+      <div id="imagePreviewGrid" class="grid grid-cols-4 gap-2 mt-3"></div>
+    </div>
+
+    <!-- Voiceover Generation -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs uppercase tracking-wider font-bold text-on-surface-variant">
+          {% trans "Voiceover Text" %}
+        </label>
+        <button type="button" id="generateVoiceoverBtn"
+          class="inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
+          <span class="material-symbols-outlined" style="font-size:14px">record_voice_over</span>
+          {% trans "Generate Voiceover" %}
+        </button>
+      </div>
+      <textarea id="voiceoverText" rows="3"
+        class="w-full bg-surface-container-highest border-0 rounded-lg px-3 py-2.5 text-sm font-medium focus:ring-2 focus:ring-primary/30"
+        placeholder="{% trans 'Enter text to convert to speech...' %}"></textarea>
+      <select id="voiceoverLang"
+        class="mt-2 bg-surface-container-highest border-0 rounded-lg px-3 py-2 text-sm font-medium">
+        <option value="ne">{% trans "Nepali" %}</option>
+        <option value="en">{% trans "English" %}</option>
+        <option value="hi">{% trans "Hindi" %}</option>
+      </select>
+      <div id="voiceoverLoading" class="hidden text-center py-2">
+        <span class="text-xs text-on-surface-variant animate-pulse">{% trans "Generating voiceover..." %}</span>
+      </div>
+      <audio id="voiceoverAudio" controls class="hidden w-full mt-3"></audio>
+    </div>
+
+    <!-- Background Music (optional) -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <label class="block text-xs uppercase tracking-wider font-bold text-on-surface-variant mb-2">
+        {% trans "Background Music" %}
+        <span class="text-[10px] opacity-50 normal-case">({% trans "optional" %})</span>
+      </label>
+      <input type="file" id="bgMusic" accept="audio/*"
+        class="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-slate-500 file:text-white hover:file:opacity-90">
+    </div>
+
+    <!-- Process & Preview -->
+    <div class="bg-surface-container rounded-xl p-4">
+      <button type="button" id="processReelBtn"
+        class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:18px">movie_creation</span>
+        {% trans "Process Reel in Browser" %}
+      </button>
+      <div id="processLoading" class="hidden text-center py-4">
+        <span class="material-symbols-outlined text-purple-500 animate-spin" style="font-size:32px">sync</span>
+        <p class="text-sm text-on-surface-variant mt-2" id="processStatus">{% trans "Processing video..." %}</p>
+      </div>
+      <video id="reelPreview" controls class="hidden w-full mt-4 rounded-xl max-h-[500px]"></video>
+    </div>
+
+    <!-- Hidden file input for the processed video -->
+    <input type="file" name="video_file" id="id_video_file" class="hidden">
+
+    <!-- Submit -->
+    <div class="flex justify-end gap-3">
+      <a href="{% url 'social:dashboard' %}"
+        class="bg-surface-container-highest text-on-surface-variant px-6 py-3 rounded-xl text-sm font-bold hover:opacity-80 transition-opacity">
+        {% trans "Cancel" %}
+      </a>
+      <button type="submit" id="submitReelBtn" disabled
+        class="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:16px">send</span>
+        {% trans "Submit for Review" %}
+      </button>
+    </div>
+  </form>
+
+</div>
+
+<!-- ffmpeg.wasm -->
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
+
+<script>
+(function() {
+  const { FFmpeg } = FFmpegWASM;
+  const { fetchFile } = FFmpegUtil;
+
+  let ffmpeg = null;
+  let voiceoverBlob = null;
+  let slideshowFiles = [];
+
+  // ── Image Previews ──
+  document.getElementById('slideshowImages').addEventListener('change', function(e) {
+    const grid = document.getElementById('imagePreviewGrid');
+    grid.innerHTML = '';
+    slideshowFiles = Array.from(e.target.files);
+    slideshowFiles.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const div = document.createElement('div');
+        div.className = 'relative rounded-lg overflow-hidden aspect-square bg-surface-container-highest';
+        div.innerHTML = `<img src="${ev.target.result}" class="w-full h-full object-cover"><span class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">${i+1}</span>`;
+        grid.appendChild(div);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+
+  // ── Voiceover Generation ──
+  document.getElementById('generateVoiceoverBtn').addEventListener('click', async function() {
+    const text = document.getElementById('voiceoverText').value;
+    if (!text) return alert('Enter voiceover text first.');
+
+    const lang = document.getElementById('voiceoverLang').value;
+    const loading = document.getElementById('voiceoverLoading');
+    const audio = document.getElementById('voiceoverAudio');
+
+    this.disabled = true;
+    loading.classList.remove('hidden');
+
+    try {
+      const response = await fetch("{% url 'social:generate_voiceover' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify({ text, lang }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Voiceover generation failed');
+      }
+
+      voiceoverBlob = await response.blob();
+      audio.src = URL.createObjectURL(voiceoverBlob);
+      audio.classList.remove('hidden');
+    } catch (err) {
+      alert('Error: ' + err.message);
+    } finally {
+      this.disabled = false;
+      loading.classList.add('hidden');
+    }
+  });
+
+  // ── Load ffmpeg.wasm ──
+  async function loadFFmpeg() {
+    if (ffmpeg) return ffmpeg;
+
+    const loadingDiv = document.getElementById('ffmpegLoading');
+    const progressBar = document.getElementById('ffmpegProgress');
+    loadingDiv.classList.remove('hidden');
+
+    ffmpeg = new FFmpeg();
+
+    ffmpeg.on('progress', ({ progress }) => {
+      const pct = Math.round(progress * 100);
+      document.getElementById('processStatus').textContent = `Processing: ${pct}%`;
+    });
+
+    await ffmpeg.load({
+      coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+      wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+    });
+
+    progressBar.style.width = '100%';
+    document.getElementById('ffmpegLoadingText').textContent = 'Video processor ready!';
+    setTimeout(() => loadingDiv.classList.add('hidden'), 1500);
+
+    return ffmpeg;
+  }
+
+  // ── Process Reel ──
+  document.getElementById('processReelBtn').addEventListener('click', async function() {
+    if (slideshowFiles.length === 0) return alert('Upload at least one image.');
+
+    const processLoading = document.getElementById('processLoading');
+    processLoading.classList.remove('hidden');
+    this.disabled = true;
+
+    try {
+      const ff = await loadFFmpeg();
+
+      // Write images to ffmpeg virtual filesystem
+      for (let i = 0; i < slideshowFiles.length; i++) {
+        const data = await fetchFile(slideshowFiles[i]);
+        const ext = slideshowFiles[i].name.split('.').pop() || 'jpg';
+        await ff.writeFile(`img${String(i).padStart(3, '0')}.${ext}`, data);
+
+        // Convert each image to a standardized format
+        await ff.exec([
+          '-y', '-i', `img${String(i).padStart(3, '0')}.${ext}`,
+          '-vf', 'scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black',
+          '-frames:v', '1',
+          `frame${String(i).padStart(3, '0')}.png`
+        ]);
+      }
+
+      // Create concat file for slideshow (3 seconds per image)
+      let concatContent = '';
+      for (let i = 0; i < slideshowFiles.length; i++) {
+        concatContent += `file 'frame${String(i).padStart(3, '0')}.png'\nduration 3\n`;
+      }
+      // Repeat last frame to avoid issues
+      concatContent += `file 'frame${String(slideshowFiles.length - 1).padStart(3, '0')}.png'\n`;
+
+      await ff.writeFile('concat.txt', concatContent);
+
+      // Build slideshow video
+      await ff.exec([
+        '-y', '-f', 'concat', '-safe', '0', '-i', 'concat.txt',
+        '-vsync', 'vfr', '-pix_fmt', 'yuv420p',
+        '-c:v', 'libx264', '-preset', 'fast',
+        'slideshow.mp4'
+      ]);
+
+      document.getElementById('processStatus').textContent = 'Merging audio...';
+
+      // Add audio if available
+      let finalFile = 'slideshow.mp4';
+
+      if (voiceoverBlob) {
+        const voData = await fetchFile(voiceoverBlob);
+        await ff.writeFile('voiceover.mp3', voData);
+
+        const bgInput = document.getElementById('bgMusic');
+        if (bgInput.files.length > 0) {
+          const bgData = await fetchFile(bgInput.files[0]);
+          await ff.writeFile('bgmusic.mp3', bgData);
+
+          // Mix voiceover + bg music
+          await ff.exec([
+            '-y', '-i', 'voiceover.mp3', '-i', 'bgmusic.mp3',
+            '-filter_complex', '[0:a]volume=1.0[vo];[1:a]volume=0.3[bg];[vo][bg]amix=inputs=2:duration=first',
+            '-ac', '2', 'mixed_audio.mp3'
+          ]);
+
+          await ff.exec([
+            '-y', '-i', 'slideshow.mp4', '-i', 'mixed_audio.mp3',
+            '-c:v', 'copy', '-c:a', 'aac', '-shortest',
+            'final.mp4'
+          ]);
+        } else {
+          await ff.exec([
+            '-y', '-i', 'slideshow.mp4', '-i', 'voiceover.mp3',
+            '-c:v', 'copy', '-c:a', 'aac', '-shortest',
+            'final.mp4'
+          ]);
+        }
+        finalFile = 'final.mp4';
+      } else {
+        const bgInput = document.getElementById('bgMusic');
+        if (bgInput.files.length > 0) {
+          const bgData = await fetchFile(bgInput.files[0]);
+          await ff.writeFile('bgmusic.mp3', bgData);
+          await ff.exec([
+            '-y', '-i', 'slideshow.mp4', '-i', 'bgmusic.mp3',
+            '-c:v', 'copy', '-c:a', 'aac', '-shortest',
+            'final.mp4'
+          ]);
+          finalFile = 'final.mp4';
+        }
+      }
+
+      // Read output
+      const outputData = await ff.readFile(finalFile);
+      const blob = new Blob([outputData.buffer], { type: 'video/mp4' });
+
+      // Preview
+      const preview = document.getElementById('reelPreview');
+      preview.src = URL.createObjectURL(blob);
+      preview.classList.remove('hidden');
+
+      // Set the hidden file input
+      const file = new File([blob], 'reel.mp4', { type: 'video/mp4' });
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      document.getElementById('id_video_file').files = dt.files;
+
+      // Enable submit
+      document.getElementById('submitReelBtn').disabled = false;
+      document.getElementById('processStatus').textContent = 'Reel ready!';
+
+    } catch (err) {
+      console.error(err);
+      alert('Error processing reel: ' + err.message);
+    } finally {
+      this.disabled = false;
+      processLoading.classList.add('hidden');
+    }
+  });
+})();
+</script>
+{% endblock %}
