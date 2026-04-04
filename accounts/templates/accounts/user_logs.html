@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Activity Log" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 space-y-6">
+
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div>
+      <h1 class="text-2xl md:text-3xl font-black font-headline text-on-surface">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:28px">timeline</span>
+        {% trans "My Activity Log" %}
+      </h1>
+      <p class="text-sm text-on-surface-variant mt-1">{% trans "Track your contributions and progress" %}</p>
+    </div>
+    <a href="{% url 'user_profile' %}"
+      class="text-sm font-bold text-primary hover:text-primary/80 transition-colors">
+      ← {% trans "Back to Profile" %}
+    </a>
+  </div>
+
+  <!-- Filter -->
+  <form method="get" class="flex flex-wrap gap-2">
+    <select name="action"
+      class="bg-surface-container border border-outline/20 rounded-xl px-3 py-2 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/30 focus:border-primary">
+      <option value="">{% trans "All Actions" %}</option>
+      {% for val, label in action_choices %}
+      <option value="{{ val }}" {% if val == action_filter %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit"
+      class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
+      {% trans "Filter" %}
+    </button>
+    {% if action_filter %}
+    <a href="{% url 'user_logs' %}"
+      class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-highest/80 transition-colors">
+      {% trans "Clear" %}
+    </a>
+    {% endif %}
+  </form>
+
+  <!-- Log List -->
+  {% if page_obj %}
+  <div class="space-y-2">
+    {% for log in page_obj %}
+    <div
+      class="flex items-start gap-3 p-4 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors shadow-sm">
+      <span class="text-xl flex-shrink-0 mt-0.5">{{ log.action_icon }}</span>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-bold text-on-surface">{{ log.get_action_display }}</p>
+        {% if log.description %}
+        <p class="text-xs text-on-surface-variant/70 mt-1">{{ log.description }}</p>
+        {% endif %}
+      </div>
+      <div class="flex-shrink-0 text-right">
+        {% if log.xp_change > 0 %}
+        <span class="text-xs font-bold text-emerald-500">+{{ log.xp_change }} XP</span>
+        {% elif log.xp_change < 0 %}
+        <span class="text-xs font-bold text-rose-500">{{ log.xp_change }} XP</span>
+        {% endif %}
+        <p class="text-[10px] text-on-surface-variant/50 mt-1">{{ log.created_at|date:"j M Y, H:i" }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center gap-2 pt-4">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      ← {% trans "Previous" %}
+    </a>
+    {% endif %}
+    <span class="px-4 py-2 text-sm text-on-surface-variant">
+      {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      {% trans "Next" %} →
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-16">
+    <span class="material-symbols-outlined text-6xl text-on-surface-variant/30 mb-4"
+      style="font-size:64px">inbox</span>
+    <p class="text-on-surface-variant/50 text-sm">{% trans "No activity logs yet." %}</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -232,6 +232,11 @@ def submit_activity(request):
             activity.created_by = request.user
             activity.level = 'federal'
             activity.save()
+            
+            # Award XP for activity submission
+            from accounts.gamification import award_xp, XP_ACTIVITY_SUBMITTED
+            award_xp(request.user, XP_ACTIVITY_SUBMITTED, f"Submitted activity: {activity.title}")
+            
             return redirect('home')
     else:
         form = ActivityForm()

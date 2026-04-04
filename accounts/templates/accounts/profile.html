@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Profile" %} — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8 space-y-8">
+
+  <!-- Profile Header -->
+  <div class="bg-surface-container rounded-2xl p-6 md:p-8 shadow-sm">
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+      <!-- Avatar -->
+      <div class="relative">
+        {% if profile.image %}
+        <img src="{{ profile.image.url }}" alt="{{ user.username }}"
+          class="w-24 h-24 rounded-full object-cover border-4 border-primary shadow-lg">
+        {% else %}
+        <div
+          class="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-3xl font-black shadow-lg">
+          {{ user.username|first|upper }}
+        </div>
+        {% endif %}
+        <!-- Level Badge -->
+        <div
+          class="absolute -bottom-2 -right-2 bg-primary text-white text-xs font-black px-2.5 py-1 rounded-full shadow-md">
+          Lv.{{ profile.level }}
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 text-center md:text-left">
+        <h1 class="text-2xl md:text-3xl font-black font-headline text-on-surface">{{ user.username }}</h1>
+        <p class="text-sm text-on-surface-variant mt-1">{{ profile.level_title }}</p>
+        {% if user.email %}
+        <p class="text-xs text-on-surface-variant/60 mt-1">{{ user.email }}</p>
+        {% endif %}
+
+        <!-- Verification Access Badge -->
+        <div class="mt-3">
+          {% if profile.has_verification_access %}
+          <span
+            class="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-bold">
+            <span class="material-symbols-outlined text-sm" style="font-size:14px">verified</span>
+            {% trans "Verification Access Active" %}
+          </span>
+          {% else %}
+          <span
+            class="inline-flex items-center gap-1.5 bg-slate-500/10 text-slate-500 px-3 py-1 rounded-full text-xs font-bold">
+            <span class="material-symbols-outlined text-sm" style="font-size:14px">lock</span>
+            {% trans "No Verification Access" %}
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- XP & Level Progress -->
+  <div class="bg-surface-container rounded-2xl p-6 shadow-sm">
+    <h2 class="text-lg font-bold font-headline text-on-surface mb-4">
+      <span class="material-symbols-outlined align-middle mr-1" style="font-size:20px">trending_up</span>
+      {% trans "Level Progress" %}
+    </h2>
+
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-sm font-bold text-on-surface-variant">
+        Lv.{{ profile.level }} {{ profile.level_title }}
+      </span>
+      <span class="text-sm font-bold text-primary">
+        {{ profile.xp }} / {{ profile.xp_for_next_level }} XP
+      </span>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="w-full h-4 bg-surface-container-highest rounded-full overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500"
+        style="width: {{ profile.xp_progress_percentage }}%"></div>
+    </div>
+
+    <p class="text-xs text-on-surface-variant/60 mt-2">
+      {% blocktrans with pct=profile.xp_progress_percentage %}{{ pct }}% to next level{% endblocktrans %}
+    </p>
+
+    <!-- Verification Window Info -->
+    <div class="mt-4 p-3 bg-surface-container-highest/50 rounded-xl">
+      <p class="text-xs text-on-surface-variant font-medium">
+        <span class="font-bold">{% trans "Verification Requirements:" %}</span>
+        {% blocktrans with req=profile.verification_window_info.required window=profile.verification_window_info.window %}
+        {{ req }} approved activities within {{ window }}
+        {% endblocktrans %}
+      </p>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="bg-surface-container rounded-xl p-4 text-center">
+      <span class="block text-2xl font-black text-primary">{{ profile.level }}</span>
+      <span class="text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Level" %}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-4 text-center">
+      <span class="block text-2xl font-black text-secondary">{{ profile.xp }}</span>
+      <span class="text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "XP" %}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-4 text-center">
+      <span class="block text-2xl font-black text-amber-500">{{ user.activity_set.count }}</span>
+      <span class="text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Activities" %}</span>
+    </div>
+    <div class="bg-surface-container rounded-xl p-4 text-center">
+      <span class="block text-2xl font-black text-emerald-500">{{ user.activity_set.filter.count }}</span>
+      <span class="text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Verified" %}</span>
+    </div>
+  </div>
+
+  <!-- Recent Activity Log -->
+  <div class="bg-surface-container rounded-2xl p-6 shadow-sm">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold font-headline text-on-surface">
+        <span class="material-symbols-outlined align-middle mr-1" style="font-size:20px">history</span>
+        {% trans "Recent Activity" %}
+      </h2>
+      <a href="{% url 'user_logs' %}"
+        class="text-xs font-bold text-primary hover:text-primary/80 transition-colors">
+        {% trans "View All" %} →
+      </a>
+    </div>
+
+    {% if recent_logs %}
+    <div class="space-y-3">
+      {% for log in recent_logs %}
+      <div
+        class="flex items-start gap-3 p-3 rounded-xl bg-surface-container-highest/30 hover:bg-surface-container-highest/50 transition-colors">
+        <span class="text-lg flex-shrink-0 mt-0.5">{{ log.action_icon }}</span>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-on-surface">{{ log.get_action_display }}</p>
+          {% if log.description %}
+          <p class="text-xs text-on-surface-variant/70 mt-0.5 truncate">{{ log.description }}</p>
+          {% endif %}
+        </div>
+        <div class="flex-shrink-0 text-right">
+          {% if log.xp_change > 0 %}
+          <span class="text-xs font-bold text-emerald-500">+{{ log.xp_change }} XP</span>
+          {% endif %}
+          <p class="text-[10px] text-on-surface-variant/50 mt-0.5">{{ log.created_at|timesince }} ago</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-center text-on-surface-variant/50 py-8 text-sm">
+      {% trans "No activity yet. Start by submitting your first report!" %}
+    </p>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

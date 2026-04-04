@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "All User Logs" %} — Admin — Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-8 space-y-6">
+
+  <!-- Header -->
+  <div>
+    <h1 class="text-2xl md:text-3xl font-black font-headline text-on-surface">
+      <span class="material-symbols-outlined align-middle mr-1" style="font-size:28px">admin_panel_settings</span>
+      {% trans "User Activity Logs" %}
+    </h1>
+    <p class="text-sm text-on-surface-variant mt-1">{% trans "Superadmin view — all user actions across the platform" %}</p>
+  </div>
+
+  <!-- Filters -->
+  <form method="get" class="flex flex-wrap gap-2">
+    <input type="text" name="user" value="{{ user_filter }}" placeholder="{% trans 'Search username...' %}"
+      class="bg-surface-container border border-outline/20 rounded-xl px-3 py-2 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/30 focus:border-primary w-48">
+    <select name="action"
+      class="bg-surface-container border border-outline/20 rounded-xl px-3 py-2 text-sm font-medium text-on-surface focus:ring-2 focus:ring-primary/30 focus:border-primary">
+      <option value="">{% trans "All Actions" %}</option>
+      {% for val, label in action_choices %}
+      <option value="{{ val }}" {% if val == action_filter %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit"
+      class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors">
+      {% trans "Filter" %}
+    </button>
+    {% if action_filter or user_filter %}
+    <a href="{% url 'admin_user_logs' %}"
+      class="bg-surface-container-highest text-on-surface-variant px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-highest/80 transition-colors">
+      {% trans "Clear" %}
+    </a>
+    {% endif %}
+  </form>
+
+  <!-- Log Table -->
+  {% if page_obj %}
+  <div class="bg-surface-container rounded-2xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-surface-container-highest/50">
+            <th class="px-4 py-3 text-left font-bold text-on-surface-variant text-xs uppercase tracking-wider">
+              {% trans "User" %}</th>
+            <th class="px-4 py-3 text-left font-bold text-on-surface-variant text-xs uppercase tracking-wider">
+              {% trans "Action" %}</th>
+            <th class="px-4 py-3 text-left font-bold text-on-surface-variant text-xs uppercase tracking-wider">
+              {% trans "Details" %}</th>
+            <th class="px-4 py-3 text-right font-bold text-on-surface-variant text-xs uppercase tracking-wider">
+              {% trans "XP" %}</th>
+            <th class="px-4 py-3 text-right font-bold text-on-surface-variant text-xs uppercase tracking-wider">
+              {% trans "Time" %}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline/10">
+          {% for log in page_obj %}
+          <tr class="hover:bg-surface-container-high/30 transition-colors">
+            <td class="px-4 py-3">
+              <span class="font-bold text-on-surface">{{ log.user.username }}</span>
+            </td>
+            <td class="px-4 py-3">
+              <span class="inline-flex items-center gap-1.5">
+                <span>{{ log.action_icon }}</span>
+                <span class="font-medium">{{ log.get_action_display }}</span>
+              </span>
+            </td>
+            <td class="px-4 py-3 text-on-surface-variant/70 max-w-xs truncate">
+              {{ log.description|truncatewords:15 }}
+            </td>
+            <td class="px-4 py-3 text-right">
+              {% if log.xp_change > 0 %}
+              <span class="font-bold text-emerald-500">+{{ log.xp_change }}</span>
+              {% elif log.xp_change < 0 %}
+              <span class="font-bold text-rose-500">{{ log.xp_change }}</span>
+              {% else %}
+              <span class="text-on-surface-variant/30">—</span>
+              {% endif %}
+            </td>
+            <td class="px-4 py-3 text-right text-xs text-on-surface-variant/50 whitespace-nowrap">
+              {{ log.created_at|date:"j M Y, H:i" }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center gap-2 pt-4">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      ← {% trans "Previous" %}
+    </a>
+    {% endif %}
+    <span class="px-4 py-2 text-sm text-on-surface-variant">
+      {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+    </span>
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}{% if user_filter %}&user={{ user_filter }}{% endif %}"
+      class="bg-surface-container px-4 py-2 rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors">
+      {% trans "Next" %} →
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="text-center py-16">
+    <span class="material-symbols-outlined text-6xl text-on-surface-variant/30" style="font-size:64px">inbox</span>
+    <p class="text-on-surface-variant/50 text-sm mt-4">{% trans "No logs found." %}</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

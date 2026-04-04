@@ -87,8 +87,38 @@ class ActivityAdmin(TranslationAdmin):
 
     @admin.action(description='Mark selected activities as verified')
     def mark_as_verified(self, request, queryset):
-        updated = queryset.update(status='verified')
-        self.message_user(request, f"{updated} activities marked as verified.")
+        from accounts.gamification import award_xp, XP_ACTIVITY_VERIFIED, XP_VERIFIED_OTHERS_ACTIVITY
+        from accounts.models import UserActivityLog
+        
+        unverified = queryset.filter(status='unverified')
+        count = 0
+        for activity in unverified:
+            activity.status = 'verified'
+            activity.save()
+            count += 1
+            
+            # Award XP to the activity author
+            award_xp(
+                activity.created_by,
+                XP_ACTIVITY_VERIFIED,
+                f"Activity verified: {activity.title}"
+            )
+            
+            # Log that the admin/verifier performed this action
+            if request.user != activity.created_by:
+                award_xp(
+                    request.user,
+                    XP_VERIFIED_OTHERS_ACTIVITY,
+                    f"Verified activity by {activity.created_by.username}: {activity.title}"
+                )
+                UserActivityLog.objects.create(
+                    user=request.user,
+                    action='activity_approved_by',
+                    description=f"Verified activity '{activity.title}' by {activity.created_by.username}",
+                    metadata={'activity_id': activity.id, 'author': activity.created_by.username}
+                )
+        
+        self.message_user(request, f"{count} activities marked as verified.")
 
 
 @admin.register(Vote)

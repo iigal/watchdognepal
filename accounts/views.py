@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.utils import timezone
 from .forms import RegisterForm
-from .models import UserProfile, SMSLog
+from .models import UserProfile, SMSLog, UserActivityLog
 from .utils import send_otp_sms, send_otp_email, get_client_ip
 from core.utils import get_country_from_ip
 import random
@@ -138,3 +138,72 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
+@login_required
+def profile_view(request):
+    """User profile page showing gamification stats."""
+    profile = request.user.profile
+    recent_logs = request.user.activity_logs.all()[:10]
+    
+    context = {
+        'profile': profile,
+        'recent_logs': recent_logs,
+    }
+    return render(request, 'accounts/profile.html', context)
+
+
+@login_required
+def user_logs_view(request):
+    """User-facing activity log page."""
+    logs = request.user.activity_logs.all()
+    
+    # Filter by action type
+    action_filter = request.GET.get('action', '')
+    if action_filter:
+        logs = logs.filter(action=action_filter)
+    
+    paginator = Paginator(logs, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'action_filter': action_filter,
+        'action_choices': UserActivityLog.ACTION_CHOICES,
+    }
+    return render(request, 'accounts/user_logs.html', context)
+
+
+@login_required
+def admin_logs_view(request):
+    """Superadmin dashboard to view all user logs globally."""
+    if not request.user.is_superuser:
+        messages.error(request, 'You do not have permission to access this page.')
+        return redirect('home')
+    
+    logs = UserActivityLog.objects.all().select_related('user')
+    
+    # Filters
+    action_filter = request.GET.get('action', '')
+    user_filter = request.GET.get('user', '')
+    
+    if action_filter:
+        logs = logs.filter(action=action_filter)
+    if user_filter:
+        logs = logs.filter(user__username__icontains=user_filter)
+    
+    paginator = Paginator(logs, 50)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'page_obj': page_obj,
+        'action_filter': action_filter,
+        'user_filter': user_filter,
+        'action_choices': UserActivityLog.ACTION_CHOICES,
+    }
+    return render(request, 'accounts/admin_logs.html', context)
