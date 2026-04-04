@@ -73,7 +73,11 @@
     <!-- Central Progress Donut Chart -->
     <div class="lg:col-span-5 flex flex-col items-center justify-center">
       <div class="relative w-48 h-48 md:w-64 md:h-64">
-        <canvas id="overviewDonutChart"></canvas>
+        <canvas id="overviewDonutChart"
+          data-complete="{{ total_completed_count|default:0 }}"
+          data-missed="{{ total_missed_count|default:0 }}"
+          data-approaching="{{ total_approaching_count|default:0 }}"
+          data-inprogress="{{ total_in_progress_count|default:0 }}"></canvas>
       </div>
       <div
         class="mt-4 flex flex-wrap justify-center gap-3 text-[10px] uppercase tracking-widest font-bold text-slate-500 text-center">
@@ -84,7 +88,7 @@
         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-blue-500"></span>
           {% trans "In Progress" %}</span>
         <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-rose-500"></span>
-          {% trans "Missed" %}</span>
+          {% trans "Delayed" %}</span>
       </div>
     </div>
   </div>
@@ -110,8 +114,7 @@
     {% endfor %}
 
     {% for commitment in in_progress_commitments %}
-    {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail'
-    %}
+    {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' %}
     {% endfor %}
   </div>
   {% endif %}
@@ -258,18 +261,18 @@
   document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('overviewDonutChart');
     if (ctx) {
+      const dComplete = parseInt(ctx.dataset.complete) || 0;
+      const dMissed = parseInt(ctx.dataset.missed) || 0;
+      const dApproaching = parseInt(ctx.dataset.approaching) || 0;
+      const dInProgress = parseInt(ctx.dataset.inprogress) || 0;
+
       new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: ['{% trans "Complete" %}', '{% trans "Deadline Missed" %}', '{% trans "Deadline Approaching" %}', '{% trans "In Progress" %}'],
           datasets: [{
-            data: [
-              {{ total_completed_count }},
-          {{ total_missed_count }},
-              {{ total_approaching_count }},
-    { { total_in_progress_count } }
-            ],
-    backgroundColor: [
+            data: [dComplete, dMissed, dApproaching, dInProgress],
+            backgroundColor: [
       '#10b981', // emerald-500
       '#f43f5e', // rose-500
       '#fbbf24', // amber-400

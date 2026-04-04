@@ -58,6 +58,23 @@ def home(request):
         latest_dates.append(latest_commitment.created_at)
         
     last_updated_date = max(latest_dates) if latest_dates else None
+    
+    # Reload points with prefetch for activities to calculate unified stats
+    all_gov_manifestos = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).select_related('party', 'elected_member', 'elected_member__party').prefetch_related('activities', 'sub_manifestos')
+    
+    all_gov_commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).select_related('party', 'elected_member', 'elected_member__party').prefetch_related('activities', 'sub_commitments')
+    
+    all_points = list(all_gov_manifestos) + list(all_gov_commitments)
+    
+    in_progress_points = []
+    in_progress_commitments = []
+    
+    upcoming_deadlines = []
+    upcoming_commitment_deadlines = []
 
     for p in all_points:
         if isinstance(p, ManifestoPoint):
@@ -67,80 +84,46 @@ def home(request):
             
         if p.is_completed:
             total_completed_count += 1
-        elif p.is_overdue:  # this calculates is_overdue property for each
-            total_missed_count += 1
         else:
-            calc_deadline = p.calculated_deadline
-            if calc_deadline and calc_deadline <= approaching_threshold:
-                total_approaching_count += 1
-            else:
+            has_verified_activity = any(a.status == 'verified' for a in p.activities.all())
+            if has_verified_activity:
                 total_in_progress_count += 1
+                if isinstance(p, ManifestoPoint):
+                    in_progress_points.append(p)
+                else:
+                    in_progress_commitments.append(p)
+            elif p.is_overdue:
+                total_missed_count += 1
+            else:
+                total_approaching_count += 1
+                if isinstance(p, ManifestoPoint):
+                    p.item_type = 'manifesto'
+                    upcoming_deadlines.append(p)
+                else:
+                    p.item_type = 'commitment'
+                    upcoming_commitment_deadlines.append(p)
 
-    # ─── Manifesto: In Progress ───
-    in_progress_points = ManifestoPoint.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-        activities__status='verified'
-    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
+    upcoming_deadlines.sort(key=lambda p: p.calculated_deadline if p.calculated_deadline else datetime.date.max)
+    upcoming_commitment_deadlines.sort(key=lambda c: c.calculated_deadline if c.calculated_deadline else datetime.date.max)
 
-    in_progress_ids = set(in_progress_points.values_list('id', flat=True))
-
-    # ─── Manifesto: Approaching Deadlines ───
-    manifesto_points = ManifestoPoint.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-    ).exclude(
-        id__in=in_progress_ids
-    ).select_related('party', 'elected_member', 'elected_member__party')
-    
-    upcoming_deadlines = []
-    for point in manifesto_points:
-        calc_deadline = point.calculated_deadline
-        if calc_deadline and calc_deadline >= today:
-            point.item_type = 'manifesto'
-            upcoming_deadlines.append(point)
-            
-    upcoming_deadlines.sort(key=lambda p: p.calculated_deadline)
     total_upcoming_manifesto = len(upcoming_deadlines)
-    upcoming_deadlines = upcoming_deadlines[:5]
-
-    deadline_ids = set(p.id for p in upcoming_deadlines)
-    shown_manifesto_ids = in_progress_ids | deadline_ids
-
-    # ─── Commitment: In Progress ───
-    in_progress_commitments = Commitment.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-        activities__status='verified'
-    ).select_related('party', 'elected_member', 'elected_member__party').distinct()
-
-    in_progress_commitment_ids = set(in_progress_commitments.values_list('id', flat=True))
-
-    # ─── Commitment: Approaching Deadlines ───
-    commitment_qs = Commitment.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-    ).exclude(
-        id__in=in_progress_commitment_ids
-    ).select_related('party', 'elected_member', 'elected_member__party')
-    
-    upcoming_commitment_deadlines = []
-    for c in commitment_qs:
-        calc_deadline = c.calculated_deadline
-        if calc_deadline and calc_deadline >= today:
-            c.item_type = 'commitment'
-            upcoming_commitment_deadlines.append(c)
-            
-    upcoming_commitment_deadlines.sort(key=lambda c: c.calculated_deadline)
     total_upcoming_commitment = len(upcoming_commitment_deadlines)
 
     mixed_upcoming_deadlines = upcoming_deadlines + upcoming_commitment_deadlines
-    mixed_upcoming_deadlines.sort(key=lambda item: item.calculated_deadline)
+    mixed_upcoming_deadlines.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
     mixed_upcoming_deadlines = mixed_upcoming_deadlines[:10]
 
-    commitment_deadline_ids = set(c.id for c in upcoming_commitment_deadlines[:5])  # Limit to 5 for ids tracker optionally
+    # Calculate sets of IDs to exclude them from the party tabs (so we don't show duplicates)
+    in_progress_ids = set(p.id for p in in_progress_points)
+    deadline_ids = set(p.id for p in upcoming_deadlines[:5])
+    shown_manifesto_ids = in_progress_ids | deadline_ids
+    
+    in_progress_commitment_ids = set(p.id for p in in_progress_commitments)
+    commitment_deadline_ids = set(p.id for p in upcoming_commitment_deadlines[:5])
     shown_commitment_ids = in_progress_commitment_ids | commitment_deadline_ids
+    
+    total_upcoming_deadline_count = total_upcoming_manifesto + total_upcoming_commitment
 
-    total_upcoming_deadline_count = cache.get('total_upcoming_deadline_count')
-    if total_upcoming_deadline_count is None:
-        total_upcoming_deadline_count = total_upcoming_manifesto + total_upcoming_commitment
-        cache.set('total_upcoming_deadline_count', total_upcoming_deadline_count, 60 * 60 * 24)  # 1 day
 
     context = {
         'government_parties': government_parties,
