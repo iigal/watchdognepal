@@ -445,7 +445,9 @@ def dashboard(request):
 # ─── Manifesto Views ──────────────────────────────────────────
 
 def manifesto_list(request):
-    manifestos = ManifestoPoint.objects.prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
+    manifestos = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
 
     q = request.GET.get('q', '').strip()
     if q:
@@ -469,7 +471,9 @@ def manifesto_list(request):
     page_obj = paginator.get_page(request.GET.get('page'))
 
     # Stats for the page
-    all_manifestos = ManifestoPoint.objects.all()
+    all_manifestos = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    )
     total_count = all_manifestos.count()
     completed_count = all_manifestos.filter(is_completed=True).count()
 
@@ -534,7 +538,9 @@ def manifesto_og_image(request, pk):
 # ─── Commitment Views ─────────────────────────────────────────
 
 def commitment_list(request):
-    commitments = Commitment.objects.prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
+    commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party').order_by('-created_at')
 
     q = request.GET.get('q', '').strip()
     if q:
@@ -549,7 +555,9 @@ def commitment_list(request):
     paginator = Paginator(commitments, 10)
     page_obj = paginator.get_page(request.GET.get('page'))
 
-    all_commitments = Commitment.objects.all()
+    all_commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    )
     total_count = all_commitments.count()
     completed_count = all_commitments.filter(is_completed=True).count()
 
