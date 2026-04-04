@@ -66,73 +66,11 @@
     {% load accounts_tags %}
 
     {% for point in in_progress_points %}
-    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="mb-6">
-        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
-        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
-          <a href="{% url 'manifesto_detail' point.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ point.title }}</a>
-        </h3>
-        <div class="flex items-center gap-2 mb-4 flex-wrap">
-          {% if point.party %}{% include 'includes/party_badge.html' with party=point.party %}{% endif %}
-          {% if point.elected_member %}{% include 'includes/member_badge.html' with member=point.elected_member %}{% endif %}
-        </div>
-        <div class="space-y-4">
-          <div class="flex justify-between text-sm font-semibold mb-2">
-            <span class="text-slate-600">{% trans "Progress" %} ({{ point.progress_fraction }})</span>
-            <span class="text-secondary">{{ point.completion_percentage }}%</span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-secondary h-full rounded-full" style="width: {{ point.completion_percentage }}%"></div>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
-        {% if point.calculated_deadline %}
-        <div class="text-xs">
-          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
-          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ point.calculated_deadline|date:'c' }}">Loading...</p>
-        </div>
-        {% endif %}
-        <a href="{% url 'manifesto_detail' point.id %}" class="p-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-colors text-decoration-none">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </a>
-      </div>
-    </div>
+      {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' %}
     {% endfor %}
 
     {% for commitment in in_progress_commitments %}
-    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="mb-6">
-        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
-        <h3 class="text-lg md:text-xl font-black font-headline mb-2 leading-tight">
-          <a href="{% url 'commitment_detail' commitment.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ commitment.title }}</a>
-        </h3>
-        <div class="flex items-center gap-2 mb-4 flex-wrap">
-          {% if commitment.party %}{% include 'includes/party_badge.html' with party=commitment.party %}{% endif %}
-          {% if commitment.elected_member %}{% include 'includes/member_badge.html' with member=commitment.elected_member %}{% endif %}
-        </div>
-        <div class="space-y-4">
-          <div class="flex justify-between text-sm font-semibold mb-2">
-            <span class="text-slate-600">{% trans "Progress" %} ({{ commitment.progress_fraction }})</span>
-            <span class="text-secondary">{{ commitment.completion_percentage }}%</span>
-          </div>
-          <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-            <div class="bg-secondary h-full rounded-full" style="width: {{ commitment.completion_percentage }}%"></div>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
-        {% if commitment.calculated_deadline %}
-        <div class="text-xs">
-          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
-          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ commitment.calculated_deadline|date:'c' }}">Loading...</p>
-        </div>
-        {% endif %}
-        <a href="{% url 'commitment_detail' commitment.id %}" class="p-2 bg-secondary/10 text-secondary rounded-lg hover:bg-secondary hover:text-white transition-colors text-decoration-none">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </a>
-      </div>
-    </div>
+      {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' %}
     {% endfor %}
   </div>
   {% endif %}
@@ -149,87 +87,11 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     {% for item in mixed_upcoming_deadlines %}
-    {% if item.item_type == 'manifesto' %}
-    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="mb-6">
-        <span class="bg-primary/10 text-primary text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Manifesto" %}</span>
-        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
-          <a href="{% url 'manifesto_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
-        </h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-primary">gavel</span>
-            <div>
-              <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
-              <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-secondary">construction</span>
-            <div>
-              <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
-              <p class="font-medium text-sm text-secondary">
-                {% if item.top_5_verified_activities %}
-                  {{ item.top_5_verified_activities.0.title }}
-                {% else %}
-                  {% trans "No verified action yet" %}
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
-        {% if item.calculated_deadline %}
-        <div class="text-xs">
-          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
-          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
-        </div>
-        {% endif %}
-        <span class="text-xs font-black text-primary uppercase"><a href="{% url 'manifesto_detail' item.id %}" class="text-primary text-decoration-none">{% trans "Audit Detail" %} &rarr;</a></span>
-      </div>
-    </div>
-    {% elif item.item_type == 'commitment' %}
-    <div class="bg-surface-container-lowest p-5 md:p-8 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300">
-      <div class="mb-6">
-        <span class="bg-secondary-container text-on-secondary-container text-[10px] font-black px-3 py-1 rounded-full uppercase inline-block mb-3">{% trans "Commitment" %}</span>
-        <h3 class="text-lg md:text-xl font-black font-headline mb-4 leading-tight">
-          <a href="{% url 'commitment_detail' item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">{{ item.title }}</a>
-        </h3>
-        <div class="space-y-4">
-          <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-primary">gavel</span>
-            <div>
-              <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
-              <p class="font-medium text-sm">{{ item.description|truncatewords:20 }}</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="material-symbols-outlined text-secondary">construction</span>
-            <div>
-              <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
-              <p class="font-medium text-sm text-secondary">
-                {% if item.top_5_verified_activities %}
-                  {{ item.top_5_verified_activities.0.title }}
-                {% else %}
-                  {% trans "No verified action yet" %}
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="flex items-center justify-between pt-6 border-t border-surface-container-high">
-        {% if item.calculated_deadline %}
-        <div class="text-xs">
-          <p class="text-slate-400 font-medium"><span class="material-symbols-outlined text-base align-middle">timer</span> {% trans "Deadline" %}</p>
-          <p class="text-on-surface font-bold deadline-countdown" data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
-        </div>
-        {% endif %}
-        <span class="text-xs font-black text-primary uppercase"><a href="{% url 'commitment_detail' item.id %}" class="text-primary text-decoration-none">{% trans "Audit Detail" %} &rarr;</a></span>
-      </div>
-    </div>
-    {% endif %}
+      {% if item.item_type == 'manifesto' %}
+        {% include 'includes/home_card.html' with item=item item_type='manifesto' detail_url_name='manifesto_detail' %}
+      {% elif item.item_type == 'commitment' %}
+        {% include 'includes/home_card.html' with item=item item_type='commitment' detail_url_name='commitment_detail' %}
+      {% endif %}
     {% endfor %}
   </div>
   {% endif %}
@@ -272,51 +134,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {% for point in party.manifesto_points.all %}
           {% if not point.id|is_shown:shown_manifesto_ids %}
-          <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-sm hover:border-primary/30 transition-all" id="manifesto-pt-{{ point.id }}">
-            <div class="flex justify-between items-start mb-4">
-              <div class="font-headline font-bold text-lg leading-tight">
-                <a href="{% url 'manifesto_detail' point.id %}" class="text-slate-900 text-decoration-none hover:text-primary transition-colors">{{ point.title }}</a>
-              </div>
-              {% if point.calculated_deadline %}
-              <span class="bg-rose-50 text-rose-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">event</span> {{ point.calculated_deadline|to_bs }}
-              </span>
-              {% endif %}
-            </div>
-
-            <div class="space-y-4">
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-primary">gavel</span>
-                <div>
-                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
-                  <p class="font-medium text-sm text-slate-600">{{ point.description|truncatewords:20 }}</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-secondary">construction</span>
-                <div>
-                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
-                  <p class="font-medium text-sm text-secondary">
-                    {% if point.top_5_verified_activities %}
-                      {{ point.top_5_verified_activities.0.title }}
-                    {% else %}
-                      {% trans "No verified action yet" %}
-                    {% endif %}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-slate-500 uppercase tracking-widest">{% trans "Progress" %}</span>
-                <span class="text-secondary">{{ point.completion_percentage }}%</span>
-              </div>
-              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                <div class="bg-secondary h-full rounded-full" style="width: {{ point.completion_percentage }}%"></div>
-              </div>
-            </div>
-          </div>
+            {% url 'manifesto_detail' point.id as m_url %}
+            {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' id_attr='manifesto-pt-'|add:point.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
@@ -331,51 +150,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {% for commitment in party.commitments.all %}
           {% if not commitment.id|is_shown:shown_commitment_ids %}
-          <div class="bg-white border border-slate-200 border-l-4 border-l-violet-500 rounded-lg p-6 shadow-sm hover:border-violet-300 transition-all" id="commitment-{{ commitment.id }}">
-            <div class="flex justify-between items-start mb-4">
-              <div class="font-headline font-bold text-lg leading-tight">
-                <a href="{% url 'commitment_detail' commitment.id %}" class="text-slate-900 text-decoration-none hover:text-violet-600 transition-colors">{{ commitment.title }}</a>
-              </div>
-              {% if commitment.calculated_deadline %}
-              <span class="bg-violet-50 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-widest whitespace-nowrap ml-4 flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">event</span> {{ commitment.calculated_deadline|to_bs }}
-              </span>
-              {% endif %}
-            </div>
-
-            <div class="space-y-4">
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-violet-500">gavel</span>
-                <div>
-                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Promise" %}</p>
-                  <p class="font-medium text-sm text-slate-600">{{ commitment.description|truncatewords:20 }}</p>
-                </div>
-              </div>
-              <div class="flex items-start gap-4">
-                <span class="material-symbols-outlined text-secondary">construction</span>
-                <div>
-                  <p class="text-xs font-black uppercase opacity-40">{% trans "The Action" %}</p>
-                  <p class="font-medium text-sm text-secondary">
-                    {% if commitment.top_5_verified_activities %}
-                      {{ commitment.top_5_verified_activities.0.title }}
-                    {% else %}
-                      {% trans "No verified action yet" %}
-                    {% endif %}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6">
-              <div class="flex justify-between text-xs font-bold mb-2">
-                <span class="text-slate-500 uppercase tracking-widest">{% trans "Progress" %}</span>
-                <span class="text-violet-600">{{ commitment.completion_percentage }}%</span>
-              </div>
-              <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                <div class="bg-violet-500 h-full rounded-full" style="width: {{ commitment.completion_percentage }}%"></div>
-              </div>
-            </div>
-          </div>
+            {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' id_attr='commitment-'|add:commitment.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
