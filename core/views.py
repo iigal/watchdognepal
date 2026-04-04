@@ -20,31 +20,41 @@ def home(request):
     
     today = timezone.now().date()
     
-    # --- Caching Counters ---
-    total_manifesto_count = cache.get('total_manifesto_count')
-    if total_manifesto_count is None:
-        total_manifesto_count = ManifestoPoint.objects.filter(
-            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-        ).count()
-        cache.set('total_manifesto_count', total_manifesto_count, 60 * 60 * 24 * 180)  # 6 months
+    today = timezone.now().date()
+    
+    # Calculate dynamic stats for the hero section counters and donut chart
+    all_points = list(ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).select_related('party', 'elected_member')) + list(Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).select_related('party', 'elected_member'))
 
-    total_commitment_count = cache.get('total_commitment_count')
-    if total_commitment_count is None:
-        total_commitment_count = Commitment.objects.filter(
-            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-        ).count()
-        cache.set('total_commitment_count', total_commitment_count, 60 * 60 * 24 * 7)  # 1 week
+    import datetime
+    approaching_threshold = today + datetime.timedelta(days=90)
+    
+    total_manifesto_count = 0
+    total_commitment_count = 0
+    total_in_progress_count = 0
+    total_completed_count = 0
+    total_missed_count = 0
+    total_approaching_count = 0
 
-    total_in_progress_count = cache.get('total_in_progress_count')
-    if total_in_progress_count is None:
-        total_in_progress_count = ManifestoPoint.objects.filter(
-            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-            activities__status='verified'
-        ).distinct().count() + Commitment.objects.filter(
-            models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True),
-            activities__status='verified'
-        ).distinct().count()
-        cache.set('total_in_progress_count', total_in_progress_count, 60 * 60 * 24)  # 1 day
+    for p in all_points:
+        if isinstance(p, ManifestoPoint):
+            total_manifesto_count += 1
+        else:
+            total_commitment_count += 1
+            
+        if p.is_completed:
+            total_completed_count += 1
+        elif p.is_overdue:  # this calculates is_overdue property for each
+            total_missed_count += 1
+        else:
+            calc_deadline = p.calculated_deadline
+            if calc_deadline and calc_deadline <= approaching_threshold:
+                total_approaching_count += 1
+            else:
+                total_in_progress_count += 1
 
     # ─── Manifesto: In Progress ───
     in_progress_points = ManifestoPoint.objects.filter(
@@ -128,6 +138,9 @@ def home(request):
         'total_manifesto_count': total_manifesto_count,
         'total_commitment_count': total_commitment_count,
         'total_in_progress_count': total_in_progress_count,
+        'total_completed_count': total_completed_count,
+        'total_missed_count': total_missed_count,
+        'total_approaching_count': total_approaching_count,
         'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }
     return render(request, 'home.html', context)
