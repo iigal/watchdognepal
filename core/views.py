@@ -39,6 +39,26 @@ def home(request):
     total_missed_count = 0
     total_approaching_count = 0
 
+    import subprocess
+    try:
+        git_commit_count = subprocess.check_output(['git', 'rev-list', '--count', 'HEAD']).decode('utf-8').strip()
+    except Exception:
+        git_commit_count = "0"
+
+    from django.contrib.auth.models import User
+    total_registered_users = User.objects.count()
+
+    latest_dates = []
+    latest_activity = Activity.objects.order_by('-created_at').first()
+    if latest_activity:
+        latest_dates.append(latest_activity.created_at)
+        
+    latest_commitment = Commitment.objects.order_by('-created_at').first()
+    if latest_commitment:
+        latest_dates.append(latest_commitment.created_at)
+        
+    last_updated_date = max(latest_dates) if latest_dates else None
+
     for p in all_points:
         if isinstance(p, ManifestoPoint):
             total_manifesto_count += 1
@@ -141,6 +161,9 @@ def home(request):
         'total_completed_count': total_completed_count,
         'total_missed_count': total_missed_count,
         'total_approaching_count': total_approaching_count,
+        'git_commit_count': git_commit_count,
+        'total_registered_users': total_registered_users,
+        'last_updated_date': last_updated_date,
         'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }
     return render(request, 'home.html', context)

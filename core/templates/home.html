@@ -16,26 +16,38 @@
         {% blocktrans %}Monitor manifesto commitments, verified activities, and approaching deadlines.
         Hold your government accountable with data-driven transparency.{% endblocktrans %}
       </p>
-      <div class="grid grid-cols-2 md:flex flex-wrap gap-2 md:gap-3">
-        <div class="bg-surface-container-low p-3 md:p-4 rounded-xl flex-1 text-center md:text-left shadow-sm">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-primary font-black text-xl md:text-2xl">{{ total_manifesto_count }}</span>
-          <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Manifestos" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Manifestos" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-4 rounded-xl flex-1 text-center md:text-left shadow-sm">
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-secondary font-black text-xl md:text-2xl">{{ total_commitment_count }}</span>
-          <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Commitments" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-4 rounded-xl flex-1 text-center md:text-left shadow-sm">
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
-          <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "In Progress" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-4 rounded-xl flex-1 text-center md:text-left shadow-sm">
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_count }}</span>
-          <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Complete" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete" %}</span>
         </div>
-        <div class="bg-surface-container-low p-3 md:p-4 rounded-xl flex-1 text-center md:text-left col-span-2 md:col-span-1 shadow-sm">
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
-          <span class="text-[9px] md:text-[10px] uppercase tracking-widest font-bold opacity-60">{% trans "Deadline Passed" %}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
+        </div>
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ total_registered_users }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Active Users" %}</span>
+        </div>
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
+        </div>
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-slate-700 font-black text-[15px] md:text-[18px] mt-1 mb-1">{{ last_updated_date|date:"j M Y"|default:"N/A" }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Last Updated" %}</span>
         </div>
       </div>
     </div>
