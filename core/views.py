@@ -39,19 +39,44 @@ def home(request):
     total_missed_count = 0
     total_approaching_count = 0
 
-    import subprocess
-    import os
-    from django.conf import settings
-    try:
-        git_commit_count = subprocess.check_output(
-            ['git', 'rev-list', '--count', 'HEAD'], 
-            cwd=settings.BASE_DIR,
-            stderr=subprocess.STDOUT
-        ).decode('utf-8').strip()
-    except Exception as e:
-        print("Git Commit Count Error:", e)
-        git_commit_count = "0" 
+    from django.core.cache import cache
 
+    # Fetch GitHub Commit Count via GitHub API to work in production without .git folder
+    git_commit_count = cache.get('github_commit_count')
+    if not git_commit_count:
+        try:
+            import urllib.request
+            import re
+            
+            req = urllib.request.Request('https://api.github.com/repos/iigal/watchdognepal/commits?per_page=1')
+            req.add_header('User-Agent', 'WatchdogNepal-Backend')
+            with urllib.request.urlopen(req, timeout=3) as response:
+                link_header = response.headers.get('Link')
+                if link_header:
+                    match = re.search(r'page=(\d+)>; rel="last"', link_header)
+                    if match:
+                        git_commit_count = match.group(1)
+                else:
+                    git_commit_count = "1"
+                        
+            if git_commit_count:
+                cache.set('github_commit_count', git_commit_count, 3600)  # cache for 1 hour
+        except Exception as e:
+            print("Github API Error:", e)
+
+    if not git_commit_count:
+        # Fallback to local git if API fails (e.g. rate limit)
+        import subprocess
+        import os
+        from django.conf import settings
+        try:
+            git_commit_count = subprocess.check_output(
+                ['git', 'rev-list', '--count', 'HEAD'], 
+                cwd=settings.BASE_DIR,
+                stderr=subprocess.STDOUT
+            ).decode('utf-8').strip()
+        except Exception:
+            git_commit_count = "N/A"
     from django.contrib.auth.models import User
     total_registered_users = User.objects.count()
 

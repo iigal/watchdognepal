@@ -44,7 +44,11 @@
         <a href="https://github.com/iigal/watchdognepal" target="_blank" rel="noopener noreferrer" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
           <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
-        </a> 
+        </a>
+        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
+          <span class="block text-slate-700 font-black text-[15px] md:text-[18px] mt-1 mb-1">{{ last_updated_date|date:"j M Y"|default:"N/A" }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Last Updated" %}</span>
+        </div>
       </div>
     </div>
 
