@@ -189,8 +189,7 @@
           {% for point in party.manifesto_points.all %}
           {% if not point.id|is_shown:shown_manifesto_ids %}
           {% url 'manifesto_detail' point.id as m_url %}
-          {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail'
-          id_attr='manifesto-pt-'|add:point.id|stringformat:"s" %}
+          {% include 'includes/home_card.html' with item=point item_type='manifesto' detail_url_name='manifesto_detail' id_attr='manifesto-pt-'|add:point.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
@@ -206,8 +205,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {% for commitment in party.commitments.all %}
           {% if not commitment.id|is_shown:shown_commitment_ids %}
-          {% include 'includes/home_card.html' with item=commitment item_type='commitment'
-          detail_url_name='commitment_detail' id_attr='commitment-'|add:commitment.id|stringformat:"s" %}
+          {% include 'includes/home_card.html' with item=commitment item_type='commitment' detail_url_name='commitment_detail' id_attr='commitment-'|add:commitment.id|stringformat:"s" %}
           {% endif %}
           {% empty %}
           <div class="col-span-2 text-center py-8">
@@ -269,7 +267,7 @@
               {{ total_completed_count }},
           {{ total_missed_count }},
               {{ total_approaching_count }},
-              {{ total_in_progress_count }}
+    { { total_in_progress_count } }
             ],
     backgroundColor: [
       '#10b981', // emerald-500
