@@ -62,6 +62,7 @@ pymysql.install_as_MySQLdb()
 # Application definition
 
 INSTALLED_APPS = [
+    'modeltranslation',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -191,7 +192,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'ne'
 
 TIME_ZONE = 'UTC'
 
@@ -209,6 +210,8 @@ LANGUAGES = [
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ne'
 
 
 # Static files (CSS, JavaScript, Images)

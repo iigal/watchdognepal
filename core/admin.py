@@ -1,16 +1,17 @@
 from django.contrib import admin
 from django import forms
+from modeltranslation.admin import TranslationAdmin, TranslationTabularInline
 from .models import Activity, Vote, PoliticalParty, ElectedMember, ManifestoPoint, SubManifesto, Commitment, SubCommitment, Petition, PetitionSignature
 from .widgets import NepaliDatePickerWidget
 
 @admin.register(PoliticalParty)
-class PoliticalPartyAdmin(admin.ModelAdmin):
+class PoliticalPartyAdmin(TranslationAdmin):
     list_display = ('name', 'in_government', 'oath_date')
     list_filter = ('in_government',)
     search_fields = ('name',)
 
 @admin.register(ElectedMember)
-class ElectedMemberAdmin(admin.ModelAdmin):
+class ElectedMemberAdmin(TranslationAdmin):
     list_display = ('name', 'constituency', 'party', 'oath_date', 'phone_number', 'office_email')
     list_filter = ('party',)
     search_fields = ('name', 'constituency', 'phone_number', 'office_email')
@@ -33,7 +34,7 @@ class ManifestoPointAdminForm(forms.ModelForm):
         }
 
 
-class SubManifestoInline(admin.TabularInline):
+class SubManifestoInline(TranslationTabularInline):
     model = SubManifesto
     extra = 1
     fields = ('title', 'deadline', 'is_completed')
@@ -43,7 +44,7 @@ class SubManifestoInline(admin.TabularInline):
 
 
 @admin.register(ManifestoPoint)
-class ManifestoPointAdmin(admin.ModelAdmin):
+class ManifestoPointAdmin(TranslationAdmin):
     form = ManifestoPointAdminForm
     list_display = ('title', 'category', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
     list_filter = ('category', 'party', 'elected_member', 'is_completed')
@@ -60,7 +61,7 @@ class CommitmentAdminForm(forms.ModelForm):
         }
 
 
-class SubCommitmentInline(admin.TabularInline):
+class SubCommitmentInline(TranslationTabularInline):
     model = SubCommitment
     extra = 1
     fields = ('title', 'deadline', 'is_completed')
@@ -70,7 +71,7 @@ class SubCommitmentInline(admin.TabularInline):
 
 
 @admin.register(Commitment)
-class CommitmentAdmin(admin.ModelAdmin):
+class CommitmentAdmin(TranslationAdmin):
     form = CommitmentAdminForm
     list_display = ('title', 'category', 'party', 'elected_member', 'calculated_deadline', 'is_completed', 'progress_fraction')
     list_filter = ('category', 'party', 'elected_member', 'is_completed')
@@ -78,7 +79,7 @@ class CommitmentAdmin(admin.ModelAdmin):
     inlines = [SubCommitmentInline]
 
 @admin.register(Activity)
-class ActivityAdmin(admin.ModelAdmin):
+class ActivityAdmin(TranslationAdmin):
     list_display = ('title', 'level', 'status', 'manifesto_point', 'commitment', 'created_by', 'created_at', 'positive_votes', 'negative_votes')
     list_filter = ('level', 'status', 'created_at')
     search_fields = ('title', 'description', 'province')
@@ -102,7 +103,7 @@ class PetitionSignatureInline(admin.TabularInline):
 
 
 @admin.register(Petition)
-class PetitionAdmin(admin.ModelAdmin):
+class PetitionAdmin(TranslationAdmin):
     list_display = ('title', 'category', 'target', 'goal', 'signature_count', 'status', 'created_by', 'created_at')
     list_filter = ('status', 'category', 'created_at')
     search_fields = ('title', 'description', 'target')
