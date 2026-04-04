@@ -378,13 +378,47 @@
         </button>
 
         {% if user.is_authenticated %}
-        <span class="hidden md:inline text-sm font-medium dark:text-slate-300">{{ user.username }}</span>
-        <a href="{% url 'dashboard' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Dashboard">
-          <span class="material-symbols-outlined">dashboard</span>
-        </a>
-        <a href="{% url 'logout' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all text-decoration-none" style="text-decoration:none;" title="Logout">
-          <span class="material-symbols-outlined">logout</span>
-        </a>
+        <div class="hidden md:block nav-dropdown">
+          <button class="flex items-center gap-1 py-1 text-slate-600 hover:text-red-700 transition-colors font-medium">
+            <span class="material-symbols-outlined text-[20px]">account_circle</span>
+            <span class="dark:text-slate-300">{{ user.username }}</span>
+            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          </button>
+          <div class="nav-dropdown-menu" style="right: 0; left: auto; min-width: 220px;">
+            <a href="{% url 'dashboard' %}">
+              <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+            </a>
+            <a href="{% url 'user_profile' %}">
+              <span class="material-symbols-outlined">person</span> {% trans "My Profile" %}
+            </a>
+            <a href="{% url 'user_logs' %}">
+              <span class="material-symbols-outlined">history</span> {% trans "Activity Logs" %}
+            </a>
+            {% if user.is_superuser %}
+            <a href="{% url 'admin_user_logs' %}">
+              <span class="material-symbols-outlined">admin_panel_settings</span> {% trans "Admin Logs" %}
+            </a>
+            {% endif %}
+            <div class="border-t border-slate-100 my-1"></div>
+            <a href="{% url 'social:dashboard' %}">
+              <span class="material-symbols-outlined">campaign</span> {% trans "Social Studio" %}
+            </a>
+            <a href="{% url 'social:create_image' %}">
+              <span class="material-symbols-outlined">image</span> {% trans "Create Image Post" %}
+            </a>
+            <a href="{% url 'social:create_reel' %}">
+              <span class="material-symbols-outlined">movie</span> {% trans "Create Reel" %}
+            </a>
+            <a href="{% url 'social:post_list' %}">
+              <span class="material-symbols-outlined">grid_view</span> {% trans "Social Posts" %}
+            </a>
+            <div class="border-t border-slate-100 my-1"></div>
+            <a href="{% url 'logout' %}" class="text-rose-600 hover:text-rose-700">
+              <span class="material-symbols-outlined">logout</span> {% trans "Logout" %}
+            </a>
+          </div>
+        </div>
+
         <a href="{% url 'submit_activity' %}" class="hidden md:inline-flex bg-primary px-6 py-2 rounded-xl text-white font-headline font-bold hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
           Submit
         </a>
@@ -435,14 +469,43 @@
         </a>
         <div class="border-t border-slate-100 my-2"></div>
         {% if user.is_authenticated %}
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Account" %}</p>
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'dashboard' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">dashboard</span>Dashboard
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">dashboard</span>{% trans "Dashboard" %}
         </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'user_profile' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">person</span>{% trans "My Profile" %}
+        </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'user_logs' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">history</span>{% trans "Activity Logs" %}
+        </a>
+        {% if user.is_superuser %}
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'admin_user_logs' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">admin_panel_settings</span>{% trans "Admin Logs" %}
+        </a>
+        {% endif %}
+
+        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Social Media Studio" %}</p>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:dashboard' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">campaign</span>{% trans "Social Studio Home" %}
+        </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:create_image' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">image</span>{% trans "Create Image Post" %}
+        </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:create_reel' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">movie</span>{% trans "Create Reel" %}
+        </a>
+        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:post_list' %}">
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">grid_view</span>{% trans "All Posts" %}
+        </a>
+
+        <div class="border-t border-slate-100 my-2"></div>
+
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'submit_activity' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">add_circle</span>Submit Activity
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">add_circle</span>{% trans "Submit Activity" %}
         </a>
         <a class="py-3 px-4 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors" style="text-decoration:none;" href="{% url 'logout' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">logout</span>Logout
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">logout</span>{% trans "Logout" %}
         </a>
         {% else %}
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'login' %}">
@@ -576,9 +639,9 @@
   <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 mt-24">
     <div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 font-['Public_Sans'] text-xs uppercase tracking-widest">
       <div class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-4">
-        <span>Simple Civic Nepal</span>
+        <span>People are Watching</span>
         <span class="h-4 w-[1px] bg-slate-300"></span>
-        <span class="text-slate-500 font-normal normal-case tracking-normal">© 2024 The People's Ledger.</span>
+        <span class="text-slate-500 font-normal normal-case tracking-normal">© 2026 People are Watching.</span>
       </div>
       <div class="flex flex-wrap gap-6 md:gap-8">
         <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'manifesto_list' %}">Manifestos</a>
