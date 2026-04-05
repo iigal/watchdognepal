@@ -3,1365 +3,1436 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-10 11:01+0000\n"
+"POT-Creation-Date: 2026-04-05 15:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: ne\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: core/templates/base.html:31 core/templates/base.html:129
+#: accounts/templates/accounts/admin_logs.html:4
+msgid "All User Logs"
+msgstr "सबै प्रयोगकर्ता लगहरू"
+
+#: accounts/templates/accounts/admin_logs.html:13
+msgid "User Activity Logs"
+msgstr "प्रयोगकर्ता गतिविधि लगहरू"
+
+#: accounts/templates/accounts/admin_logs.html:15
+msgid "Superadmin view — all user actions across the platform"
+msgstr "सुपर एडमिन दृश्य — प्लेटफर्ममा सबै प्रयोगकर्ता कार्यहरू"
+
+#: accounts/templates/accounts/admin_logs.html:20
+msgid "Search username..."
+msgstr "प्रयोगकर्ता नाम खोज्नुहोस्..."
+
+#: accounts/templates/accounts/admin_logs.html:24
+#: accounts/templates/accounts/user_logs.html:28
+msgid "All Actions"
+msgstr "सबै कार्यहरू"
+
+#: accounts/templates/accounts/admin_logs.html:31
+#: accounts/templates/accounts/user_logs.html:35
+#: core/templates/commitment_list.html:59 core/templates/manifesto_list.html:68
+#: core/templates/petition_list.html:53
+#: social/templates/social/post_list.html:30
+msgid "Filter"
+msgstr "फिल्टर"
+
+#: accounts/templates/accounts/admin_logs.html:36
+#: accounts/templates/accounts/user_logs.html:40
+#: core/templates/member_list.html:29 core/templates/party_list.html:29
+msgid "Clear"
+msgstr "खाली गर्नुहोस्"
+
+#: accounts/templates/accounts/admin_logs.html:49
+msgid "User"
+msgstr "प्रयोगकर्ता"
+
+#: accounts/templates/accounts/admin_logs.html:51
+msgid "Action"
+msgstr "कार्य"
+
+#: accounts/templates/accounts/admin_logs.html:53
+msgid "Details"
+msgstr "विवरण"
+
+#: accounts/templates/accounts/admin_logs.html:55
+#: accounts/templates/accounts/profile.html:103
+msgid "XP"
+msgstr "XP"
+
+#: accounts/templates/accounts/admin_logs.html:57
+msgid "Time"
+msgstr "समय"
+
+#: accounts/templates/accounts/admin_logs.html:100
+#: accounts/templates/accounts/user_logs.html:76
+#: social/templates/social/post_list.html:85
+msgid "Previous"
+msgstr "अघिल्लो"
+
+#: accounts/templates/accounts/admin_logs.html:109
+#: accounts/templates/accounts/user_logs.html:85
+#: social/templates/social/post_list.html:92
+msgid "Next"
+msgstr "अर्को"
+
+#: accounts/templates/accounts/admin_logs.html:118
+msgid "No logs found."
+msgstr "कुनै लग भेटिएन।"
+
+#: accounts/templates/accounts/profile.html:4 core/templates/base.html:136
+#: core/templates/base.html:221
+msgid "My Profile"
+msgstr "मेरो प्रोफाइल"
+
+#: accounts/templates/accounts/profile.html:44
+msgid "Verification Access Active"
+msgstr "प्रमाणीकरण पहुँच सक्रिय"
+
+#: accounts/templates/accounts/profile.html:50
+msgid "No Verification Access"
+msgstr "प्रमाणीकरण पहुँच छैन"
+
+#: accounts/templates/accounts/profile.html:62
+msgid "Level Progress"
+msgstr "स्तर प्रगति"
+
+#: accounts/templates/accounts/profile.html:81
+#, python-format
+msgid "%(pct)s%% to next level"
+msgstr ""
+
+#: accounts/templates/accounts/profile.html:87
+msgid "Verification Requirements:"
+msgstr "प्रमाणीकरण आवश्यकताहरू:"
+
+#: accounts/templates/accounts/profile.html:88
+#, python-format
+msgid ""
+"\n"
+"        %(req)s approved activities within %(window)s\n"
+"        "
+msgstr ""
+
+#: accounts/templates/accounts/profile.html:99
+#: core/templates/activities_list.html:42
+msgid "Level"
+msgstr "स्तर"
+
+#: accounts/templates/accounts/profile.html:107 core/templates/base.html:83
+#: core/templates/base.html:199 core/templates/base.html:395
+#: core/templates/includes/sidebar.html:14
+msgid "Activities"
+msgstr "गतिविधिहरू"
+
+#: accounts/templates/accounts/profile.html:111
+#: core/templates/activities_list.html:27
+#: core/templates/activities_list.html:87 core/templates/dashboard.html:145
+msgid "Verified"
+msgstr "प्रमाणित"
+
+#: accounts/templates/accounts/profile.html:120
+msgid "Recent Activity"
+msgstr "हालको गतिविधि"
+
+#: accounts/templates/accounts/profile.html:124
+#: social/templates/social/dashboard.html:36
+msgid "View All"
+msgstr "सबै हेर्नुहोस्"
+
+#: accounts/templates/accounts/profile.html:151
+msgid "No activity yet. Start by submitting your first report!"
+msgstr "अझै कुनै गतिविधि छैन। पहिलो रिपोर्ट पेश गरेर सुरु गर्नुहोस्!"
+
+#: accounts/templates/accounts/user_logs.html:4
+#: accounts/templates/accounts/user_logs.html:14
+msgid "My Activity Log"
+msgstr "मेरो गतिविधि लग"
+
+#: accounts/templates/accounts/user_logs.html:16
+msgid "Track your contributions and progress"
+msgstr "तपाईंको योगदान र प्रगति ट्र्याक गर्नुहोस्"
+
+#: accounts/templates/accounts/user_logs.html:20
+msgid "Back to Profile"
+msgstr "प्रोफाइलमा फर्कनुहोस्"
+
+#: accounts/templates/accounts/user_logs.html:95
+msgid "No activity logs yet."
+msgstr "अझै कुनै गतिविधि लग छैन।"
+
+#: core/templates/accounts/login.html:4 core/templates/accounts/login.html:43
+#: core/templates/accounts/login.html:58 core/templates/base.html:170
+#: core/templates/base.html:256
+msgid "Login"
+msgstr "लग इन"
+
+#: core/templates/accounts/login.html:12
+msgid "Welcome Back"
+msgstr "पुनः स्वागतम्"
+
+#: core/templates/accounts/login.html:13
+msgid "Sign in to your Watchdog Nepal account"
+msgstr "तपाईंको वाचडग नेपाल खातामा साइन इन गर्नुहोस्"
+
+#: core/templates/accounts/login.html:50
+msgid "Username"
+msgstr "प्रयोगकर्ता नाम"
+
+#: core/templates/accounts/login.html:54
+msgid "Password"
+msgstr "पासवर्ड"
+
+#: core/templates/accounts/login.html:69
+#: core/templates/accounts/register.html:31
+#: core/templates/submit_activity.html:34
+msgid "or"
+msgstr "वा"
+
+#: core/templates/accounts/login.html:75
+msgid "Continue with Google"
+msgstr "गुगलसँग जारी राख्नुहोस्"
+
+#: core/templates/accounts/login.html:80
+msgid "Don't have an account?"
+msgstr "खाता छैन?"
+
+#: core/templates/accounts/login.html:81
+msgid "Register here"
+msgstr "यहाँ दर्ता गर्नुहोस्"
+
+#: core/templates/accounts/register.html:4
+#: core/templates/accounts/register.html:59 core/templates/base.html:172
+#: core/templates/base.html:258
+msgid "Register"
+msgstr "दर्ता गर्नुहोस्"
+
+#: core/templates/accounts/register.html:12
+msgid "Create Your Account"
+msgstr "आफ्नो खाता बनाउनुहोस्"
+
+#: core/templates/accounts/register.html:13
+msgid "Join Watchdog Nepal and raise your voice for transparency"
+msgstr "वाचडग नेपालमा सामेल हुनुहोस् र पारदर्शिताको लागि आवाज उठाउनुहोस्"
+
+#: core/templates/accounts/register.html:25
+msgid "Sign up with Google"
+msgstr "गुगलबाट साइन अप गर्नुहोस्"
+
+#: core/templates/accounts/register.html:64
+msgid "Already have an account?"
+msgstr "पहिले नै खाता छ?"
+
+#: core/templates/accounts/register.html:65
+msgid "Login here"
+msgstr "यहाँ लग इन गर्नुहोस्"
+
+#: core/templates/accounts/verify_otp.html:4
+#: core/templates/accounts/verify_otp.html:14
+msgid "Verify Mobile Number"
+msgstr "मोबाइल नम्बर प्रमाणित गर्नुहोस्"
+
+#: core/templates/accounts/verify_otp.html:16
+msgid "Please enter the 6-digit verification codes sent to"
+msgstr "कृपया पठाइएको ६ अङ्कको प्रमाणीकरण कोड प्रविष्ट गर्नुहोस्"
+
+#: core/templates/accounts/verify_otp.html:16
+msgid "and"
+msgstr "र"
+
+#: core/templates/accounts/verify_otp.html:29
+msgid "Mobile Verification Code"
+msgstr "मोबाइल प्रमाणीकरण कोड"
+
+#: core/templates/accounts/verify_otp.html:29
+#: core/templates/accounts/verify_otp.html:39
+msgid "sent to"
+msgstr "मा पठाइएको"
+
+#: core/templates/accounts/verify_otp.html:32
+msgid "Enter 6-digit OTP from SMS"
+msgstr "SMS बाट ६ अङ्कको OTP प्रविष्ट गर्नुहोस्"
+
+#: core/templates/accounts/verify_otp.html:39
+msgid "Email Verification Code"
+msgstr "इमेल प्रमाणीकरण कोड"
+
+#: core/templates/accounts/verify_otp.html:42
+msgid "Enter 6-digit OTP from Email"
+msgstr "इमेलबाट ६ अङ्कको OTP प्रविष्ट गर्नुहोस्"
+
+#: core/templates/accounts/verify_otp.html:49
+msgid "Verify Identity"
+msgstr "पहिचान प्रमाणित गर्नुहोस्"
+
+#: core/templates/activities_list.html:5
+msgid "Activities Feed"
+msgstr "गतिविधि फिड"
+
+#: core/templates/activities_list.html:17
+msgid "Citizen Verification"
+msgstr "नागरिक प्रमाणीकरण"
+
+#: core/templates/activities_list.html:18
+msgid "Government Activities"
+msgstr "सरकारी गतिविधिहरू"
+
+#: core/templates/activities_list.html:23
+#: core/templates/commitment_list.html:22 core/templates/manifesto_list.html:22
+msgid "Total"
+msgstr "कुल"
+
+#: core/templates/activities_list.html:31
+#: core/templates/commitment_list.html:30 core/templates/dashboard.html:149
+#: core/templates/manifesto_list.html:30
+#: social/templates/social/dashboard.html:28
+msgid "Pending"
+msgstr "बाँकी"
+
+#: core/templates/activities_list.html:51 core/templates/manifesto_list.html:58
+msgid "Status"
+msgstr "स्थिति"
+
+#: core/templates/activities_list.html:59
+msgid "Sort by"
+msgstr "क्रमबद्ध गर्नुहोस्"
+
+#: core/templates/activities_list.html:69
+msgid "Apply"
+msgstr "लागू गर्नुहोस्"
+
+#: core/templates/activities_list.html:91
+msgid "Unverified"
+msgstr "अप्रमाणित"
+
+#: core/templates/activities_list.html:161
+msgid "No activities found"
+msgstr "कुनै गतिविधि भेटिएन"
+
+#: core/templates/activities_list.html:162
+#: core/templates/commitment_list.html:166
+#: core/templates/manifesto_list.html:181
+msgid "Try adjusting the filters or check back later."
+msgstr "फिल्टर समायोजन गर्नुहोस् वा पछि फेरि हेर्नुहोस्।"
+
+#: core/templates/base.html:65
 msgid "Watchdog Nepal"
 msgstr "वाचडग नेपाल"
 
-#: core/templates/base.html:43
+#: core/templates/base.html:68 core/templates/base.html:188
+#: core/templates/commitment_detail.html:23
+#: core/templates/manifesto_detail.html:23
 msgid "Home"
 msgstr "गृहपृष्ठ"
 
-#: core/templates/base.html:49 core/templates/base.html:134
-msgid "Parties"
-msgstr ""
+#: core/templates/base.html:73 core/templates/base.html:191
+msgid "Tracking"
+msgstr "ट्र्याकिङ"
 
-#: core/templates/base.html:55 core/templates/base.html:135
+#: core/templates/base.html:77 core/templates/base.html:193
+#: core/templates/base.html:391 core/templates/home.html:22
+#: core/templates/home.html:159 core/templates/includes/sidebar.html:8
+#: core/templates/includes/sidebar.html:33
+#: core/templates/manifesto_detail.html:25 core/templates/member_detail.html:97
+#: core/templates/party_detail.html:41
+msgid "Manifestos"
+msgstr "घोषणापत्रहरू"
+
+#: core/templates/base.html:80 core/templates/base.html:196
+#: core/templates/base.html:392 core/templates/commitment_detail.html:25
+#: core/templates/home.html:26 core/templates/home.html:166
+#: core/templates/includes/sidebar.html:11
+#: core/templates/includes/sidebar.html:37
+#: core/templates/member_detail.html:101 core/templates/party_detail.html:45
+msgid "Commitments"
+msgstr "प्रतिबद्धताहरू"
+
+#: core/templates/base.html:91 core/templates/base.html:202
+msgid "Politics"
+msgstr "राजनीति"
+
+#: core/templates/base.html:95 core/templates/party_list.html:4
+#: core/templates/party_list.html:14
+msgid "Political Parties"
+msgstr "राजनीतिक दलहरू"
+
+#: core/templates/base.html:98 core/templates/member_list.html:4
+#, fuzzy
+#| msgid "Members"
+msgid "Elected Members"
+msgstr "सदस्यहरू"
+
+#: core/templates/base.html:103 core/templates/base.html:212
+#: core/templates/base.html:396 core/templates/includes/sidebar.html:17
+#: core/templates/petition_list.html:4
+msgid "Petitions"
+msgstr "निवेदनहरू"
+
+#: core/templates/base.html:133 core/templates/base.html:218
+#: core/templates/dashboard.html:4 core/templates/dashboard.html:17
+#: social/templates/social/post_list.html:15
+msgid "Dashboard"
+msgstr "ड्यासबोर्ड"
+
+#: core/templates/base.html:139 core/templates/base.html:224
+msgid "Activity Logs"
+msgstr "गतिविधि लगहरू"
+
+#: core/templates/base.html:143 core/templates/base.html:228
+msgid "Admin Logs"
+msgstr "एडमिन लगहरू"
+
+#: core/templates/base.html:148
+msgid "Social Studio"
+msgstr "सोसल स्टुडियो"
+
+#: core/templates/base.html:151 core/templates/base.html:237
+#: social/templates/social/create_image.html:4
+#: social/templates/social/create_image.html:12
+#: social/templates/social/dashboard.html:47
+msgid "Create Image Post"
+msgstr "छवि पोस्ट बनाउनुहोस्"
+
+#: core/templates/base.html:154 core/templates/base.html:240
+#: social/templates/social/create_reel.html:4
+#: social/templates/social/create_reel.html:12
+#: social/templates/social/dashboard.html:58
+msgid "Create Reel"
+msgstr "रिल बनाउनुहोस्"
+
+#: core/templates/base.html:157 social/templates/social/post_list.html:4
+#: social/templates/social/post_list.html:12
+msgid "Social Posts"
+msgstr "सामाजिक पोस्टहरू"
+
+#: core/templates/base.html:161 core/templates/base.html:252
+msgid "Logout"
+msgstr "लग आउट"
+
+#: core/templates/base.html:167
+msgid "Submit"
+msgstr "पेश गर्नुहोस्"
+
+#: core/templates/base.html:204 core/templates/base.html:393
+#: core/templates/includes/sidebar.html:21
+#: core/templates/includes/sidebar.html:45
+msgid "Parties"
+msgstr "दलहरू"
+
+#: core/templates/base.html:207 core/templates/base.html:394
+#: core/templates/includes/sidebar.html:24
+#: core/templates/includes/sidebar.html:49
 msgid "Members"
 msgstr "सदस्यहरू"
 
-#: core/templates/base.html:61 core/templates/base.html:136
-msgid "Activities"
-msgstr ""
+#: core/templates/base.html:210
+msgid "Civic"
+msgstr "नागरिक"
 
-#: core/templates/base.html:89
-msgid "Submit"
-msgstr ""
+#: core/templates/base.html:216
+msgid "Account"
+msgstr "खाता"
 
-#: core/templates/base.html:91
-msgid "Logout"
-msgstr ""
+#: core/templates/base.html:232 social/templates/social/dashboard.html:4
+#: social/templates/social/dashboard.html:14
+msgid "Social Media Studio"
+msgstr "सामाजिक सञ्चार स्टुडियो"
 
-#: core/templates/base.html:93
-msgid "Login"
-msgstr ""
+#: core/templates/base.html:234
+msgid "Social Studio Home"
+msgstr "सोसल स्टुडियो गृह"
 
-#: core/templates/base.html:94
-msgid "Register"
-msgstr ""
+#: core/templates/base.html:243 social/templates/social/post_detail.html:29
+msgid "All Posts"
+msgstr "सबै पोस्टहरू"
 
-#: core/templates/base.html:130
-msgid "Holding government accountable."
-msgstr ""
+#: core/templates/base.html:249 core/templates/submit_activity.html:4
+#: core/templates/submit_activity.html:64
+msgid "Submit Activity"
+msgstr "गतिविधि पेश गर्नुहोस्"
 
-#: core/templates/base.html:141
-msgid "Built with"
-msgstr ""
+#: core/templates/base.html:263
+msgid "Toggle Dark Mode"
+msgstr "डार्क मोड टगल गर्नुहोस्"
 
-#: core/templates/base.html:141
-msgid "for transparency"
-msgstr ""
+#: core/templates/base.html:386 core/templates/base.html:388
+msgid "People are Watching"
+msgstr "जनता हेरिरहेछ"
+
+#: core/templates/commitment_detail.html:39
+#: core/templates/commitment_list.html:89
+#: core/templates/manifesto_detail.html:39
+#: core/templates/manifesto_list.html:99
+msgid "Kept (On Time)"
+msgstr "पालना (समयमै)"
+
+#: core/templates/commitment_detail.html:39
+#: core/templates/commitment_list.html:93
+#: core/templates/manifesto_detail.html:39
+#: core/templates/manifesto_list.html:103
+msgid "Kept (Late)"
+msgstr "पालना (ढिलो)"
+
+#: core/templates/commitment_detail.html:39
+#: core/templates/commitment_list.html:97 core/templates/home.html:74
+#: core/templates/manifesto_detail.html:39
+#: core/templates/manifesto_list.html:62 core/templates/manifesto_list.html:107
+msgid "Delayed"
+msgstr "ढिलो"
+
+#: core/templates/commitment_detail.html:39
+#: core/templates/commitment_list.html:101 core/templates/home.html:34
+#: core/templates/home.html:72 core/templates/home.html:86
+#: core/templates/home.html:256 core/templates/manifesto_detail.html:39
+#: core/templates/manifesto_list.html:63 core/templates/manifesto_list.html:111
+msgid "In Progress"
+msgstr "प्रगतिमा"
+
+#: core/templates/commitment_detail.html:39
+#: core/templates/commitment_list.html:105
+#: core/templates/manifesto_detail.html:39
+#: core/templates/manifesto_list.html:115
+msgid "Not Started"
+msgstr "सुरु भएको छैन"
+
+#: core/templates/commitment_detail.html:42
+#: core/templates/manifesto_detail.html:42
+msgid "complete"
+msgstr "पूरा"
+
+#: core/templates/commitment_detail.html:70
+#: core/templates/includes/home_card.html:65
+#: core/templates/manifesto_detail.html:70
+#: core/templates/member_detail.html:128 core/templates/member_detail.html:209
+#: core/templates/party_detail.html:96 core/templates/party_detail.html:219
+msgid "Progress"
+msgstr "प्रगति"
+
+#: core/templates/commitment_detail.html:71
+#: core/templates/commitment_list.html:118
+#: core/templates/manifesto_detail.html:71
+#: core/templates/manifesto_list.html:131
+msgid "completed"
+msgstr "पूरा"
+
+#: core/templates/commitment_detail.html:83
+#: core/templates/includes/home_card.html:42
+#: core/templates/manifesto_detail.html:83
+msgid "Deadline"
+msgstr "समयसीमा"
+
+#: core/templates/commitment_detail.html:86
+#: core/templates/commitment_detail.html:109
+#: core/templates/manifesto_detail.html:86
+#: core/templates/manifesto_detail.html:109
+msgid "Overdue"
+msgstr "म्याद सकियो"
+
+#: core/templates/commitment_detail.html:98
+#: core/templates/commitment_list.html:129
+#: core/templates/member_detail.html:218 core/templates/party_detail.html:229
+msgid "Sub-Commitments"
+msgstr "उप-प्रतिबद्धताहरू"
+
+#: core/templates/commitment_detail.html:137
+#: core/templates/manifesto_detail.html:137
+#: core/templates/member_detail.html:161 core/templates/member_detail.html:242
+#: core/templates/party_detail.html:139 core/templates/party_detail.html:260
+msgid "Verified Activities"
+msgstr "प्रमाणित गतिविधिहरू"
+
+#: core/templates/commitment_detail.html:148
+#: core/templates/manifesto_detail.html:148
+msgid "View source"
+msgstr "स्रोत हेर्नुहोस्"
+
+#: core/templates/commitment_detail.html:167
+#: core/templates/manifesto_detail.html:167
+msgid "Share This"
+msgstr "यो साझा गर्नुहोस्"
+
+#: core/templates/commitment_list.html:4
+msgid "Commitment Tracking"
+msgstr "प्रतिबद्धता ट्र्याकिङ"
+
+#: core/templates/commitment_list.html:16
+msgid "Government Accountability"
+msgstr "सरकारी उत्तरदायित्व"
+
+#: core/templates/commitment_list.html:17
+msgid "Commitment Tracker"
+msgstr "प्रतिबद्धता ट्र्याकर"
+
+#: core/templates/commitment_list.html:26 core/templates/manifesto_list.html:26
+#: core/templates/manifesto_list.html:61
+msgid "Kept"
+msgstr "पालना"
+
+#: core/templates/commitment_list.html:41 core/templates/manifesto_list.html:41
+#: core/templates/member_list.html:27 core/templates/party_list.html:27
+#: core/templates/petition_list.html:35
+msgid "Search"
+msgstr "खोज्नुहोस्"
+
+#: core/templates/commitment_list.html:44
+msgid "Search commitments..."
+msgstr "प्रतिबद्धता खोज्नुहोस्..."
+
+#: core/templates/commitment_list.html:49 core/templates/manifesto_list.html:49
+#: core/templates/petition_list.html:43
+msgid "Category"
+msgstr "श्रेणी"
+
+#: core/templates/commitment_list.html:51 core/templates/manifesto_list.html:51
+#: core/templates/petition_list.html:45
+msgid "All Categories"
+msgstr "सबै श्रेणीहरू"
+
+#: core/templates/commitment_list.html:64 core/templates/manifesto_list.html:73
+msgid "Filtered"
+msgstr "फिल्टर गरिएको"
+
+#: core/templates/commitment_list.html:65 core/templates/manifesto_list.html:74
+msgid "Clear all filters"
+msgstr "सबै फिल्टरहरू हटाउनुहोस्"
+
+#: core/templates/commitment_list.html:157
+#: core/templates/manifesto_list.html:172
+msgid "View"
+msgstr "हेर्नुहोस्"
+
+#: core/templates/commitment_list.html:165
+msgid "No commitments found"
+msgstr "कुनै प्रतिबद्धता भेटिएन"
+
+#: core/templates/dashboard.html:18
+msgid "Welcome back,"
+msgstr "पुनः स्वागतम्,"
+
+#: core/templates/dashboard.html:24
+msgid "Petitions Created"
+msgstr "सिर्जना गरिएका निवेदनहरू"
+
+#: core/templates/dashboard.html:28
+msgid "Petitions Signed"
+msgstr "हस्ताक्षर गरिएका निवेदनहरू"
+
+#: core/templates/dashboard.html:32
+msgid "Activities Submitted"
+msgstr "पेश गरिएका गतिविधिहरू"
+
+#: core/templates/dashboard.html:41 core/templates/dashboard.html:57
+msgid "My Petitions"
+msgstr "मेरा निवेदनहरू"
+
+#: core/templates/dashboard.html:45
+msgid "Signed Petitions"
+msgstr "हस्ताक्षर गरिएका निवेदनहरू"
+
+#: core/templates/dashboard.html:49 core/templates/dashboard.html:133
+msgid "My Activities"
+msgstr "मेरा गतिविधिहरू"
+
+#: core/templates/dashboard.html:59
+msgid "New Petition"
+msgstr "नयाँ निवेदन"
+
+#: core/templates/dashboard.html:70
+msgid "Active"
+msgstr "सक्रिय"
+
+#: core/templates/dashboard.html:74
+msgid "Achieved"
+msgstr "प्राप्त"
+
+#: core/templates/dashboard.html:77 core/templates/petition_detail.html:34
+msgid "Closed"
+msgstr "बन्द"
+
+#: core/templates/dashboard.html:85 core/templates/petition_detail.html:98
+#: core/templates/petition_list.html:91
+msgid "signatures"
+msgstr "हस्ताक्षरहरू"
+
+#: core/templates/dashboard.html:86 core/templates/dashboard.html:157
+#: core/templates/petition_detail.html:76 core/templates/petition_list.html:100
+msgid "ago"
+msgstr "अघि"
+
+#: core/templates/dashboard.html:94
+msgid "You haven't created any petitions yet."
+msgstr "तपाईंले अझै कुनै निवेदन सिर्जना गर्नुभएको छैन।"
+
+#: core/templates/dashboard.html:95
+msgid "Start your first petition"
+msgstr "पहिलो निवेदन सुरु गर्नुहोस्"
+
+#: core/templates/dashboard.html:102
+msgid "Petitions I Signed"
+msgstr "मैले हस्ताक्षर गरेका निवेदनहरू"
+
+#: core/templates/dashboard.html:110
+msgid "by"
+msgstr "द्वारा"
+
+#: core/templates/dashboard.html:125
+msgid "You haven't signed any petitions yet."
+msgstr "तपाईंले अझै कुनै निवेदनमा हस्ताक्षर गर्नुभएको छैन।"
+
+#: core/templates/dashboard.html:126
+msgid "Browse petitions"
+msgstr "निवेदनहरू हेर्नुहोस्"
+
+#: core/templates/dashboard.html:165
+msgid "You haven't submitted any activities yet."
+msgstr "तपाईंले अझै कुनै गतिविधि पेश गर्नुभएको छैन।"
+
+#: core/templates/dashboard.html:166
+msgid "Submit an activity"
+msgstr "गतिविधि पेश गर्नुहोस्"
 
 #: core/templates/home.html:4
-msgid "Government Manifestos Tracker"
-msgstr ""
+msgid "Government Manifestos & Commitments Tracker"
+msgstr "सरकारी घोषणापत्र र प्रतिबद्धता ट्र्याकर"
 
-#: core/templates/home.html:14
+#: core/templates/home.html:13
 msgid "Track Government"
 msgstr "सरकारको ट्र्याक गर्नुहोस्"
 
-#: core/templates/home.html:15
-msgid "Promises & Actions"
-msgstr ""
+#: core/templates/home.html:13
+msgid "Promises & Actions."
+msgstr "वाचा र कार्यहरू।"
 
-#: core/templates/home.html:18
+#: core/templates/home.html:16
 msgid ""
-"Monitor manifesto commitments, verified activities, and approaching "
-"deadlines.\n"
-"                    Hold your government accountable with data-driven "
-"transparency."
+"Monitor manifesto commitments, verified activities, and approaching deadlines.\n"
+"        Hold your government accountable with data-driven transparency."
 msgstr ""
 
-#: core/templates/home.html:24
-msgid "Gov. Parties"
-msgstr ""
+#: core/templates/home.html:30 core/templates/home.html:301
+msgid "Deadline Passed"
+msgstr "समयसीमा बितिसक्यो"
 
-#: core/templates/home.html:28
-msgid "Manifesto Points"
-msgstr ""
+#: core/templates/home.html:38 core/templates/home.html:256
+msgid "Complete on Time"
+msgstr "समयमै पूरा"
 
-#: core/templates/home.html:32
-msgid "Upcoming Deadlines"
-msgstr ""
+#: core/templates/home.html:42
+msgid "Complete after deadline"
+msgstr "समयसीमा पछि पूरा"
 
-#: core/templates/home.html:47
+#: core/templates/home.html:46
+msgid "Git Commits"
+msgstr "गिट कमिटहरू"
+
+#: core/templates/home.html:50
+msgid "Last Updated"
+msgstr "अन्तिम अपडेट"
+
+#: core/templates/home.html:68
+msgid "Complete"
+msgstr "पूरा भयो"
+
+#: core/templates/home.html:70
+msgid "Approaching"
+msgstr "नजिकिँदै"
+
+#: core/templates/home.html:85
+msgid "Active Track"
+msgstr "सक्रिय ट्र्याक"
+
+#: core/templates/home.html:89
+msgid "active"
+msgstr "सक्रिय"
+
+#: core/templates/home.html:109
+msgid "Active Audit"
+msgstr "सक्रिय लेखापरीक्षण"
+
+#: core/templates/home.html:110
 msgid "Approaching Deadlines"
-msgstr ""
+msgstr "नजिकिँदै गरेका समयसीमाहरू"
 
-#: core/templates/home.html:48
+#: core/templates/home.html:113
 msgid "upcoming"
+msgstr "आगामी"
+
+#: core/templates/home.html:147
+msgid "In Govt"
+msgstr "सरकारमा"
+
+#: core/templates/home.html:182
+msgid "This party has not added any manifesto points yet."
+msgstr "यो दलले अझै कुनै घोषणापत्र बुँदा थपेको छैन।"
+
+#: core/templates/home.html:198
+msgid "This party has not added any commitments yet."
+msgstr "यो दलले अझै कुनै प्रतिबद्धता थपेको छैन।"
+
+#: core/templates/home.html:207
+msgid "No parties in government"
+msgstr "सरकारमा कुनै दल छैन"
+
+#: core/templates/home.html:208
+msgid "Please mark parties as 'In Government' via the Admin panel."
+msgstr "कृपया एडमिन प्यानलबाट दलहरूलाई 'सरकारमा' भनी चिन्ह लगाउनुहोस्।"
+
+#: core/templates/home.html:256
+msgid "Complete After Deadline"
+msgstr "समयसीमा पछि पूरा"
+
+#: core/templates/home.html:256
+msgid "Deadline Missed"
+msgstr "समयसीमा चुक्यो"
+
+#: core/templates/home.html:256
+msgid "Deadline Approaching"
+msgstr "समयसीमा नजिकिँदै"
+
+#: core/templates/includes/home_card.html:22
+msgid "Manifesto"
+msgstr "घोषणापत्र"
+
+#: core/templates/includes/home_card.html:26
+msgid "Commitment"
+msgstr "प्रतिबद्धता"
+
+#: core/templates/includes/home_card.html:36
+msgid "Completed"
+msgstr "पूरा भयो"
+
+#: core/templates/includes/home_card.html:45
+msgid "Loading..."
+msgstr "लोड हुँदैछ..."
+
+#: core/templates/includes/share_buttons.html:10
+msgid "Facebook"
 msgstr ""
 
-#: core/templates/home.html:86
+#: core/templates/includes/share_buttons.html:20
+msgid "WhatsApp"
+msgstr ""
+
+#: core/templates/includes/share_buttons.html:22
+msgid "Copied!"
+msgstr ""
+
+#: core/templates/includes/share_buttons.html:22
+#: core/templates/includes/share_buttons.html:25
+#: core/templates/petition_detail.html:145
+msgid "Copy Link"
+msgstr ""
+
+#: core/templates/includes/sidebar.html:6
+msgid "Quick Links"
+msgstr "द्रुत लिङ्कहरू"
+
+#: core/templates/includes/sidebar.html:30
+msgid "At a Glance"
+msgstr "एक नजरमा"
+
+#: core/templates/includes/sidebar.html:41
+msgid "Active Petitions"
+msgstr "सक्रिय निवेदनहरू"
+
+#: core/templates/includes/sidebar.html:57
+msgid "Announcements"
+msgstr "सूचनाहरू"
+
+#: core/templates/includes/sidebar.html:58
+msgid "No announcements at this time."
+msgstr "यस समय कुनै सूचना छैन।"
+
+#: core/templates/manifesto_detail.html:98
+#: core/templates/manifesto_list.html:143 core/templates/member_detail.html:137
+#: core/templates/party_detail.html:107
+msgid "Sub-Manifestos"
+msgstr "उप-घोषणापत्रहरू"
+
+#: core/templates/manifesto_list.html:4
+msgid "Manifesto Tracking"
+msgstr "घोषणापत्र ट्र्याकिङ"
+
+#: core/templates/manifesto_list.html:16
+msgid "National Accountability"
+msgstr "राष्ट्रिय उत्तरदायित्व"
+
+#: core/templates/manifesto_list.html:17
+msgid "Manifesto Tracker"
+msgstr "घोषणापत्र ट्र्याकर"
+
+#: core/templates/manifesto_list.html:44
+msgid "Search manifestos..."
+msgstr "घोषणापत्र खोज्नुहोस्..."
+
+#: core/templates/manifesto_list.html:60
+msgid "All"
+msgstr "सबै"
+
+#: core/templates/manifesto_list.html:180
+msgid "No manifestos found"
+msgstr "कुनै घोषणापत्र भेटिएन"
+
+#: core/templates/member_detail.html:12
+#, fuzzy
+#| msgid "Members"
+msgid "All Members"
+msgstr "सदस्यहरू"
+
+#: core/templates/member_detail.html:42
+msgid "Contact Information"
+msgstr ""
+
+#: core/templates/member_detail.html:49
+msgid "Phone"
+msgstr ""
+
+#: core/templates/member_detail.html:58
+msgid "Alt Phone"
+msgstr ""
+
+#: core/templates/member_detail.html:67
+msgid "Secretary"
+msgstr ""
+
+#: core/templates/member_detail.html:76
+msgid "Personal Email"
+msgstr ""
+
+#: core/templates/member_detail.html:85
+msgid "Office Email"
+msgstr ""
+
+#: core/templates/member_detail.html:172 core/templates/member_detail.html:252
+msgid "No verified activities yet."
+msgstr ""
+
+#: core/templates/member_detail.html:181 core/templates/party_detail.html:171
+msgid "No manifesto points"
+msgstr ""
+
+#: core/templates/member_detail.html:182
+msgid "No manifesto points found for this member."
+msgstr ""
+
+#: core/templates/member_detail.html:261 core/templates/party_detail.html:292
+msgid "No commitments"
+msgstr ""
+
+#: core/templates/member_detail.html:262
+msgid "No commitments found for this member."
+msgstr ""
+
+#: core/templates/member_list.html:14
+msgid "Elected Constituency Members"
+msgstr ""
+
+#: core/templates/member_list.html:15
+msgid "Representatives elected from constituencies across Nepal"
+msgstr ""
+
+#: core/templates/member_list.html:24
+msgid "Search by name, constituency, or party..."
+msgstr ""
+
+#: core/templates/member_list.html:37
+msgid "Parliament Composition"
+msgstr ""
+
+#: core/templates/member_list.html:38
+#, fuzzy
+#| msgid "Members"
+msgid "members"
+msgstr "सदस्यहरू"
+
+#: core/templates/member_list.html:93
+msgid "No elected members found"
+msgstr ""
+
+#: core/templates/member_list.html:94
+msgid "Members will appear here once added via the admin panel."
+msgstr ""
+
+#: core/templates/party_detail.html:12
+msgid "All Parties"
+msgstr ""
+
+#: core/templates/party_detail.html:31
 msgid "In Government"
 msgstr ""
 
-#: core/templates/home.html:109
-msgid "Verified Activities"
+#: core/templates/party_detail.html:77 core/templates/party_detail.html:201
+msgid "Link"
 msgstr ""
 
-#: core/templates/home.html:119
-msgid "Source"
+#: core/templates/party_detail.html:162
+msgid "No verified activities for this point yet."
 msgstr ""
 
-#: core/templates/home.html:134
-msgid "This party has not added any manifesto points yet."
+#: core/templates/party_detail.html:172
+msgid "No manifesto points found for this party."
 msgstr ""
 
-#: core/templates/home.html:143
-msgid "No parties in government"
+#: core/templates/party_detail.html:283
+msgid "No verified activities for this commitment yet."
 msgstr ""
 
-#: core/templates/home.html:144
-msgid "Please mark parties as 'In Government' via the Admin panel."
+#: core/templates/party_detail.html:293
+msgid "No commitments found for this party."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/contrib/messages/apps.py:16
-msgid "Messages"
+#: core/templates/party_list.html:15
+msgid "Parties represented in Parliament"
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/contrib/sitemaps/apps.py:8
-msgid "Site Maps"
+#: core/templates/party_list.html:24
+msgid "Search parties..."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/contrib/staticfiles/apps.py:9
-msgid "Static Files"
+#: core/templates/party_list.html:48
+msgid "View Manifestos"
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/contrib/syndication/apps.py:7
-msgid "Syndication"
+#: core/templates/party_list.html:56
+msgid "No parties found"
 msgstr ""
 
-#. Translators: String used to replace omitted page numbers in elided page
-#. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:30
-msgid "…"
+#: core/templates/party_list.html:57
+msgid "Parties will appear here once added via the admin panel."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:32
-msgid "That page number is not an integer"
+#: core/templates/petition_create.html:4 core/templates/petition_create.html:23
+#: core/templates/petition_list.html:21 core/templates/petition_list.html:113
+msgid "Start a Petition"
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:33
-msgid "That page number is less than 1"
+#: core/templates/petition_create.html:12
+#: core/templates/petition_detail.html:12
+msgid "All Petitions"
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/core/paginator.py:34
-msgid "That page contains no results"
+#: core/templates/petition_create.html:25
+msgid "Create a petition to rally support for a cause that matters to you."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/core/validators.py:22
-msgid "Enter a valid value."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:70
-msgid "Enter a valid domain name."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:153
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:775
-msgid "Enter a valid URL."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:200
-msgid "Enter a valid integer."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:211
-msgid "Enter a valid email address."
-msgstr ""
-
-#. Translators: "letters" means latin letters: a-z and A-Z.
-#: venv/lib/python3.13/site-packages/django/core/validators.py:289
-msgid ""
-"Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:297
-msgid ""
-"Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
-"hyphens."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:309
-#: venv/lib/python3.13/site-packages/django/core/validators.py:318
-#: venv/lib/python3.13/site-packages/django/core/validators.py:332
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2220
-#, python-format
-msgid "Enter a valid %(protocol)s address."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:311
-msgid "IPv4"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:320
-#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:43
-msgid "IPv6"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:334
-msgid "IPv4 or IPv6"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:375
-msgid "Enter only digits separated by commas."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:381
-#, python-format
-msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:416
-#, python-format
-msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:425
-#, python-format
-msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:434
-#, python-format
-msgid "Ensure this value is a multiple of step size %(limit_value)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:441
-#, python-format
-msgid ""
-"Ensure this value is a multiple of step size %(limit_value)s, starting from "
-"%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:473
-#, python-format
-msgid ""
-"Ensure this value has at least %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at least %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:491
-#, python-format
-msgid ""
-"Ensure this value has at most %(limit_value)d character (it has "
-"%(show_value)d)."
-msgid_plural ""
-"Ensure this value has at most %(limit_value)d characters (it has "
-"%(show_value)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:514
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:366
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:405
-msgid "Enter a number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:516
-#, python-format
-msgid "Ensure that there are no more than %(max)s digit in total."
-msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:521
-#, python-format
-msgid "Ensure that there are no more than %(max)s decimal place."
-msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:526
-#, python-format
-msgid ""
-"Ensure that there are no more than %(max)s digit before the decimal point."
-msgid_plural ""
-"Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:597
-#, python-format
-msgid ""
-"File extension “%(extension)s” is not allowed. Allowed extensions are: "
-"%(allowed_extensions)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/core/validators.py:659
-msgid "Null characters are not allowed."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/base.py:1600
-#: venv/lib/python3.13/site-packages/django/forms/models.py:908
-msgid "and"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/base.py:1602
-#, python-format
-msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/constraints.py:22
-#, python-format
-msgid "Constraint “%(name)s” is violated."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:134
-#, python-format
-msgid "Value %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:135
-msgid "This field cannot be null."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:136
-msgid "This field cannot be blank."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:137
-#, python-format
-msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
-
-#. Translators: The 'lookup_type' is one of 'date', 'year' or
-#. 'month'. Eg: "Title must be unique for pub_date year"
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:141
-#, python-format
-msgid ""
-"%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:180
-#, python-format
-msgid "Field of type: %(field_type)s"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1162
-#, python-format
-msgid "“%(value)s” value must be either True or False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1163
-#, python-format
-msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1165
-msgid "Boolean (Either True or False)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1215
-#, python-format
-msgid "String (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1217
-msgid "String (unlimited)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1326
-msgid "Comma-separated integers"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1427
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
-"format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1431
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1566
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
-"date."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1435
-msgid "Date (without time)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1562
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
-"uuuuuu]][TZ] format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1570
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
-"[TZ]) but it is an invalid date/time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1575
-msgid "Date (with time)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1702
-#, python-format
-msgid "“%(value)s” value must be a decimal number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1704
-msgid "Decimal number"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1864
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
-"uuuuuu] format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1868
-msgid "Duration"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1920
-msgid "Email address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:1945
-msgid "File path"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2023
-#, python-format
-msgid "“%(value)s” value must be a float."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2025
-msgid "Floating point number"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2065
-#, python-format
-msgid "“%(value)s” value must be an integer."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2067
-msgid "Integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2163
-msgid "Big (8 byte) integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2180
-msgid "Small integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2188
-msgid "IPv4 address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2219
-msgid "IP address"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2310
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2311
-#, python-format
-msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2313
-msgid "Boolean (Either True, False or None)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2364
-msgid "Positive big integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2379
-msgid "Positive integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2394
-msgid "Positive small integer"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2410
-#, python-format
-msgid "Slug (up to %(max_length)s)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2446
-msgid "Text"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2526
-#, python-format
-msgid ""
-"“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
-"format."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2530
-#, python-format
-msgid ""
-"“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
-"invalid time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2534
-msgid "Time"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2642
-msgid "URL"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2666
-msgid "Raw binary data"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2731
-#, python-format
-msgid "“%(value)s” is not a valid UUID."
-msgstr ""
+#: core/templates/petition_create.html:52
+msgid "Create Petition"
+msgstr "निवेदन बनाउनुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py:2733
-msgid "Universally unique identifier"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:244
-msgid "File"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/files.py:420
-msgid "Image"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:24
-msgid "A JSON object"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/json.py:26
-msgid "Value must be valid JSON."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:979
-#, python-format
-msgid "%(model)s instance with %(field)s %(value)r is not a valid choice."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:982
-msgid "Foreign Key (type determined by related field)"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1276
-msgid "One-to-one relationship"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1333
-#, python-format
-msgid "%(from)s-%(to)s relationship"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1335
-#, python-format
-msgid "%(from)s-%(to)s relationships"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/db/models/fields/related.py:1383
-msgid "Many-to-many relationship"
-msgstr ""
-
-#. Translators: If found as last label character, these punctuation
-#. characters will prevent the default label_suffix to be appended to the label
-#: venv/lib/python3.13/site-packages/django/forms/boundfield.py:185
-msgid ":?.!"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:95
-msgid "This field is required."
-msgstr ""
+#: core/templates/petition_create.html:55
+#: social/templates/social/create_image.html:129
+#: social/templates/social/create_reel.html:121
+msgid "Cancel"
+msgstr "रद्द गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:315
-msgid "Enter a whole number."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:486
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1267
-msgid "Enter a valid date."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:509
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1268
-msgid "Enter a valid time."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:536
-msgid "Enter a valid date/time."
-msgstr ""
+#: core/templates/petition_detail.html:30
+msgid "Goal Achieved!"
+msgstr "लक्ष्य प्राप्त!"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:570
-msgid "Enter a valid duration."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:571
-#, python-brace-format
-msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
+#: core/templates/petition_detail.html:42
+msgid "Started by"
+msgstr "शुरु गर्ने"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:640
-msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:641
-msgid "No file was submitted."
-msgstr ""
+#: core/templates/petition_detail.html:44
+msgid "Addressed to:"
+msgstr "सम्बोधित:"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:642
-msgid "The submitted file is empty."
-msgstr ""
+#: core/templates/petition_detail.html:64
+msgid "Recent Signatures"
+msgstr "हालका हस्ताक्षरहरू"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:644
-#, python-format
-msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
-msgid_plural ""
-"Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:649
-msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
+#: core/templates/petition_detail.html:86
+msgid "No signatures yet. Be the first to sign!"
+msgstr "अझै कुनै हस्ताक्षर छैन। पहिलो भएर हस्ताक्षर गर्नुहोस्!"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:717
-msgid ""
-"Upload a valid image. The file you uploaded was either not an image or a "
-"corrupted image."
-msgstr ""
+#: core/templates/petition_detail.html:98
+msgid "of"
+msgstr "मध्ये"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:889
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:975
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1592
-#, python-format
-msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
+#: core/templates/petition_detail.html:103
+msgid "reached"
+msgstr "पुगेको"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:977
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1096
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1590
-msgid "Enter a list of values."
-msgstr ""
+#: core/templates/petition_detail.html:111
+msgid "You've signed this petition"
+msgstr "तपाईंले यो निवेदनमा हस्ताक्षर गरिसक्नुभयो"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1097
-msgid "Enter a complete value."
-msgstr ""
+#: core/templates/petition_detail.html:116
+msgid "This is your petition"
+msgstr "यो तपाईंको निवेदन हो"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1339
-msgid "Enter a valid UUID."
-msgstr ""
+#: core/templates/petition_detail.html:121
+msgid "Why do you support this? (optional)"
+msgstr "तपाईं किन यसलाई समर्थन गर्नुहुन्छ? (ऐच्छिक)"
 
-#: venv/lib/python3.13/site-packages/django/forms/fields.py:1369
-msgid "Enter a valid JSON."
-msgstr ""
+#: core/templates/petition_detail.html:124
+msgid "Sign this Petition"
+msgstr "यो निवेदनमा हस्ताक्षर गर्नुहोस्"
 
-#. Translators: This is the default suffix added to form field labels
-#: venv/lib/python3.13/site-packages/django/forms/forms.py:97
-msgid ":"
-msgstr ""
+#: core/templates/petition_detail.html:130
+msgid "Login to Sign"
+msgstr "हस्ताक्षर गर्न लग इन गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/forms/forms.py:239
-#, python-format
-msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
+#: core/templates/petition_detail.html:136
+msgid "This petition is no longer accepting signatures"
+msgstr "यो निवेदनले अब हस्ताक्षर स्वीकार गर्दैन"
 
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:61
-#, python-format
-msgid ""
-"ManagementForm data is missing or has been tampered with. Missing fields: "
-"%(field_names)s. You may need to file a bug report if the issue persists."
-msgstr ""
+#: core/templates/petition_detail.html:142
+msgid "Share this petition"
+msgstr "यो निवेदन साझा गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:65
-#, python-format
-msgid "Please submit at most %(num)d form."
-msgid_plural "Please submit at most %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:70
-#, python-format
-msgid "Please submit at least %(num)d form."
-msgid_plural "Please submit at least %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:484
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:491
-msgid "Order"
-msgstr ""
+#: core/templates/petition_list.html:15
+msgid "Signature Petitions"
+msgstr "हस्ताक्षर निवेदनहरू"
 
-#: venv/lib/python3.13/site-packages/django/forms/formsets.py:499
-msgid "Delete"
-msgstr ""
+#: core/templates/petition_list.html:17
+msgid "Start a petition or support causes that matter. Your voice counts."
+msgstr "निवेदन सुरु गर्नुहोस् वा महत्त्वपूर्ण कारणहरूलाई समर्थन गर्नुहोस्। तपाईंको आवाज महत्त्वपूर्ण छ।"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:901
-#, python-format
-msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
+#: core/templates/petition_list.html:25
+msgid "Login to Start"
+msgstr "सुरु गर्न लग इन गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:906
-#, python-format
-msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
+#: core/templates/petition_list.html:38
+msgid "Search petitions..."
+msgstr "निवेदन खोज्नुहोस्..."
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:913
-#, python-format
-msgid ""
-"Please correct the duplicate data for %(field_name)s which must be unique "
-"for the %(lookup)s in %(date_field)s."
-msgstr ""
+#: core/templates/petition_list.html:92
+msgid "Goal:"
+msgstr "लक्ष्य:"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:922
-msgid "Please correct the duplicate values below."
-msgstr ""
+#: core/templates/petition_list.html:109
+msgid "No petitions yet"
+msgstr "अझै कुनै निवेदन छैन"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1359
-msgid "The inline value did not match the parent instance."
-msgstr ""
+#: core/templates/petition_list.html:110
+msgid "Be the first to start a petition and make your voice heard!"
+msgstr "पहिलो भएर निवेदन सुरु गर्नुहोस् र आफ्नो आवाज सुनाउनुहोस्!"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1450
-msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
+#: core/templates/socialaccount/login.html:4
+msgid "Sign In"
+msgstr "साइन इन"
 
-#: venv/lib/python3.13/site-packages/django/forms/models.py:1594
-#, python-format
-msgid "“%(pk)s” is not a valid value."
-msgstr ""
+#: core/templates/socialaccount/login.html:16
+msgid "Sign In Via Google"
+msgstr "गुगलबाट साइन इन गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/forms/utils.py:229
+#: core/templates/socialaccount/login.html:19
 #, python-format
-msgid ""
-"%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
-"may be ambiguous or it may not exist."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:527
-msgid "Clear"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:528
-msgid "Currently"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:529
-msgid "Change"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:866
-msgid "Unknown"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:867
-msgid "Yes"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/forms/widgets.py:868
-msgid "No"
-msgstr ""
-
-#. Translators: Please do not add spaces around commas.
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:873
-msgid "yes,no,maybe"
+msgid "You are about to sign in using a third-party account from %(provider_name)s."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:903
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:920
-#, python-format
-msgid "%(size)d byte"
-msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:922
-#, python-format
-msgid "%s KB"
-msgstr ""
+#: core/templates/socialaccount/login.html:29
+msgid "Continue to Google"
+msgstr "गुगलमा जारी राख्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:924
-#, python-format
-msgid "%s MB"
-msgstr ""
+#: core/templates/socialaccount/login.html:32
+msgid "Cancel and go back"
+msgstr "रद्द गरेर फर्कनुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:926
-#, python-format
-msgid "%s GB"
-msgstr ""
+#: core/templates/socialaccount/signup.html:5
+msgid "Finish Signing Up"
+msgstr "दर्ता पूरा गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:928
-#, python-format
-msgid "%s TB"
-msgstr ""
+#: core/templates/socialaccount/signup.html:14
+msgid "Complete Your Profile"
+msgstr "आफ्नो प्रोफाइल पूरा गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/template/defaultfilters.py:930
+#: core/templates/socialaccount/signup.html:17
 #, python-format
-msgid "%s PB"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:74
-msgid "p.m."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:75
-msgid "a.m."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:80
-msgid "PM"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:81
-msgid "AM"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:153
-msgid "midnight"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dateformat.py:155
-msgid "noon"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:7
-msgid "Monday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:8
-msgid "Tuesday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:9
-msgid "Wednesday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:10
-msgid "Thursday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:11
-msgid "Friday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:12
-msgid "Saturday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:13
-msgid "Sunday"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:16
-msgid "Mon"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:17
-msgid "Tue"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:18
-msgid "Wed"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:19
-msgid "Thu"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:20
-msgid "Fri"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:21
-msgid "Sat"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:22
-msgid "Sun"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:25
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:26
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:27
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:28
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:29
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:30
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:31
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:32
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:33
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:34
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:35
-msgid "November"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:36
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:39
-msgid "jan"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:40
-msgid "feb"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:41
-msgid "mar"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:42
-msgid "apr"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:43
-msgid "may"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:44
-msgid "jun"
+msgid "You are signing up with your %(provider_name)s account."
 msgstr ""
 
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:45
-msgid "jul"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:46
-msgid "aug"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:47
-msgid "sep"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:48
-msgid "oct"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:49
-msgid "nov"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:50
-msgid "dec"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:53
-msgctxt "abbrev. month"
-msgid "Jan."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:54
-msgctxt "abbrev. month"
-msgid "Feb."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:55
-msgctxt "abbrev. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:56
-msgctxt "abbrev. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:57
-msgctxt "abbrev. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:58
-msgctxt "abbrev. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:59
-msgctxt "abbrev. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:60
-msgctxt "abbrev. month"
-msgid "Aug."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:61
-msgctxt "abbrev. month"
-msgid "Sept."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:62
-msgctxt "abbrev. month"
-msgid "Oct."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:63
-msgctxt "abbrev. month"
-msgid "Nov."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:64
-msgctxt "abbrev. month"
-msgid "Dec."
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:67
-msgctxt "alt. month"
-msgid "January"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:68
-msgctxt "alt. month"
-msgid "February"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:69
-msgctxt "alt. month"
-msgid "March"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:70
-msgctxt "alt. month"
-msgid "April"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:71
-msgctxt "alt. month"
-msgid "May"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:72
-msgctxt "alt. month"
-msgid "June"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:73
-msgctxt "alt. month"
-msgid "July"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:74
-msgctxt "alt. month"
-msgid "August"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:75
-msgctxt "alt. month"
-msgid "September"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:76
-msgctxt "alt. month"
-msgid "October"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:77
-msgctxt "alt. month"
-msgid "November"
-msgstr ""
+#: core/templates/socialaccount/signup.html:30
+msgid "Create Account"
+msgstr "खाता बनाउनुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/utils/dates.py:78
-msgctxt "alt. month"
-msgid "December"
-msgstr ""
-
-#: venv/lib/python3.13/site-packages/django/utils/ipv6.py:20
-msgid "This is not a valid IPv6 address."
-msgstr ""
+#: core/templates/submit_activity.html:12
+msgid "Back to Home"
+msgstr "गृहपृष्ठमा फर्कनुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/utils/text.py:76
-#, python-format
-msgctxt "String to return when truncating text"
-msgid "%(truncated_text)s…"
-msgstr ""
+#: core/templates/submit_activity.html:23
+msgid "Submit Government Activity"
+msgstr "सरकारी गतिविधि पेश गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/utils/text.py:287
-msgid "or"
-msgstr ""
+#: core/templates/submit_activity.html:31
+msgid "Important:"
+msgstr "महत्त्वपूर्ण:"
 
-#. Translators: This string is used as a separator between list elements
-#: venv/lib/python3.13/site-packages/django/utils/text.py:306
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:135
-msgid ", "
-msgstr ""
+#: core/templates/submit_activity.html:32
+msgid "After the link is provided, we will verify and accept as soon as possible."
+msgstr "लिङ्क प्रदान गरिएपछि, हामी सकेसम्म चाँडो प्रमाणित र स्वीकार गर्नेछौं।"
 
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:8
-#, python-format
-msgid "%(num)d year"
-msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:9
-#, python-format
-msgid "%(num)d month"
-msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:10
-#, python-format
-msgid "%(num)d week"
-msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:11
-#, python-format
-msgid "%(num)d day"
-msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:12
-#, python-format
-msgid "%(num)d hour"
-msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/utils/timesince.py:13
-#, python-format
-msgid "%(num)d minute"
-msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
-
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:29
-msgid "Forbidden"
-msgstr ""
+#: core/templates/submit_activity.html:33
+msgid "verified source"
+msgstr "प्रमाणित स्रोत"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:30
-msgid "CSRF verification failed. Request aborted."
-msgstr ""
+#: core/templates/submit_activity.html:35
+#, fuzzy
+#| msgid "Track Government"
+msgid "government"
+msgstr "सरकारको ट्र्याक गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:34
-msgid ""
-"You are seeing this message because this HTTPS site requires a “Referer "
-"header” to be sent by your web browser, but none was sent. This header is "
-"required for security reasons, to ensure that your browser is not being "
-"hijacked by third parties."
-msgstr ""
+#: core/templates/submit_activity.html:36
+msgid "domain."
+msgstr "क्षेत्र।"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:40
-msgid ""
-"If you have configured your browser to disable “Referer” headers, please re-"
-"enable them, at least for this site, or for HTTPS connections, or for “same-"
-"origin” requests."
-msgstr ""
+#: social/templates/social/create_image.html:15
+#: social/templates/social/create_reel.html:15
+msgid "Back"
+msgstr "फिर्ता"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:45
-msgid ""
-"If you are using the <meta name=\"referrer\" content=\"no-referrer\"> tag or "
-"including the “Referrer-Policy: no-referrer” header, please remove them. The "
-"CSRF protection requires the “Referer” header to do strict referer checking. "
-"If you’re concerned about privacy, use alternatives like <a rel=\"noreferrer"
-"\" …> for links to third-party sites."
-msgstr ""
+#: social/templates/social/create_image.html:26
+#: social/templates/social/post_detail.html:64
+msgid "Template"
+msgstr "टेम्प्लेट"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:54
-msgid ""
-"You are seeing this message because this site requires a CSRF cookie when "
-"submitting forms. This cookie is required for security reasons, to ensure "
-"that your browser is not being hijacked by third parties."
-msgstr ""
+#: social/templates/social/create_image.html:30
+msgid "Template A: Keyword Highlight"
+msgstr "टेम्प्लेट A: कीवर्ड हाइलाइट"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:60
-msgid ""
-"If you have configured your browser to disable cookies, please re-enable "
-"them, at least for this site, or for “same-origin” requests."
-msgstr ""
+#: social/templates/social/create_image.html:31
+msgid "Template B: Red Box Title"
+msgstr "टेम्प्लेट B: रातो बक्स शीर्षक"
 
-#: venv/lib/python3.13/site-packages/django/views/csrf.py:66
-msgid "More information is available with DEBUG=True."
-msgstr ""
+#: social/templates/social/create_image.html:36
+msgid "Aspect Ratio"
+msgstr "पक्ष अनुपात"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:44
-msgid "No year specified"
-msgstr ""
+#: social/templates/social/create_image.html:40
+msgid "Square (1:1) — 1080×1080"
+msgstr "वर्ग (1:1) — 1080×1080"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:64
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:115
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:214
-msgid "Date out of range"
-msgstr ""
+#: social/templates/social/create_image.html:41
+msgid "Portrait (4:5) — 1080×1350"
+msgstr "पोर्ट्रेट (4:5) — 1080×1350"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:94
-msgid "No month specified"
-msgstr ""
+#: social/templates/social/create_image.html:49
+#: social/templates/social/create_reel.html:35
+msgid "Title"
+msgstr "शीर्षक"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:147
-msgid "No day specified"
-msgstr ""
+#: social/templates/social/create_image.html:53
+msgid "Enter post title"
+msgstr "पोस्ट शीर्षक प्रविष्ट गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:194
-msgid "No week specified"
-msgstr ""
+#: social/templates/social/create_image.html:60
+#: social/templates/social/create_reel.html:45
+#: social/templates/social/post_detail.html:56
+msgid "Caption"
+msgstr "क्याप्सन"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:353
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:384
-#, python-format
-msgid "No %(verbose_name_plural)s available"
-msgstr ""
+#: social/templates/social/create_image.html:65
+msgid "AI Generate"
+msgstr "AI उत्पादन"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:680
-#, python-format
-msgid ""
-"Future %(verbose_name_plural)s not available because %(class_name)s."
-"allow_future is False."
-msgstr ""
+#: social/templates/social/create_image.html:70
+msgid "Write your caption here or use AI to generate one..."
+msgstr "यहाँ क्याप्सन लेख्नुहोस् वा AI प्रयोग गर्नुहोस्..."
 
-#: venv/lib/python3.13/site-packages/django/views/generic/dates.py:720
-#, python-format
-msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
+#: social/templates/social/create_image.html:72
+msgid "Generating caption with AI..."
+msgstr "AI बाट क्याप्सन उत्पादन गर्दै..."
 
-#: venv/lib/python3.13/site-packages/django/views/generic/detail.py:56
-#, python-format
-msgid "No %(verbose_name)s found matching the query"
-msgstr ""
+#: social/templates/social/create_image.html:79
+msgid "Keywords to Highlight"
+msgstr "हाइलाइट गर्ने कीवर्डहरू"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:70
-msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
+#: social/templates/social/create_image.html:80
+msgid "Template A only"
+msgstr "टेम्प्लेट A मात्र"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:77
-#, python-format
-msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
+#: social/templates/social/create_image.html:84
+msgid "e.g., corruption, accountability, development"
+msgstr "जस्तै: भ्रष्टाचार, उत्तरदायित्व, विकास"
 
-#: venv/lib/python3.13/site-packages/django/views/generic/list.py:173
-#, python-format
-msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
+#: social/templates/social/create_image.html:90
+msgid "Description"
+msgstr "विवरण"
 
-#: venv/lib/python3.13/site-packages/django/views/static.py:49
-msgid "Directory indexes are not allowed here."
-msgstr ""
+#: social/templates/social/create_image.html:91
+msgid "Template B only"
+msgstr "टेम्प्लेट B मात्र"
 
-#: venv/lib/python3.13/site-packages/django/views/static.py:51
-#, python-format
-msgid "“%(path)s” does not exist"
-msgstr ""
+#: social/templates/social/create_image.html:95
+msgid "Short description for the red box template"
+msgstr "रातो बक्स टेम्प्लेटको लागि छोटो विवरण"
 
-#: venv/lib/python3.13/site-packages/django/views/static.py:68
-#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:8
-#: venv/lib/python3.13/site-packages/django/views/templates/directory_index.html:11
-#, python-format
-msgid "Index of %(directory)s"
-msgstr ""
+#: social/templates/social/create_image.html:101
+msgid "Upload Image"
+msgstr "छवि अपलोड गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:7
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:204
-msgid "The install worked successfully! Congratulations!"
-msgstr ""
+#: social/templates/social/create_image.html:115
+msgid "Crop & Apply"
+msgstr "क्रप र लागू गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:206
-#, python-format
-msgid ""
-"View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
-"target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
-msgstr ""
+#: social/templates/social/create_image.html:119
+msgid "Reset"
+msgstr "रिसेट"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:208
-#, python-format
-msgid ""
-"You are seeing this page because <a href=\"https://docs.djangoproject.com/en/"
-"%(version)s/ref/settings/#debug\" target=\"_blank\" rel=\"noopener"
-"\">DEBUG=True</a> is in your settings file and you have not configured any "
-"URLs."
-msgstr ""
+#: social/templates/social/create_image.html:134
+#: social/templates/social/create_reel.html:126
+msgid "Submit for Review"
+msgstr "समीक्षाको लागि पेश गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:217
-msgid "Django Documentation"
-msgstr ""
+#: social/templates/social/create_reel.html:23
+msgid "Loading video processor..."
+msgstr "भिडियो प्रोसेसर लोड हुँदैछ..."
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:218
-msgid "Topics, references, &amp; how-to’s"
-msgstr ""
+#: social/templates/social/create_reel.html:39
+msgid "Enter reel title"
+msgstr "रिल शीर्षक प्रविष्ट गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:226
-msgid "Tutorial: A Polling App"
-msgstr ""
+#: social/templates/social/create_reel.html:49
+msgid "Write caption..."
+msgstr "क्याप्सन लेख्नुहोस्..."
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:227
-msgid "Get started with Django"
-msgstr ""
+#: social/templates/social/create_reel.html:55
+msgid "Upload Images for Slideshow"
+msgstr "स्लाइडशोको लागि छविहरू अपलोड गर्नुहोस्"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:235
-msgid "Django Community"
-msgstr ""
+#: social/templates/social/create_reel.html:59
+msgid "Select multiple images. Each will display for 3 seconds in the reel."
+msgstr "धेरै छविहरू चयन गर्नुहोस्। प्रत्येक रिलमा ३ सेकेन्ड देखिनेछ।"
 
-#: venv/lib/python3.13/site-packages/django/views/templates/default_urlconf.html:236
-msgid "Connect, get help, or contribute"
-msgstr ""
+#: social/templates/social/create_reel.html:67
+msgid "Voiceover Text"
+msgstr "भ्वाइसओभर पाठ"
 
-#: venv/lib/python3.13/site-packages/django_bootstrap5/components.py:26
-msgid "close"
-msgstr ""
+#: social/templates/social/create_reel.html:72
+msgid "Generate Voiceover"
+msgstr "भ्वाइसओभर उत्पादन गर्नुहोस्"
 
-#: watchdog/settings.py:149
-msgid "English"
-msgstr ""
+#: social/templates/social/create_reel.html:77
+msgid "Enter text to convert to speech..."
+msgstr "बोलीमा रूपान्तरण गर्न पाठ प्रविष्ट गर्नुहोस्..."
 
-#: watchdog/settings.py:150
+#: social/templates/social/create_reel.html:80 watchdog/settings.py:208
 msgid "Nepali"
-msgstr ""
+msgstr "नेपाली"
+
+#: social/templates/social/create_reel.html:81 watchdog/settings.py:207
+msgid "English"
+msgstr "अंग्रेजी"
+
+#: social/templates/social/create_reel.html:82
+msgid "Hindi"
+msgstr "हिन्दी"
+
+#: social/templates/social/create_reel.html:85
+msgid "Generating voiceover..."
+msgstr "भ्वाइसओभर उत्पादन गर्दै..."
+
+#: social/templates/social/create_reel.html:93
+msgid "Background Music"
+msgstr "पृष्ठभूमि सङ्गीत"
+
+#: social/templates/social/create_reel.html:94
+msgid "optional"
+msgstr "ऐच्छिक"
+
+#: social/templates/social/create_reel.html:105
+msgid "Process Reel in Browser"
+msgstr "ब्राउजरमा रिल प्रोसेस गर्नुहोस्"
+
+#: social/templates/social/create_reel.html:109
+msgid "Processing video..."
+msgstr "भिडियो प्रोसेस हुँदैछ..."
+
+#: social/templates/social/dashboard.html:16
+msgid "Create, manage, and publish branded content"
+msgstr "ब्रान्डेड सामग्री बनाउनुहोस्, व्यवस्थापन गर्नुहोस् र प्रकाशित गर्नुहोस्"
+
+#: social/templates/social/dashboard.html:24
+msgid "Drafts"
+msgstr "ड्राफ्टहरू"
+
+#: social/templates/social/dashboard.html:32
+#: social/templates/social/post_detail.html:76
+msgid "Published"
+msgstr "प्रकाशित"
+
+#: social/templates/social/dashboard.html:49
+msgid "Upload an image, apply branded templates, and generate captions with AI"
+msgstr "छवि अपलोड गर्नुहोस्, ब्रान्डेड टेम्प्लेट लागू गर्नुहोस् र AI बाट क्याप्सन उत्पादन गर्नुहोस्"
+
+#: social/templates/social/dashboard.html:60
+msgid "Build video reels with voiceover and audio — all processed in your browser"
+msgstr "भ्वाइसओभर र अडियोसहित भिडियो रिलहरू बनाउनुहोस् — सबै तपाईंको ब्राउजरमा प्रोसेस हुन्छ"
+
+#: social/templates/social/dashboard.html:70
+msgid "Your Recent Posts"
+msgstr "तपाईंका हालका पोस्टहरू"
+
+#: social/templates/social/post_detail.html:25
+msgid "By"
+msgstr "द्वारा"
+
+#: social/templates/social/post_detail.html:48
+msgid "No media attached"
+msgstr "कुनै मिडिया संलग्न छैन"
+
+#: social/templates/social/post_detail.html:68
+msgid "Ratio"
+msgstr "अनुपात"
+
+#: social/templates/social/post_detail.html:72
+msgid "Approved By"
+msgstr "स्वीकृति दिने"
+
+#: social/templates/social/post_detail.html:86
+msgid "Published to:"
+msgstr "प्रकाशित:"
+
+#: social/templates/social/post_detail.html:93
+msgid "Publishing Errors"
+msgstr "प्रकाशन त्रुटिहरू"
+
+#: social/templates/social/post_detail.html:100
+msgid "Rejection Reason"
+msgstr "अस्वीकृतिको कारण"
+
+#: social/templates/social/post_detail.html:108
+msgid "Review Actions"
+msgstr "समीक्षा कार्यहरू"
+
+#: social/templates/social/post_detail.html:115
+msgid "Approve"
+msgstr "स्वीकृत गर्नुहोस्"
+
+#: social/templates/social/post_detail.html:124
+msgid "Approve & Publish Now"
+msgstr "स्वीकृत गरेर प्रकाशित गर्नुहोस्"
+
+#: social/templates/social/post_detail.html:130
+msgid "Reject"
+msgstr "अस्वीकार गर्नुहोस्"
+
+#: social/templates/social/post_detail.html:136
+msgid "Reason for rejection..."
+msgstr "अस्वीकृतिको कारण..."
+
+#: social/templates/social/post_detail.html:140
+msgid "Confirm Rejection"
+msgstr "अस्वीकृति पुष्टि गर्नुहोस्"
+
+#: social/templates/social/post_list.html:23
+msgid "All Statuses"
+msgstr "सबै स्थितिहरू"
+
+#: social/templates/social/post_list.html:101
+msgid "No posts yet."
+msgstr "अझै कुनै पोस्ट छैन।"
+
+#: social/templates/social/post_list.html:103
+msgid "Create Your First Post"
+msgstr "पहिलो पोस्ट बनाउनुहोस्"

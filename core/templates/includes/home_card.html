@@ -42,7 +42,7 @@
           <span class="material-symbols-outlined text-[14px]">timer</span> {% trans "Deadline" %}
         </p>
         <p class="text-on-surface font-bold deadline-countdown mt-0.5 text-right w-full"
-          data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
+          data-deadline="{{ item.calculated_deadline|date:'c' }}">{% trans "Loading..." %}</p>
       </div>
       {% endif %}
     </div>

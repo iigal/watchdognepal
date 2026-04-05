@@ -298,7 +298,7 @@
       const distance = deadlineTime - now;
 
       if (distance < 0) {
-        el.innerHTML = "Deadline Passed";
+        el.innerHTML = "{% trans 'Deadline Passed' %}";
         el.classList.add('text-rose-500');
         return;
       }

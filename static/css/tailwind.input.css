@@ -59,6 +59,7 @@ html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
   border-color: #4a5568 !important;
 }
 /* Dark mode: breadcrumbs and misc text */
+html.dark .text-slate-400 { color: #6b7280; }
 html.dark .text-slate-500 { color: #6b7280; }
 html.dark .text-slate-600 { color: #9ca3af; }
 html.dark .text-slate-700 { color: #c8cad0; }
@@ -66,11 +67,70 @@ html.dark .text-slate-800 { color: #d1d5db; }
 html.dark .text-slate-900 { color: #e5e7eb; }
 html.dark .text-on-surface { color: #e1e3e4; }
 html.dark .text-on-surface-variant { color: #9ca3af; }
+html.dark .text-red-700 { color: #fca5a5; }
+html.dark .text-red-800 { color: #fca5a5; }
+html.dark .text-green-700 { color: #6ee7b7; }
+html.dark .text-green-800 { color: #6ee7b7; }
+html.dark .text-blue-700 { color: #93c5fd; }
+html.dark .text-blue-800 { color: #93c5fd; }
+
+/* Dark mode: all white/light backgrounds */
+html.dark .bg-white { background-color: #1c1f26; }
 html.dark .bg-slate-50 { background-color: #1c1f26; }
 html.dark .bg-slate-100 { background-color: #262a33; }
-html.dark .bg-white { background-color: #1c1f26; }
+html.dark .bg-slate-200 { background-color: #2d3139; }
+html.dark .bg-slate-300 { background-color: #3d424a; }
+
+/* Dark mode: Surface container tokens (M3 design system) */
+html.dark .bg-surface { background-color: #111318; }
+html.dark .bg-surface-container-lowest { background-color: #1c1f26; }
+html.dark .bg-surface-container-low { background-color: #1e2128; }
+html.dark .bg-surface-container { background-color: #22252c; }
+html.dark .bg-surface-container-high { background-color: #262a33; }
+html.dark .bg-surface-container-highest { background-color: #2d3139; }
+html.dark .bg-surface-container-highest\/30 { background-color: rgba(45,49,57,0.3); }
+html.dark .bg-surface-container-highest\/50 { background-color: rgba(45,49,57,0.5); }
+
+/* Dark mode: colored badge/status backgrounds */
+html.dark .bg-emerald-50 { background-color: rgba(16,185,129,0.1); }
+html.dark .bg-emerald-100 { background-color: rgba(16,185,129,0.15); }
+html.dark .bg-green-100 { background-color: rgba(34,197,94,0.15); }
+html.dark .bg-blue-50 { background-color: rgba(59,130,246,0.1); }
+html.dark .bg-blue-100 { background-color: rgba(59,130,246,0.15); }
+html.dark .bg-blue-100\/50 { background-color: rgba(59,130,246,0.08); }
+html.dark .bg-red-50 { background-color: rgba(239,68,68,0.1); }
+html.dark .bg-red-100 { background-color: rgba(239,68,68,0.15); }
+html.dark .bg-rose-50 { background-color: rgba(244,63,94,0.1); }
+html.dark .bg-rose-100 { background-color: rgba(244,63,94,0.15); }
+html.dark .bg-amber-50 { background-color: rgba(245,158,11,0.1); }
+html.dark .bg-amber-100 { background-color: rgba(245,158,11,0.15); }
+html.dark .bg-violet-50 { background-color: rgba(139,92,246,0.1); }
+html.dark .bg-violet-100 { background-color: rgba(139,92,246,0.15); }
+html.dark .bg-primary\/10 { background-color: rgba(177,0,44,0.15); }
+html.dark .bg-secondary\/10 { background-color: rgba(51,90,180,0.15); }
+
+/* Dark mode: borders */
 html.dark .border-slate-100 { border-color: #2d3139; }
 html.dark .border-slate-200 { border-color: #2d3139; }
+html.dark .border-slate-300 { border-color: #3d424a; }
+html.dark .border-outline\/20 { border-color: rgba(145,111,110,0.3); }
+
+/* Dark mode: hover states */
+html.dark .hover\:bg-slate-50:hover { background-color: #1e2128; }
+html.dark .hover\:bg-slate-100:hover { background-color: #262a33; }
+html.dark .hover\:bg-slate-200:hover { background-color: #2d3139; }
+html.dark .hover\:bg-surface-container-high:hover { background-color: #2d3139; }
+html.dark .hover\:bg-surface-container-high\/30:hover { background-color: rgba(45,49,57,0.3); }
+html.dark .hover\:bg-surface-container-highest\/50:hover { background-color: rgba(45,49,57,0.5); }
+
+/* Dark mode: box shadows */
+html.dark .shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+html.dark .shadow-md { box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+html.dark .shadow-lg { box-shadow: 0 10px 15px rgba(0,0,0,0.35); }
+
+/* Dark mode: separator/divider */
+html.dark .divide-outline\/10 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(145,111,110,0.15); }
+
 html.dark .wn-cultural-bg { opacity: 0.02; }
 
 /* ---- Share button styles ---- */

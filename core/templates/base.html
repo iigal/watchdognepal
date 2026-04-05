@@ -3,7 +3,8 @@
 {% load i18n %}
 
 <!DOCTYPE html>
-<html lang="en" id="html-root">
+{% get_current_language as CURRENT_LANG %}
+<html lang="{{ CURRENT_LANG }}" id="html-root">
 
 <head>
   <meta charset="UTF-8">
@@ -163,12 +164,12 @@
         </div>
 
         <a href="{% url 'submit_activity' %}" class="hidden md:inline-flex bg-primary px-6 py-2 rounded-xl text-white font-headline font-bold hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
-          Submit
+          {% trans "Submit" %}
         </a>
         {% else %}
-        <a href="{% url 'login' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 transition-all font-bold text-decoration-none" style="text-decoration:none;">Login</a>
+        <a href="{% url 'login' %}" class="hidden md:block p-2 text-slate-500 hover:bg-slate-50 transition-all font-bold text-decoration-none" style="text-decoration:none;">{% trans "Login" %}</a>
         <a href="{% url 'register' %}" class="hidden md:inline-flex bg-primary px-4 md:px-6 py-2 rounded-xl text-white font-headline font-bold text-sm hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
-          Register
+          {% trans "Register" %}
         </a>
         {% endif %}
 
@@ -252,9 +253,9 @@
         </a>
         {% else %}
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'login' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">login</span>Login
+          <span class="material-symbols-outlined text-[18px] align-middle mr-2">login</span>{% trans "Login" %}
         </a>
-        <a class="py-3 px-4 rounded-lg bg-primary text-white hover:opacity-90 transition-colors text-center" style="text-decoration:none;" href="{% url 'register' %}">Register</a>
+        <a class="py-3 px-4 rounded-lg bg-primary text-white hover:opacity-90 transition-colors text-center" style="text-decoration:none;" href="{% url 'register' %}">{% trans "Register" %}</a>
         {% endif %}
         <!-- Mobile Dark Mode + Language Switcher -->
         <div class="border-t border-slate-100 dark:border-slate-700 my-2"></div>
@@ -382,17 +383,17 @@
   <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 mt-24">
     <div class="flex flex-col md:flex-row justify-between items-center px-12 py-8 gap-4 font-['Public_Sans'] text-xs uppercase tracking-widest">
       <div class="font-bold text-slate-900 dark:text-slate-100 flex items-center gap-4">
-        <span>People are Watching</span>
+        <span>{% trans "People are Watching" %}</span>
         <span class="h-4 w-[1px] bg-slate-300"></span>
-        <span class="text-slate-500 font-normal normal-case tracking-normal">© 2026 People are Watching.</span>
+        <span class="text-slate-500 font-normal normal-case tracking-normal">© 2026 {% trans "People are Watching" %}.</span>
       </div>
       <div class="flex flex-wrap gap-6 md:gap-8">
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'manifesto_list' %}">Manifestos</a>
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'commitment_list' %}">Commitments</a>
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'party_list' %}">Parties</a>
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'elected_member_list' %}">Members</a>
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'activities_list' %}">Activities</a>
-        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'petition_list' %}">Petitions</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'manifesto_list' %}">{% trans "Manifestos" %}</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'commitment_list' %}">{% trans "Commitments" %}</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'party_list' %}">{% trans "Parties" %}</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'elected_member_list' %}">{% trans "Members" %}</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'activities_list' %}">{% trans "Activities" %}</a>
+        <a class="text-slate-500 hover:text-red-700 transition-opacity hover:opacity-80" style="text-decoration:none;" href="{% url 'petition_list' %}">{% trans "Petitions" %}</a>
       </div>
     </div>
   </footer>
