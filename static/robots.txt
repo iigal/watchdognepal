@@ -1,5 +1,28 @@
+# robots.txt for Watchdog Nepal
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /accounts/
+Disallow: /api/
+Disallow: /social/
+Disallow: /dashboard/
+Disallow: /vote/
+Disallow: /submanifesto/toggle/
+Disallow: /subcommitment/toggle/
+Disallow: /og/
+
+# Block aggressive AI crawlers to preserve server resources
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+# Sitemap orientation
 Sitemap: https://watchdognepal.com/sitemap.xml
