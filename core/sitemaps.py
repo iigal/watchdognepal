@@ -1,6 +1,6 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from .models import PoliticalParty, ElectedMember, Petition, Commitment
+from .models import PoliticalParty, ElectedMember, Petition, Commitment, ManifestoPoint
 
 class StaticViewSitemap(Sitemap):
     priority = 1.0
@@ -45,3 +45,13 @@ class CommitmentSitemap(Sitemap):
 
     def location(self, obj):
         return reverse('commitment_detail', kwargs={'pk': obj.pk})
+
+class ManifestoSitemap(Sitemap):
+    changefreq = "weekly"
+    priority = 0.8
+
+    def items(self):
+        return ManifestoPoint.objects.all()
+
+    def location(self, obj):
+        return reverse('manifesto_detail', kwargs={'pk': obj.pk})

@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.contrib.sitemaps.views import sitemap
-from core.sitemaps import StaticViewSitemap, PartySitemap, MemberSitemap, PetitionSitemap, CommitmentSitemap
+from core.sitemaps import StaticViewSitemap, PartySitemap, MemberSitemap, PetitionSitemap, CommitmentSitemap, ManifestoSitemap
 
 sitemaps = {
     'static': StaticViewSitemap,
@@ -29,6 +29,7 @@ sitemaps = {
     'members': MemberSitemap,
     'petitions': PetitionSitemap,
     'commitments': CommitmentSitemap,
+    'manifestos': ManifestoSitemap,
 }
 from core.views import (
     home, submit_activity, vote_activity,
