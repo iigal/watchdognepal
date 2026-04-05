@@ -12,6 +12,44 @@ from .forms import ActivityForm, PetitionForm
 from .og_image import generate_manifesto_og_image, generate_commitment_og_image
 
 
+def robots_txt(request):
+    """
+    Serve robots.txt as a direct HttpResponse to ensure correct MIME type (text/plain)
+    and bypass static file storage or service worker interception issues.
+    """
+    content = (
+        "# robots.txt for Watchdog Nepal\n"
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin/\n"
+        "Disallow: /accounts/\n"
+        "Disallow: /api/\n"
+        "Disallow: /social/\n"
+        "Disallow: /dashboard/\n"
+        "Disallow: /vote/\n"
+        "Disallow: /submanifesto/toggle/\n"
+        "Disallow: /subcommitment/toggle/\n"
+        "Disallow: /og/\n"
+        "\n"
+        "# Block aggressive AI crawlers to preserve server resources\n"
+        "User-agent: GPTBot\n"
+        "Disallow: /\n"
+        "\n"
+        "User-agent: CCBot\n"
+        "Disallow: /\n"
+        "\n"
+        "User-agent: cohere-ai\n"
+        "Disallow: /\n"
+        "\n"
+        "User-agent: anthropic-ai\n"
+        "Disallow: /\n"
+        "\n"
+        "# Sitemap orientation\n"
+        "Sitemap: https://watchdognepal.com/sitemap.xml"
+    )
+    return HttpResponse(content, content_type="text/plain")
+
+
 def home(request):
     # Fetch all parties that are in government
     government_parties = PoliticalParty.objects.filter(in_government=True).prefetch_related(

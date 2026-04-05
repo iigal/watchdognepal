@@ -32,7 +32,7 @@ sitemaps = {
     'manifestos': ManifestoSitemap,
 }
 from core.views import (
-    home, submit_activity, vote_activity,
+    home, robots_txt, submit_activity, vote_activity,
     party_list, party_detail,
     elected_member_list, elected_member_detail,
     activities_list,
@@ -44,7 +44,7 @@ from core.views import (
 
 urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
-    path('robots.txt', RedirectView.as_view(url=staticfiles_storage.url('robots.txt')), name='robots_txt'),
+    path('robots.txt', robots_txt, name='robots_txt'),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('favicon.ico')), name='favicon_ico'),
     path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', admin.site.urls),
