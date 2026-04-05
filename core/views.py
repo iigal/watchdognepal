@@ -268,6 +268,10 @@ def submit_activity(request):
             from accounts.gamification import award_xp, XP_ACTIVITY_SUBMITTED
             award_xp(request.user, XP_ACTIVITY_SUBMITTED, f"Submitted activity: {activity.title}")
             
+            # Auto-translate title & description to the other language
+            from .auto_translate import auto_translate_activity
+            auto_translate_activity(activity)
+            
             return redirect('home')
     else:
         form = ActivityForm()
