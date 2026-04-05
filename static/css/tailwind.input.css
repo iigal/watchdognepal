@@ -1,0 +1,201 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   Watchdog Nepal — Inline Styles (from base.html)
+   ============================================ */
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.gauge-gradient {
+  background: conic-gradient(from 180deg at 50% 50%, #b1002c 0%, #335ab4 75%, #f3f4f5 100%);
+}
+
+body {
+  font-family: 'Public Sans', sans-serif;
+  background-color: #f8f9fa;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #191c1d;
+}
+
+h1, h2, h3, h4, h5, .font-headline {
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+/* ---- Dark mode ---- */
+html.dark body { background-color: #111318; color: #e1e3e4; }
+html.dark .wn-card {
+  background: #1c1f26; border-color: #2d3139;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+html.dark .wn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); border-color: #3d424a; }
+html.dark .nav-dropdown-menu {
+  background: #1c1f26; border-color: #2d3139;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+html.dark .nav-dropdown-menu a { color: #c8cad0; }
+html.dark .nav-dropdown-menu a:hover { background: #262a33; color: #ffb3b3; }
+html.dark .nav-dropdown-menu a .material-symbols-outlined { color: #6b7280; }
+html.dark .nav-dropdown-menu a:hover .material-symbols-outlined { color: #ffb3b3; }
+html.dark .wn-sidebar-link { color: #c8cad0; }
+html.dark .wn-sidebar-link:hover { background: #262a33; color: #ffb3b3; }
+html.dark .wn-sidebar-link .material-symbols-outlined { color: #6b7280; }
+html.dark .wn-sidebar-link:hover .material-symbols-outlined { color: #ffb3b3; }
+html.dark .wn-sidebar-link.active { background: #2a1a1d; color: #ffb3b3; }
+html.dark .wn-sidebar-link.active .material-symbols-outlined { color: #ffb3b3; }
+html.dark .gauge-gradient {
+  background: conic-gradient(from 180deg at 50% 50%, #ff6680 0%, #6b8cff 75%, #2d3139 100%);
+}
+/* Dark mode: forms, inputs, selects */
+html.dark input, html.dark select, html.dark textarea {
+  background-color: #1c1f26 !important; color: #e1e3e4 !important;
+  border-color: #2d3139 !important;
+}
+html.dark input:focus, html.dark select:focus, html.dark textarea:focus {
+  border-color: #4a5568 !important;
+}
+/* Dark mode: breadcrumbs and misc text */
+html.dark .text-slate-500 { color: #6b7280; }
+html.dark .text-slate-600 { color: #9ca3af; }
+html.dark .text-slate-700 { color: #c8cad0; }
+html.dark .text-slate-800 { color: #d1d5db; }
+html.dark .text-slate-900 { color: #e5e7eb; }
+html.dark .text-on-surface { color: #e1e3e4; }
+html.dark .text-on-surface-variant { color: #9ca3af; }
+html.dark .bg-slate-50 { background-color: #1c1f26; }
+html.dark .bg-slate-100 { background-color: #262a33; }
+html.dark .bg-white { background-color: #1c1f26; }
+html.dark .border-slate-100 { border-color: #2d3139; }
+html.dark .border-slate-200 { border-color: #2d3139; }
+html.dark .wn-cultural-bg { opacity: 0.02; }
+
+/* ---- Share button styles ---- */
+.wn-share-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 8px;
+  font-size: 13px; font-weight: 600;
+  text-decoration: none; transition: all 0.15s ease;
+}
+.wn-share-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+.wn-share-btn svg { width: 16px; height: 16px; }
+.wn-share-facebook { background: #1877F2; color: white; }
+.wn-share-x { background: #000; color: white; }
+html.dark .wn-share-x { background: #e7e9ea; color: #000; }
+.wn-share-whatsapp { background: #25D366; color: white; }
+.wn-share-copy { background: #e2e8f0; color: #475569; }
+html.dark .wn-share-copy { background: #2d3139; color: #c8cad0; }
+
+/* Inline share (for accordions) */
+.wn-share-inline {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  text-decoration: none; transition: all 0.15s ease;
+  font-size: 14px; font-weight: 700;
+}
+.wn-share-inline:hover { opacity: 0.8; transform: translateY(-1px); }
+.wn-share-inline.facebook { background: #1877F2; color: white; }
+.wn-share-inline.x-twitter { background: #000; color: white; }
+html.dark .wn-share-inline.x-twitter { background: #e7e9ea; color: #000; }
+.wn-share-inline.whatsapp { background: #25D366; color: white; }
+.wn-share-inline.link { background: #e2e8f0; color: #64748b; }
+html.dark .wn-share-inline.link { background: #2d3139; color: #94a3b8; }
+
+/* ---- Cultural background layers ---- */
+.wn-cultural-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.035;
+}
+.wn-cultural-bg .wn-bg-himalayas {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 300px;
+}
+.wn-cultural-bg .wn-bg-rhododendron {
+  position: absolute; bottom: 20px; left: 20px; width: 180px; height: 180px; opacity: 0.8;
+}
+.wn-cultural-bg .wn-bg-flag {
+  position: absolute; top: 50%; right: 30px; transform: translateY(-50%); width: 80px; height: 140px; opacity: 0.6;
+}
+@media (max-width: 768px) {
+  .wn-cultural-bg { opacity: 0.02; }
+  .wn-cultural-bg .wn-bg-rhododendron,
+  .wn-cultural-bg .wn-bg-flag { display: none; }
+}
+
+/* Newari border pattern for heroes */
+.wn-newari-border {
+  position: relative;
+}
+.wn-newari-border::before,
+.wn-newari-border::after {
+  content: '';
+  position: absolute; left: 0; right: 0; height: 6px;
+  background: repeating-linear-gradient(90deg,
+    #b1002c 0px, #b1002c 4px, transparent 4px, transparent 8px,
+    #003893 8px, #003893 12px, transparent 12px, transparent 16px);
+  opacity: 0.6;
+}
+.wn-newari-border::before { top: 0; border-radius: 12px 12px 0 0; }
+.wn-newari-border::after { bottom: 0; border-radius: 0 0 12px 12px; }
+
+/* Cultural border pattern for heroes (legacy compat) */
+.wn-cultural-border {
+  position: relative;
+  border-bottom: 3px solid #b1002c;
+}
+.wn-cultural-border::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0; right: 0; height: 3px;
+  background: repeating-linear-gradient(90deg, #b1002c 0px, #b1002c 12px, #003893 12px, #003893 24px, #b1002c 24px);
+}
+
+/* Hero mountain silhouette overlay */
+.wn-hero-mountains {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,120 L100,80 L200,95 L300,40 L400,70 L500,20 L600,55 L700,30 L800,60 L900,25 L1000,50 L1100,75 L1200,45 L1200,120 Z' fill='rgba(255,255,255,0.08)'/%3E%3C/svg%3E") no-repeat bottom center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+/* ---- Sidebar styles ---- */
+.wn-sidebar-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; color: #475569; text-decoration: none;
+  transition: all 0.15s ease;
+}
+.wn-sidebar-link:hover { background: #f8fafc; color: #b1002c; }
+.wn-sidebar-link .material-symbols-outlined { font-size: 18px; color: #94a3b8; }
+.wn-sidebar-link:hover .material-symbols-outlined { color: #b1002c; }
+.wn-sidebar-link.active { background: #fef2f2; color: #b1002c; }
+.wn-sidebar-link.active .material-symbols-outlined { color: #b1002c; }
+
+/* ---- Dropdown menus ---- */
+.nav-dropdown { position: relative; }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  min-width: 200px; padding: 8px; margin-top: 8px;
+  background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  opacity: 0; visibility: hidden; transition: all 0.15s ease;
+}
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown-menu:hover { opacity: 1; visibility: visible; }
+.nav-dropdown-menu a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 8px; font-size: 13px;
+  font-weight: 600; color: #475569; text-decoration: none;
+  transition: all 0.1s ease;
+}
+.nav-dropdown-menu a:hover { background: #f8fafc; color: #b1002c; }
+.nav-dropdown-menu a .material-symbols-outlined { font-size: 18px; color: #94a3b8; }
+.nav-dropdown-menu a:hover .material-symbols-outlined { color: #b1002c; }
+
+/* ---- Consistent card style ---- */
+.wn-card {
+  background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.wn-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); border-color: #cbd5e1; }

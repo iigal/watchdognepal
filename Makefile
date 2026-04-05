@@ -1,4 +1,4 @@
-.PHONY: venv install migrate run collectstatic createsuperuser dev
+.PHONY: venv install migrate run collectstatic createsuperuser dev css
 
 # Create virtualenv
 venv:
@@ -23,6 +23,10 @@ collectstatic:
 # Create admin user
 createsuperuser:
 	. venv/bin/activate && python manage.py createsuperuser
+
+# Build production Tailwind CSS (run locally before deploying)
+css:
+	npx -y tailwindcss@3 -i static/css/tailwind.input.css -o static/css/tailwind.output.css --minify
 
 # Shortcut for development (same as `make run`)
 dev: run

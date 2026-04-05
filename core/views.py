@@ -20,15 +20,6 @@ def home(request):
     
     today = timezone.now().date()
     
-    today = timezone.now().date()
-    
-    # Calculate dynamic stats for the hero section counters and donut chart
-    all_points = list(ManifestoPoint.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-    ).select_related('party', 'elected_member')) + list(Commitment.objects.filter(
-        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
-    ).select_related('party', 'elected_member'))
-
     import datetime
     approaching_threshold = today + datetime.timedelta(days=90)
     
@@ -78,8 +69,6 @@ def home(request):
             ).decode('utf-8').strip()
         except Exception:
             git_commit_count = "N/A"
-    from django.contrib.auth.models import User
-    total_registered_users = User.objects.count()
 
     latest_dates = []
     latest_activity = Activity.objects.order_by('-created_at').first()
@@ -182,7 +171,6 @@ def home(request):
         'total_missed_count': total_missed_count,
         'total_approaching_count': total_approaching_count,
         'git_commit_count': git_commit_count,
-        'total_registered_users': total_registered_users,
         'last_updated_date': last_updated_date,
         'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }

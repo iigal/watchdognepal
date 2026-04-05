@@ -27,3 +27,5 @@ build/
 .vscode/
 *.swp
 
+# Node (for local Tailwind CSS builds)
+node_modules/
