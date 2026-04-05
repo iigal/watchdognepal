@@ -19,35 +19,35 @@
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
         <a href="{% url 'manifesto_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-primary font-black text-xl md:text-2xl">{{ total_manifesto_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Manifestos" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Manifestos" %}</span>
         </a>
         <a href="{% url 'commitment_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-secondary font-black text-xl md:text-2xl">{{ total_commitment_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
         </a>
         <a href="{% url 'manifesto_list' %}?status=overdue" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
         </a>
         <a href="{% url 'manifesto_list' %}?status=in_progress" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
         </a>
         <a href="{% url 'manifesto_list' %}?status=completed_on_time" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_on_time_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete on Time" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete on Time" %}</span>
         </a>
         <a href="{% url 'manifesto_list' %}?status=completed_late" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-blue-500 font-black text-xl md:text-2xl">{{ total_completed_late_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete after deadline" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete after deadline" %}</span>
         </a>
         <a href="https://github.com/iigal/watchdognepal" target="_blank" rel="noopener noreferrer" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
         </a>
         <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
           <span class="block text-slate-700 font-black text-[15px] md:text-[18px] mt-1 mb-1">{{ last_updated_date|date:"j M Y"|default:"N/A" }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Last Updated" %}</span>
+          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Last Updated" %}</span>
         </div>
       </div>
     </div>
