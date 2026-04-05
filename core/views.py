@@ -262,6 +262,8 @@ def submit_activity(request):
             activity = form.save(commit=False)
             activity.created_by = request.user
             activity.level = 'federal'
+            if hasattr(request.user, 'profile') and request.user.profile.has_verification_access:
+                activity.status = 'verified'
             activity.save()
             
             # Award XP for activity submission
