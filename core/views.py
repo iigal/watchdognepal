@@ -35,7 +35,8 @@ def home(request):
     total_manifesto_count = 0
     total_commitment_count = 0
     total_in_progress_count = 0
-    total_completed_count = 0
+    total_completed_on_time_count = 0
+    total_completed_late_count = 0
     total_missed_count = 0
     total_approaching_count = 0
 
@@ -114,8 +115,11 @@ def home(request):
         else:
             total_commitment_count += 1
             
-        if p.is_completed:
-            total_completed_count += 1
+        if p.is_completed is not None:
+            if p.is_completed:
+                total_completed_on_time_count += 1
+            else:
+                total_completed_late_count += 1
         else:
             has_verified_activity = any(a.status == 'verified' for a in p.activities.all())
             if has_verified_activity:
@@ -173,7 +177,8 @@ def home(request):
         'total_manifesto_count': total_manifesto_count,
         'total_commitment_count': total_commitment_count,
         'total_in_progress_count': total_in_progress_count,
-        'total_completed_count': total_completed_count,
+        'total_completed_on_time_count': total_completed_on_time_count,
+        'total_completed_late_count': total_completed_late_count,
         'total_missed_count': total_missed_count,
         'total_approaching_count': total_approaching_count,
         'git_commit_count': git_commit_count,
@@ -516,12 +521,16 @@ def manifesto_list(request):
         manifestos = manifestos.filter(category=category)
 
     status_filter = request.GET.get('status', '')
-    if status_filter == 'completed':
+    if status_filter == 'completed_on_time':
         manifestos = manifestos.filter(is_completed=True)
+    elif status_filter == 'completed_late':
+        manifestos = manifestos.filter(is_completed=False)
+    elif status_filter == 'completed':
+        manifestos = manifestos.filter(is_completed__isnull=False)
     elif status_filter == 'overdue':
         manifestos = [m for m in manifestos if m.is_overdue]
     elif status_filter == 'in_progress':
-        manifestos = [m for m in manifestos if not m.is_completed and not m.is_overdue]
+        manifestos = [m for m in manifestos if m.is_completed is None and not m.is_overdue]
 
     paginator = Paginator(manifestos, 10)
     page_obj = paginator.get_page(request.GET.get('page'))
@@ -531,7 +540,7 @@ def manifesto_list(request):
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
     )
     total_count = all_manifestos.count()
-    completed_count = all_manifestos.filter(is_completed=True).count()
+    completed_count = all_manifestos.filter(is_completed__isnull=False).count()
 
     return render(request, 'manifesto_list.html', {
         'manifestos': page_obj,
@@ -550,21 +559,37 @@ def manifesto_list(request):
 @login_required
 def toggle_submanifesto_completion(request, pk):
     submanifesto = get_object_or_404(SubManifesto, pk=pk)
-    submanifesto.is_completed = not submanifesto.is_completed
+    if submanifesto.is_completed is not None:
+        submanifesto.is_completed = None
+    else:
+        from django.utils import timezone
+        deadline = submanifesto.effective_deadline
+        if deadline and deadline < timezone.now().date():
+            submanifesto.is_completed = False
+        else:
+            submanifesto.is_completed = True
     submanifesto.save()
     
     # Check if all submanifestos are completed to potentially auto-complete the parent
     parent = submanifesto.parent
-    all_completed = parent.sub_manifestos.filter(is_completed=False).count() == 0
-    if all_completed != parent.is_completed:
-        parent.is_completed = all_completed
-        parent.save()
+    has_uncompleted = parent.sub_manifestos.filter(is_completed__isnull=True).exists()
+    
+    if not has_uncompleted:
+        from django.utils import timezone
+        deadline = parent.calculated_deadline
+        if deadline and deadline < timezone.now().date():
+            parent.is_completed = False
+        else:
+            parent.is_completed = True
+    else:
+        parent.is_completed = None
+    parent.save()
         
     return JsonResponse({
         'success': True,
-        'is_completed': submanifesto.is_completed,
+        'is_completed': submanifesto.is_completed is not None,
         'parent_progress': parent.progress_fraction,
-        'parent_completed': parent.is_completed,
+        'parent_completed': parent.is_completed is not None,
         'parent_percentage': parent.completion_percentage
     })
 
@@ -615,7 +640,7 @@ def commitment_list(request):
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
     )
     total_count = all_commitments.count()
-    completed_count = all_commitments.filter(is_completed=True).count()
+    completed_count = all_commitments.filter(is_completed__isnull=False).count()
 
     return render(request, 'commitment_list.html', {
         'commitments': page_obj,
@@ -633,20 +658,35 @@ def commitment_list(request):
 @login_required
 def toggle_subcommitment_completion(request, pk):
     subcommitment = get_object_or_404(SubCommitment, pk=pk)
-    subcommitment.is_completed = not subcommitment.is_completed
+    if subcommitment.is_completed is not None:
+        subcommitment.is_completed = None
+    else:
+        from django.utils import timezone
+        deadline = subcommitment.effective_deadline
+        if deadline and deadline < timezone.now().date():
+            subcommitment.is_completed = False
+        else:
+            subcommitment.is_completed = True
     subcommitment.save()
     
     parent = subcommitment.parent
-    all_completed = parent.sub_commitments.filter(is_completed=False).count() == 0
-    if all_completed != parent.is_completed:
-        parent.is_completed = all_completed
-        parent.save()
+    has_uncompleted = parent.sub_commitments.filter(is_completed__isnull=True).exists()
+    if not has_uncompleted:
+        from django.utils import timezone
+        deadline = parent.calculated_deadline
+        if deadline and deadline < timezone.now().date():
+            parent.is_completed = False
+        else:
+            parent.is_completed = True
+    else:
+        parent.is_completed = None
+    parent.save()
         
     return JsonResponse({
         'success': True,
-        'is_completed': subcommitment.is_completed,
+        'is_completed': subcommitment.is_completed is not None,
         'parent_progress': parent.progress_fraction,
-        'parent_completed': parent.is_completed,
+        'parent_completed': parent.is_completed is not None,
         'parent_percentage': parent.completion_percentage
     })
 

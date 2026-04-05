@@ -138,13 +138,19 @@
             {% for sub in point.sub_manifestos.all %}
             <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div class="flex flex-col gap-0.5">
-                <span class="text-sm font-medium {% if sub.is_completed %}line-through text-slate-400{% else %}text-slate-800{% endif %}">{{ sub.title }}</span>
+                <span class="text-sm font-medium {% if sub.is_completed != None %}line-through text-slate-400{% else %}text-slate-800{% endif %}">{{ sub.title }}</span>
                 <span class="text-[10px] text-slate-500">{{ sub.effective_deadline|to_bs|default:"No deadline" }}</span>
               </div>
               <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors" data-url="{% url 'toggle_submanifesto_completion' sub.id %}" {% if not user.is_authenticated %}disabled{% endif %}>
-                {% if sub.is_completed %}<span class="material-symbols-outlined text-emerald-500">check_circle</span>
-                {% elif sub.is_overdue %}<span class="material-symbols-outlined text-rose-500">cancel</span>
-                {% else %}<span class="material-symbols-outlined text-slate-400">radio_button_unchecked</span>{% endif %}
+                {% if sub.is_completed == True %}
+                <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                {% elif sub.is_completed == False %}
+                <span class="material-symbols-outlined text-blue-500">assignment_turned_in</span>
+                {% elif sub.is_overdue %}
+                <span class="material-symbols-outlined text-rose-500">cancel</span>
+                {% else %}
+                <span class="material-symbols-outlined text-slate-400 hover:text-blue-500">radio_button_unchecked</span>
+                {% endif %}
               </button>
             </div>
             {% endfor %}
@@ -213,13 +219,19 @@
             {% for sub in commitment.sub_commitments.all %}
             <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200">
               <div class="flex flex-col gap-0.5">
-                <span class="text-sm font-medium {% if sub.is_completed %}line-through text-slate-400{% else %}text-slate-800{% endif %}">{{ sub.title }}</span>
+                <span class="text-sm font-medium {% if sub.is_completed != None %}line-through text-slate-400{% else %}text-slate-800{% endif %}">{{ sub.title }}</span>
                 <span class="text-[10px] text-slate-500">{{ sub.effective_deadline|to_bs|default:"No deadline" }}</span>
               </div>
               <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors" data-url="{% url 'toggle_subcommitment_completion' sub.id %}" {% if not user.is_authenticated %}disabled{% endif %}>
-                {% if sub.is_completed %}<span class="material-symbols-outlined text-emerald-500">check_circle</span>
-                {% elif sub.is_overdue %}<span class="material-symbols-outlined text-rose-500">cancel</span>
-                {% else %}<span class="material-symbols-outlined text-slate-400">radio_button_unchecked</span>{% endif %}
+                {% if sub.is_completed == True %}
+                <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+                {% elif sub.is_completed == False %}
+                <span class="material-symbols-outlined text-blue-500">assignment_turned_in</span>
+                {% elif sub.is_overdue %}
+                <span class="material-symbols-outlined text-rose-500">cancel</span>
+                {% else %}
+                <span class="material-symbols-outlined text-slate-400 hover:text-violet-500">radio_button_unchecked</span>
+                {% endif %}
               </button>
             </div>
             {% endfor %}

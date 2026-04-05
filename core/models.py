@@ -61,7 +61,7 @@ class ManifestoPoint(models.Model):
     completion_days = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in days from oath")
     completion_months = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in months from oath")
     completion_years = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in years from oath")
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
@@ -93,7 +93,7 @@ class ManifestoPoint(models.Model):
 
     @property
     def is_overdue(self):
-        if self.is_completed:
+        if self.is_completed is not None:
             return False
         deadline = self.calculated_deadline
         if deadline:
@@ -105,17 +105,23 @@ class ManifestoPoint(models.Model):
     def progress_fraction(self):
         total = self.sub_manifestos.count()
         if total == 0:
-            return "1/1" if self.is_completed else "0/1"
-        completed = self.sub_manifestos.filter(is_completed=True).count()
+            return "1/1" if self.is_completed is not None else "0/1"
+        completed = self.sub_manifestos.filter(is_completed__isnull=False).count()
         return f"{completed}/{total}"
 
     @property
     def completion_percentage(self):
         total = self.sub_manifestos.count()
         if total == 0:
-            return 100 if self.is_completed else 0
-        completed = self.sub_manifestos.filter(is_completed=True).count()
+            return 100 if self.is_completed is not None else 0
+        completed = self.sub_manifestos.filter(is_completed__isnull=False).count()
         return int((completed / total) * 100)
+
+    @property
+    def is_in_progress(self):
+        if self.is_completed is not None:
+            return False
+        return self.completion_percentage > 0 or self.activities.filter(status='verified').exists()
 
     @property
     def top_5_verified_activities(self):
@@ -128,7 +134,7 @@ class SubManifesto(models.Model):
     parent = models.ForeignKey(ManifestoPoint, on_delete=models.CASCADE, related_name='sub_manifestos')
     title = models.CharField(max_length=200)
     deadline = models.DateField(blank=True, null=True)
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(null=True, blank=True, default=None)
 
     @property
     def effective_deadline(self):
@@ -140,7 +146,7 @@ class SubManifesto(models.Model):
 
     @property
     def is_overdue(self):
-        if self.is_completed:
+        if self.is_completed is not None:
             return False
         deadline = self.effective_deadline
         if deadline:
@@ -163,7 +169,7 @@ class Commitment(models.Model):
     completion_days = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in days from oath")
     completion_months = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in months from oath")
     completion_years = models.PositiveIntegerField(blank=True, null=True, help_text="Deadline in years from oath")
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
@@ -195,7 +201,7 @@ class Commitment(models.Model):
 
     @property
     def is_overdue(self):
-        if self.is_completed:
+        if self.is_completed is not None:
             return False
         deadline = self.calculated_deadline
         if deadline:
@@ -207,17 +213,23 @@ class Commitment(models.Model):
     def progress_fraction(self):
         total = self.sub_commitments.count()
         if total == 0:
-            return "1/1" if self.is_completed else "0/1"
-        completed = self.sub_commitments.filter(is_completed=True).count()
+            return "1/1" if self.is_completed is not None else "0/1"
+        completed = self.sub_commitments.filter(is_completed__isnull=False).count()
         return f"{completed}/{total}"
 
     @property
     def completion_percentage(self):
         total = self.sub_commitments.count()
         if total == 0:
-            return 100 if self.is_completed else 0
-        completed = self.sub_commitments.filter(is_completed=True).count()
+            return 100 if self.is_completed is not None else 0
+        completed = self.sub_commitments.filter(is_completed__isnull=False).count()
         return int((completed / total) * 100)
+
+    @property
+    def is_in_progress(self):
+        if self.is_completed is not None:
+            return False
+        return self.completion_percentage > 0 or self.activities.filter(status='verified').exists()
 
     @property
     def top_5_verified_activities(self):
@@ -230,7 +242,7 @@ class SubCommitment(models.Model):
     parent = models.ForeignKey(Commitment, on_delete=models.CASCADE, related_name='sub_commitments')
     title = models.CharField(max_length=200)
     deadline = models.DateField(blank=True, null=True)
-    is_completed = models.BooleanField(default=False)
+    is_completed = models.BooleanField(null=True, blank=True, default=None)
 
     @property
     def effective_deadline(self):
@@ -242,7 +254,7 @@ class SubCommitment(models.Model):
 
     @property
     def is_overdue(self):
-        if self.is_completed:
+        if self.is_completed is not None:
             return False
         deadline = self.effective_deadline
         if deadline:

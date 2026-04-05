@@ -33,14 +33,14 @@
           <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
           <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
         </a>
-        <a href="{% url 'manifesto_list' %}?status=completed" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
-          <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_count }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete" %}</span>
+        <a href="{% url 'manifesto_list' %}?status=completed_on_time" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+          <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_on_time_count }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete on Time" %}</span>
         </a>
-        <div class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center">
-          <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ total_registered_users }}</span>
-          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Active Users" %}</span>
-        </div>
+        <a href="{% url 'manifesto_list' %}?status=completed_late" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+          <span class="block text-blue-500 font-black text-xl md:text-2xl">{{ total_completed_late_count }}</span>
+          <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete after deadline" %}</span>
+        </a>
         <a href="https://github.com/iigal/watchdognepal" target="_blank" rel="noopener noreferrer" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
           <span class="text-[9px] uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
@@ -56,7 +56,8 @@
     <div class="lg:col-span-5 flex flex-col items-center justify-center">
       <div class="relative w-48 h-48 md:w-64 md:h-64">
         <canvas id="overviewDonutChart"
-          data-complete="{{ total_completed_count|default:0 }}"
+          data-complete-on-time="{{ total_completed_on_time_count|default:0 }}"
+          data-complete-late="{{ total_completed_late_count|default:0 }}"
           data-missed="{{ total_missed_count|default:0 }}"
           data-approaching="{{ total_approaching_count|default:0 }}"
           data-inprogress="{{ total_in_progress_count|default:0 }}"></canvas>
@@ -243,22 +244,24 @@
   document.addEventListener('DOMContentLoaded', function () {
     const ctx = document.getElementById('overviewDonutChart');
     if (ctx) {
-      const dComplete = parseInt(ctx.dataset.complete) || 0;
-      const dMissed = parseInt(ctx.dataset.missed) || 0;
-      const dApproaching = parseInt(ctx.dataset.approaching) || 0;
-      const dInProgress = parseInt(ctx.dataset.inprogress) || 0;
+      const dCompleteOnTime = parseInt(ctx.getAttribute('data-complete-on-time') || 0);
+      const dCompleteLate = parseInt(ctx.getAttribute('data-complete-late') || 0);
+      const dMissed = parseInt(ctx.getAttribute('data-missed') || 0);
+      const dApproaching = parseInt(ctx.getAttribute('data-approaching') || 0);
+      const dInProgress = parseInt(ctx.getAttribute('data-in-progress') || 0);
 
       new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['{% trans "Complete" %}', '{% trans "Deadline Missed" %}', '{% trans "Deadline Approaching" %}', '{% trans "In Progress" %}'],
+          labels: ['{% trans "Complete on Time" %}', '{% trans "Complete After Deadline" %}', '{% trans "Deadline Missed" %}', '{% trans "Deadline Approaching" %}', '{% trans "In Progress" %}'],
           datasets: [{
-            data: [dComplete, dMissed, dApproaching, dInProgress],
+            data: [dCompleteOnTime, dCompleteLate, dMissed, dApproaching, dInProgress],
             backgroundColor: [
       '#10b981', // emerald-500
+      '#3b82f6', // blue-500
       '#f43f5e', // rose-500
       '#fbbf24', // amber-400
-      '#3b82f6'  // blue-500
+      '#6366f1'  // indigo-500
     ],
       borderWidth: 0,
         hoverOffset: 4

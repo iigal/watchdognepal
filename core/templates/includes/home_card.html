@@ -30,12 +30,18 @@
 
 
     <div class="w-1/2 flex flex-col items-end gap-1.5">
-      {% if item.calculated_deadline %}
+      {% if item.completion_percentage == 100 %}
       <div class="text-[10px] md:text-xs">
-        <p class="text-slate-400 font-medium flex items-center gap-1">
+        <div class="text-emerald-600 font-bold flex items-center justify-end gap-1">
+          <span class="material-symbols-outlined text-[18px]">check_circle</span> {% trans "Completed" %}
+        </div>
+      </div>
+      {% elif item.calculated_deadline %}
+      <div class="text-[10px] md:text-xs min-w-fit">
+        <p class="text-slate-400 font-medium flex items-center justify-end gap-1 w-full text-right">
           <span class="material-symbols-outlined text-[14px]">timer</span> {% trans "Deadline" %}
         </p>
-        <p class="text-on-surface font-bold deadline-countdown mt-0.5"
+        <p class="text-on-surface font-bold deadline-countdown mt-0.5 text-right w-full"
           data-deadline="{{ item.calculated_deadline|date:'c' }}">Loading...</p>
       </div>
       {% endif %}
@@ -67,8 +73,8 @@
     </div>
 
     <div class="w-[25%] flex justify-center pl-2">
-      <a href="{% url detail_url_name item.id %}"
-        class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors text-decoration-none">
+      <a href="{% url detail_url_name item.id %}" style="text-decoration: none;"
+        class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors no-underline">
         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
       </a>
     </div>

@@ -84,17 +84,25 @@
             <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">{{ commitment.get_category_display }}</span>
             {% endif %}
           </div>
-          {% if commitment.is_completed %}
+          {% if commitment.is_completed == True %}
           <span class="bg-emerald-100 text-emerald-700 text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
-            <span class="material-symbols-outlined text-[12px]">check_circle</span>{% trans "Kept" %}
+            <span class="material-symbols-outlined text-[12px]">check_circle</span>{% trans "Kept (On Time)" %}
+          </span>
+          {% elif commitment.is_completed == False %}
+          <span class="bg-blue-100 text-blue-700 text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px]">assignment_turned_in</span>{% trans "Kept (Late)" %}
           </span>
           {% elif commitment.is_overdue %}
           <span class="bg-rose-100 text-rose-700 text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
             <span class="material-symbols-outlined text-[12px]">warning</span>{% trans "Delayed" %}
           </span>
-          {% else %}
+          {% elif commitment.is_in_progress %}
           <span class="bg-blue-100 text-blue-700 text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
             <span class="material-symbols-outlined text-[12px]">pending</span>{% trans "In Progress" %}
+          </span>
+          {% else %}
+          <span class="bg-slate-100 text-slate-700 text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px]">radio_button_unchecked</span>{% trans "Not Started" %}
           </span>
           {% endif %}
         </div>
@@ -111,7 +119,7 @@
             <span class="text-sm font-bold text-on-surface">{{ commitment.completion_percentage }}%</span>
           </div>
           <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
-            <div class="h-full {% if commitment.is_completed %}bg-emerald-500{% elif commitment.is_overdue %}bg-rose-500{% else %}bg-secondary{% endif %} rounded-full transition-all" style="width: {{ commitment.completion_percentage }}%"></div>
+            <div class="h-full {% if commitment.is_completed == True %}bg-emerald-500{% elif commitment.is_completed == False %}bg-blue-600{% elif commitment.is_overdue %}bg-rose-500{% else %}bg-secondary{% endif %} rounded-full transition-all" style="width: {{ commitment.completion_percentage }}%"></div>
           </div>
         </div>
 
@@ -124,14 +132,16 @@
           <div class="space-y-1.5">
             {% for sub in commitment.sub_commitments.all %}
             <div class="flex items-center gap-2 text-sm">
-              {% if sub.is_completed %}
+              {% if sub.is_completed == True %}
               <span class="material-symbols-outlined text-emerald-500 text-[16px]">check_circle</span>
+              {% elif sub.is_completed == False %}
+              <span class="material-symbols-outlined text-blue-500 text-[16px]">assignment_turned_in</span>
               {% elif sub.is_overdue %}
               <span class="material-symbols-outlined text-rose-500 text-[16px]">cancel</span>
               {% else %}
               <span class="material-symbols-outlined text-slate-300 text-[16px]">radio_button_unchecked</span>
               {% endif %}
-              <span class="{% if sub.is_completed %}line-through text-slate-400{% else %}text-slate-700{% endif %} text-sm truncate">{{ sub.title }}</span>
+              <span class="{% if sub.is_completed != None %}line-through text-slate-400{% else %}text-slate-700{% endif %} text-sm truncate">{{ sub.title }}</span>
             </div>
             {% endfor %}
           </div>

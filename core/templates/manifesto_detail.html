@@ -30,13 +30,13 @@
   <!-- Header Card -->
   <div class="wn-card rounded-xl overflow-hidden">
     <!-- Status Banner -->
-    <div class="{% if manifesto.is_completed %}bg-emerald-500{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} px-6 py-3 flex items-center justify-between">
+    <div class="{% if manifesto.is_completed == True %}bg-emerald-500{% elif manifesto.is_completed == False %}bg-blue-600{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} px-6 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2 text-white">
         <span class="material-symbols-outlined text-[18px]">
-          {% if manifesto.is_completed %}check_circle{% elif manifesto.is_overdue %}warning{% else %}pending{% endif %}
+          {% if manifesto.is_completed == True %}check_circle{% elif manifesto.is_completed == False %}assignment_turned_in{% elif manifesto.is_overdue %}warning{% elif manifesto.is_in_progress %}pending{% else %}radio_button_unchecked{% endif %}
         </span>
         <span class="text-sm font-bold uppercase tracking-wider">
-          {% if manifesto.is_completed %}{% trans "Kept" %}{% elif manifesto.is_overdue %}{% trans "Delayed" %}{% else %}{% trans "In Progress" %}{% endif %}
+          {% if manifesto.is_completed == True %}{% trans "Kept (On Time)" %}{% elif manifesto.is_completed == False %}{% trans "Kept (Late)" %}{% elif manifesto.is_overdue %}{% trans "Delayed" %}{% elif manifesto.is_in_progress %}{% trans "In Progress" %}{% else %}{% trans "Not Started" %}{% endif %}
         </span>
       </div>
       <span class="text-white/80 text-sm font-medium">{{ manifesto.completion_percentage }}% {% trans "complete" %}</span>
@@ -71,7 +71,7 @@
           <span class="text-sm font-bold text-on-surface">{{ manifesto.progress_fraction }} {% trans "completed" %}</span>
         </div>
         <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden">
-          <div class="h-full {% if manifesto.is_completed %}bg-emerald-500{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} rounded-full transition-all" style="width: {{ manifesto.completion_percentage }}%"></div>
+          <div class="h-full {% if manifesto.is_completed == True %}bg-emerald-500{% elif manifesto.is_completed == False %}bg-blue-600{% elif manifesto.is_overdue %}bg-rose-500{% else %}bg-blue-600{% endif %} rounded-full transition-all" style="width: {{ manifesto.completion_percentage }}%"></div>
         </div>
       </div>
 
@@ -102,7 +102,7 @@
       {% for sub in sub_manifestos %}
       <div class="flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors">
         <div class="flex flex-col gap-1">
-          <span class="text-sm font-medium text-slate-800 {% if sub.is_completed %}line-through text-slate-400{% endif %}">{{ sub.title }}</span>
+          <span class="text-sm font-medium text-slate-800 {% if sub.is_completed != None %}line-through text-slate-400{% endif %}">{{ sub.title }}</span>
           <span class="text-[10px] text-slate-500 flex items-center gap-1">
             <span class="material-symbols-outlined text-[10px]">calendar_month</span>
             {{ sub.effective_deadline|default:"No deadline" }}
@@ -113,8 +113,10 @@
                 data-pk="{{ sub.id }}"
                 data-url="{% url 'toggle_submanifesto_completion' sub.id %}"
                 {% if not user.is_authenticated %}disabled title="Login to update"{% endif %}>
-          {% if sub.is_completed %}
+          {% if sub.is_completed == True %}
           <span class="material-symbols-outlined text-emerald-500">check_circle</span>
+          {% elif sub.is_completed == False %}
+          <span class="material-symbols-outlined text-blue-500">assignment_turned_in</span>
           {% elif sub.is_overdue %}
           <span class="material-symbols-outlined text-rose-500">cancel</span>
           {% else %}
