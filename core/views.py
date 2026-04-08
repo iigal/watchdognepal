@@ -535,6 +535,63 @@ def dashboard(request):
     }
     return render(request, 'dashboard.html', context)
 
+# ─── Overdue (Combined Manifestos & Commitments) ──────────────
+
+def overdue_list(request):
+    """Combined page showing all overdue manifestos AND commitments."""
+    all_manifestos = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_manifestos').select_related('party', 'elected_member', 'elected_member__party')
+
+    all_commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_commitments').select_related('party', 'elected_member', 'elected_member__party')
+
+    q = request.GET.get('q', '').strip()
+    category = request.GET.get('category', '')
+
+    # Filter overdue items
+    overdue_manifestos = [m for m in all_manifestos if m.is_overdue]
+    overdue_commitments = [c for c in all_commitments if c.is_overdue]
+
+    # Apply search filter
+    if q:
+        overdue_manifestos = [m for m in overdue_manifestos if q.lower() in m.title.lower() or q.lower() in m.description.lower()]
+        overdue_commitments = [c for c in overdue_commitments if q.lower() in c.title.lower() or q.lower() in c.description.lower()]
+
+    # Apply category filter
+    if category:
+        overdue_manifestos = [m for m in overdue_manifestos if m.category == category]
+        overdue_commitments = [c for c in overdue_commitments if c.category == category]
+
+    # Tag each item with its type for the template
+    for m in overdue_manifestos:
+        m.item_type = 'manifesto'
+    for c in overdue_commitments:
+        c.item_type = 'commitment'
+
+    # Merge and sort by deadline (earliest first)
+    import datetime
+    combined = overdue_manifestos + overdue_commitments
+    combined.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
+
+    manifesto_count = len(overdue_manifestos)
+    commitment_count = len(overdue_commitments)
+
+    paginator = Paginator(combined, 20)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    return render(request, 'overdue_list.html', {
+        'items': page_obj,
+        'page_obj': page_obj,
+        'search_query': q,
+        'selected_category': category,
+        'categories': ManifestoPoint.CATEGORY_CHOICES,
+        'manifesto_count': manifesto_count,
+        'commitment_count': commitment_count,
+        'total_count': manifesto_count + commitment_count,
+    })
+
 # ─── Manifesto Views ──────────────────────────────────────────
 
 def manifesto_list(request):

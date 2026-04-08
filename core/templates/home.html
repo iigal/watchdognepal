@@ -25,7 +25,7 @@
           <span class="block text-secondary font-black text-xl md:text-2xl">{{ total_commitment_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
         </a>
-        <a href="{% url 'manifesto_list' %}?status=overdue" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+        <a href="{% url 'overdue_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
         </a>
