@@ -158,13 +158,15 @@ def home(request):
             elif p.is_overdue:
                 total_missed_count += 1
             else:
-                total_approaching_count += 1
-                if isinstance(p, ManifestoPoint):
-                    p.item_type = 'manifesto'
-                    upcoming_deadlines.append(p)
-                else:
-                    p.item_type = 'commitment'
-                    upcoming_commitment_deadlines.append(p)
+                deadline = p.calculated_deadline
+                if deadline and today <= deadline <= approaching_threshold:
+                    total_approaching_count += 1
+                    if isinstance(p, ManifestoPoint):
+                        p.item_type = 'manifesto'
+                        upcoming_deadlines.append(p)
+                    else:
+                        p.item_type = 'commitment'
+                        upcoming_commitment_deadlines.append(p)
 
     upcoming_deadlines.sort(key=lambda p: p.calculated_deadline if p.calculated_deadline else datetime.date.max)
     upcoming_commitment_deadlines.sort(key=lambda c: c.calculated_deadline if c.calculated_deadline else datetime.date.max)
