@@ -69,7 +69,7 @@ class ManifestoPoint(models.Model):
             raise ValidationError("A manifesto point must be linked to either a party or an elected member.")
 
     @property
-    def calculated_deadline(self):
+    def static_deadline(self):
         if self.deadline:
             return self.deadline
             
@@ -90,6 +90,51 @@ class ManifestoPoint(models.Model):
                 return base_date + relativedelta(years=years, months=months, days=days)
                 
         return None
+
+    @property
+    def calculated_deadline(self):
+        base_deadline = self.static_deadline
+        subs = self.sub_manifestos.all()
+        if not subs.exists():
+            return base_deadline
+
+        from django.utils import timezone
+        today = timezone.now().date()
+
+        future_deadlines = [
+            (sub.deadline or base_deadline) for sub in subs
+            if sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) >= today
+        ]
+        if future_deadlines:
+            return min(future_deadlines)
+
+        uncompleted_deadlines = [
+            (sub.deadline or base_deadline) for sub in subs
+            if sub.is_completed is None and (sub.deadline or base_deadline)
+        ]
+        if uncompleted_deadlines:
+            return max(uncompleted_deadlines)
+
+        return base_deadline
+
+    @property
+    def is_partly_crossed(self):
+        subs = self.sub_manifestos.all()
+        if not subs.exists():
+            return False
+            
+        from django.utils import timezone
+        today = timezone.now().date()
+        base_deadline = self.static_deadline
+        
+        has_overdue_uncompleted = any(
+            sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) < today for sub in subs
+        )
+        has_future_uncompleted = any(
+            sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) >= today for sub in subs
+        )
+        
+        return has_overdue_uncompleted and has_future_uncompleted
 
     @property
     def is_overdue(self):
@@ -138,7 +183,7 @@ class SubManifesto(models.Model):
 
     @property
     def effective_deadline(self):
-        return self.deadline or self.parent.calculated_deadline
+        return self.deadline or self.parent.static_deadline
 
     @property
     def is_inherited_deadline(self):
@@ -177,7 +222,7 @@ class Commitment(models.Model):
             raise ValidationError("A commitment must be linked to either a party or an elected member.")
 
     @property
-    def calculated_deadline(self):
+    def static_deadline(self):
         if self.deadline:
             return self.deadline
 
@@ -198,6 +243,51 @@ class Commitment(models.Model):
                 return base_date + relativedelta(years=years, months=months, days=days)
 
         return None
+
+    @property
+    def calculated_deadline(self):
+        base_deadline = self.static_deadline
+        subs = self.sub_commitments.all()
+        if not subs.exists():
+            return base_deadline
+
+        from django.utils import timezone
+        today = timezone.now().date()
+
+        future_deadlines = [
+            (sub.deadline or base_deadline) for sub in subs
+            if sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) >= today
+        ]
+        if future_deadlines:
+            return min(future_deadlines)
+
+        uncompleted_deadlines = [
+            (sub.deadline or base_deadline) for sub in subs
+            if sub.is_completed is None and (sub.deadline or base_deadline)
+        ]
+        if uncompleted_deadlines:
+            return max(uncompleted_deadlines)
+
+        return base_deadline
+
+    @property
+    def is_partly_crossed(self):
+        subs = self.sub_commitments.all()
+        if not subs.exists():
+            return False
+            
+        from django.utils import timezone
+        today = timezone.now().date()
+        base_deadline = self.static_deadline
+        
+        has_overdue_uncompleted = any(
+            sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) < today for sub in subs
+        )
+        has_future_uncompleted = any(
+            sub.is_completed is None and (sub.deadline or base_deadline) and (sub.deadline or base_deadline) >= today for sub in subs
+        )
+        
+        return has_overdue_uncompleted and has_future_uncompleted
 
     @property
     def is_overdue(self):
@@ -246,7 +336,7 @@ class SubCommitment(models.Model):
 
     @property
     def effective_deadline(self):
-        return self.deadline or self.parent.calculated_deadline
+        return self.deadline or self.parent.static_deadline
 
     @property
     def is_inherited_deadline(self):

@@ -78,12 +78,13 @@
       <!-- Deadline -->
       {% if manifesto.calculated_deadline %}
       <div class="flex items-center gap-2 px-4 py-3 bg-slate-50 rounded-lg border border-slate-100">
-        <span class="material-symbols-outlined text-[18px] {% if manifesto.is_overdue %}text-rose-500{% else %}text-slate-400{% endif %}">calendar_month</span>
+        <span class="material-symbols-outlined text-[18px] {% if manifesto.is_overdue %}text-rose-500{% elif manifesto.is_partly_crossed %}text-amber-500{% else %}text-slate-400{% endif %}">calendar_month</span>
         <div>
           <span class="text-xs text-slate-500 uppercase tracking-wider">{% trans "Deadline" %}</span>
-          <p class="text-sm font-medium {% if manifesto.is_overdue %}text-rose-600{% else %}text-on-surface{% endif %}">
+          <p class="text-sm font-medium {% if manifesto.is_overdue %}text-rose-600{% elif manifesto.is_partly_crossed %}text-amber-600{% else %}text-on-surface{% endif %}">
             {{ manifesto.calculated_deadline }}
-            {% if manifesto.is_overdue %}<span class="text-rose-500 text-xs ml-1">({% trans "Overdue" %})</span>{% endif %}
+            {% if manifesto.is_partly_crossed %}<span class="text-amber-500 text-xs ml-1">({% trans "Partly Delayed, Timer Running" %})</span>
+            {% elif manifesto.is_overdue %}<span class="text-rose-500 text-xs ml-1">({% trans "Overdue" %})</span>{% endif %}
           </p>
         </div>
       </div>
