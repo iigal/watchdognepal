@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{{ status_info.title }} - Watchdog Nepal{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- Hero + Stats (compact) -->
+  <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br {{ status_info.gradient }} text-white p-4 md:p-6 wn-newari-border">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-0"></div>
+    <div class="wn-hero-mountains z-[1]"></div>
+    <div class="relative z-10">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-label font-bold uppercase tracking-[0.2em] inline-block mb-2">{{ status_info.badge_label }}</span>
+          <h2 class="font-headline text-2xl md:text-3xl font-black leading-tight tracking-tighter uppercase">{{ status_info.title }}</h2>
+          <p class="text-white/70 text-sm mt-1">{{ status_info.subtitle }}</p>
+        </div>
+        <div class="flex gap-2 md:gap-3">
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black">{{ total_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Total" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black">{{ manifesto_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Manifestos" %}</span>
+          </div>
+          <div class="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-xl text-center">
+            <span class="block text-xl md:text-2xl font-black">{{ commitment_count }}</span>
+            <span class="text-[9px] uppercase tracking-widest font-bold text-white/70">{% trans "Commitments" %}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search & Filter Bar -->
+  <form method="GET" class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-3">
+    <input type="hidden" name="status" value="{{ selected_status }}">
+    <div class="flex flex-wrap items-end gap-3">
+      <div class="flex-1 min-w-[180px]">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Search" %}</label>
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px]">search</span>
+          <input type="text" name="q" value="{{ search_query }}" placeholder="{% trans 'Search items...' %}"
+                 class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20">
+        </div>
+      </div>
+      <div class="min-w-[140px]">
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{% trans "Category" %}</label>
+        <select name="category" class="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-primary/20">
+          <option value="">{% trans "All Categories" %}</option>
+          {% for value, label in categories %}
+          <option value="{{ value }}" {% if selected_category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-[16px]">filter_list</span>
+        {% trans "Filter" %}
+      </button>
+    </div>
+    {% if search_query or selected_category %}
+    <div class="flex items-center gap-2 text-xs text-slate-500">
+      <span>{% trans "Filtered" %}</span>
+      <a href="{% url 'combined_tracking' %}?status={{ selected_status }}" class="text-primary hover:underline" style="text-decoration:none;">{% trans "Clear all filters" %}</a>
+    </div>
+    {% endif %}
+  </form>
+
+  <!-- Items Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% for item in items %}
+    <div class="wn-card rounded-xl overflow-hidden flex flex-col border-l-4 {% if item.item_type == 'commitment' %}border-l-secondary{% else %}border-l-primary{% endif %}" id="tracking-{{ item.item_type }}-{{ item.id }}">
+      <div class="p-5 flex flex-col flex-1">
+        <!-- Top row: badge + party -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            {% if item.item_type == 'manifesto' %}
+            <span class="bg-primary/10 text-primary text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">description</span>{% trans "Manifesto" %}
+            </span>
+            {% else %}
+            <span class="bg-secondary-container text-on-secondary-container text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
+              <span class="material-symbols-outlined text-[12px]">handshake</span>{% trans "Commitment" %}
+            </span>
+            {% endif %}
+            {% if item.elected_member %}
+            {% include 'includes/member_badge.html' with member=item.elected_member %}
+            {% endif %}
+            {% if item.party %}
+            {% include 'includes/party_badge.html' with party=item.party %}
+            {% endif %}
+            {% if item.category and item.category != 'other' %}
+            <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider">{{ item.get_category_display }}</span>
+            {% endif %}
+          </div>
+          <span class="{% if selected_status == 'completed_on_time' %}bg-emerald-100 text-emerald-700{% elif selected_status == 'completed_late' %}bg-blue-100 text-blue-700{% else %}bg-amber-100 text-amber-700{% endif %} text-[10px] font-label font-black px-2.5 py-1 rounded uppercase flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px]">{{ status_info.icon }}</span>{{ status_info.title }}
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h4 class="font-headline text-lg font-bold text-on-surface leading-snug mb-2">
+          {% if item.item_type == 'manifesto' %}
+          <a href="{% url 'manifesto_detail' item.id %}" class="text-on-surface hover:text-primary transition-colors" style="text-decoration:none;">{{ item.title }}</a>
+          {% else %}
+          <a href="{% url 'commitment_detail' item.id %}" class="text-on-surface hover:text-secondary transition-colors" style="text-decoration:none;">{{ item.title }}</a>
+          {% endif %}
+        </h4>
+
+        <!-- Description -->
+        <p class="text-sm text-slate-500 mb-4 line-clamp-2">{{ item.description }}</p>
+
+        <!-- Progress Bar -->
+        <div class="space-y-1.5 mb-4">
+          <div class="flex justify-between items-end">
+            <span class="text-xs text-slate-400">{{ item.progress_fraction }} {% trans "completed" %}</span>
+            <span class="text-sm font-bold text-on-surface">{{ item.completion_percentage }}%</span>
+          </div>
+          <div class="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full {% if selected_status == 'completed_on_time' %}bg-emerald-500{% elif selected_status == 'completed_late' %}bg-blue-500{% else %}bg-amber-500{% endif %} rounded-full transition-all" style="width: {{ item.completion_percentage }}%"></div>
+          </div>
+        </div>
+
+        <!-- Footer: deadline + view link -->
+        <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+          <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold">
+            <span class="material-symbols-outlined text-[14px]">calendar_month</span>
+            <span>{{ item.calculated_deadline|default:"No deadline set" }}</span>
+          </div>
+          {% if item.item_type == 'manifesto' %}
+          <a href="{% url 'manifesto_detail' item.id %}" class="flex items-center gap-1 text-primary text-xs font-bold uppercase tracking-widest hover:opacity-80 transition-opacity" style="text-decoration:none;">
+            {% trans "View" %} <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </a>
+          {% else %}
+          <a href="{% url 'commitment_detail' item.id %}" class="flex items-center gap-1 text-secondary text-xs font-bold uppercase tracking-widest hover:opacity-80 transition-opacity" style="text-decoration:none;">
+            {% trans "View" %} <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-16 bg-white rounded-xl border border-slate-200 border-dashed">
+      <span class="material-symbols-outlined text-5xl text-slate-300 mb-4 block">inbox</span>
+      <h4 class="text-lg font-bold text-slate-700">{% trans "No items found" %}</h4>
+      <p class="text-slate-500 text-sm">{% trans "No manifestos or commitments match this status." %}</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% include 'includes/pagination.html' %}
+</div>
+{% endblock %}

@@ -37,7 +37,7 @@ from core.views import (
     elected_member_list, elected_member_detail,
     activities_list,
     petition_list, petition_detail, petition_create, petition_sign,
-    dashboard, overdue_list, manifesto_list, toggle_submanifesto_completion, get_manifesto_options,
+    dashboard, overdue_list, combined_tracking, manifesto_list, toggle_submanifesto_completion, get_manifesto_options,
     manifesto_detail, manifesto_og_image,
     commitment_list, commitment_detail, commitment_og_image, toggle_subcommitment_completion,
 )
@@ -68,6 +68,8 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     # Overdue (combined manifestos & commitments)
     path('overdue/', overdue_list, name='overdue_list'),
+    # Combined tracking (both manifestos & commitments by status)
+    path('tracking/', combined_tracking, name='combined_tracking'),
     # Manifestos
     path('manifestos/', manifesto_list, name='manifesto_list'),
     path('manifestos/<int:pk>/', manifesto_detail, name='manifesto_detail'),

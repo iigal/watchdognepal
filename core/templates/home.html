@@ -29,15 +29,15 @@
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
         </a>
-        <a href="{% url 'manifesto_list' %}?status=in_progress" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+        <a href="{% url 'combined_tracking' %}?status=in_progress" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-amber-500 font-black text-xl md:text-2xl">{{ total_in_progress_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "In Progress" %}</span>
         </a>
-        <a href="{% url 'manifesto_list' %}?status=completed_on_time" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+        <a href="{% url 'combined_tracking' %}?status=completed_on_time" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-emerald-500 font-black text-xl md:text-2xl">{{ total_completed_on_time_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete on Time" %}</span>
         </a>
-        <a href="{% url 'manifesto_list' %}?status=completed_late" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+        <a href="{% url 'combined_tracking' %}?status=completed_late" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-blue-500 font-black text-xl md:text-2xl">{{ total_completed_late_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete after deadline" %}</span>
         </a>

@@ -592,6 +592,122 @@ def overdue_list(request):
         'total_count': manifesto_count + commitment_count,
     })
 
+# ─── Combined Tracking (Manifestos & Commitments by status) ──
+
+def combined_tracking(request):
+    """Combined page showing both manifestos AND commitments filtered by status."""
+    import datetime
+
+    status_filter = request.GET.get('status', 'in_progress')
+    q = request.GET.get('q', '').strip()
+    category = request.GET.get('category', '')
+
+    all_manifestos = ManifestoPoint.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_manifestos', 'activities').select_related('party', 'elected_member', 'elected_member__party')
+
+    all_commitments = Commitment.objects.filter(
+        models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
+    ).prefetch_related('sub_commitments', 'activities').select_related('party', 'elected_member', 'elected_member__party')
+
+    filtered_manifestos = []
+    filtered_commitments = []
+
+    for m in all_manifestos:
+        if status_filter == 'in_progress':
+            if m.is_completed is None and not m.is_overdue:
+                has_verified = any(a.status == 'verified' for a in m.activities.all())
+                if has_verified:
+                    filtered_manifestos.append(m)
+        elif status_filter == 'completed_on_time':
+            if m.is_completed is True:
+                filtered_manifestos.append(m)
+        elif status_filter == 'completed_late':
+            if m.is_completed is False:
+                filtered_manifestos.append(m)
+
+    for c in all_commitments:
+        if status_filter == 'in_progress':
+            if c.is_completed is None and not c.is_overdue:
+                has_verified = any(a.status == 'verified' for a in c.activities.all())
+                if has_verified:
+                    filtered_commitments.append(c)
+        elif status_filter == 'completed_on_time':
+            if c.is_completed is True:
+                filtered_commitments.append(c)
+        elif status_filter == 'completed_late':
+            if c.is_completed is False:
+                filtered_commitments.append(c)
+
+    # Apply search filter
+    if q:
+        filtered_manifestos = [m for m in filtered_manifestos if q.lower() in m.title.lower() or q.lower() in m.description.lower()]
+        filtered_commitments = [c for c in filtered_commitments if q.lower() in c.title.lower() or q.lower() in c.description.lower()]
+
+    # Apply category filter
+    if category:
+        filtered_manifestos = [m for m in filtered_manifestos if m.category == category]
+        filtered_commitments = [c for c in filtered_commitments if c.category == category]
+
+    # Tag each item with its type
+    for m in filtered_manifestos:
+        m.item_type = 'manifesto'
+    for c in filtered_commitments:
+        c.item_type = 'commitment'
+
+    combined = filtered_manifestos + filtered_commitments
+    combined.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
+
+    manifesto_count = len(filtered_manifestos)
+    commitment_count = len(filtered_commitments)
+
+    paginator = Paginator(combined, 20)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    # Status display info
+    from django.utils.translation import gettext_lazy as _
+    STATUS_INFO = {
+        'in_progress': {
+            'title': _('In Progress'),
+            'subtitle': _('Manifestos and commitments currently being worked on.'),
+            'gradient': 'from-amber-500 via-amber-600 to-amber-700',
+            'accent': 'amber',
+            'icon': 'pending',
+            'badge_label': _('Active Track'),
+        },
+        'completed_on_time': {
+            'title': _('Complete on Time'),
+            'subtitle': _('Manifestos and commitments delivered before their deadline.'),
+            'gradient': 'from-emerald-500 via-emerald-600 to-emerald-700',
+            'accent': 'emerald',
+            'icon': 'check_circle',
+            'badge_label': _('On Track'),
+        },
+        'completed_late': {
+            'title': _('Complete after deadline'),
+            'subtitle': _('Manifestos and commitments completed but after the original deadline.'),
+            'gradient': 'from-blue-500 via-blue-600 to-blue-700',
+            'accent': 'blue',
+            'icon': 'assignment_turned_in',
+            'badge_label': _('Better Late'),
+        },
+    }
+
+    status_info = STATUS_INFO.get(status_filter, STATUS_INFO['in_progress'])
+
+    return render(request, 'combined_tracking.html', {
+        'items': page_obj,
+        'page_obj': page_obj,
+        'search_query': q,
+        'selected_category': category,
+        'selected_status': status_filter,
+        'categories': ManifestoPoint.CATEGORY_CHOICES,
+        'manifesto_count': manifesto_count,
+        'commitment_count': commitment_count,
+        'total_count': manifesto_count + commitment_count,
+        'status_info': status_info,
+    })
+
 # ─── Manifesto Views ──────────────────────────────────────────
 
 def manifesto_list(request):

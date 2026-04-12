@@ -1436,3 +1436,32 @@ msgstr "अझै कुनै पोस्ट छैन।"
 #: social/templates/social/post_list.html:103
 msgid "Create Your First Post"
 msgstr "पहिलो पोस्ट बनाउनुहोस्"
+
+#: core/views.py (combined_tracking)
+msgid "Manifestos and commitments currently being worked on."
+msgstr "हाल काम भइरहेका घोषणापत्र र प्रतिबद्धताहरू।"
+
+msgid "Manifestos and commitments delivered before their deadline."
+msgstr "समयसीमा अघि पूरा भएका घोषणापत्र र प्रतिबद्धताहरू।"
+
+msgid "Manifestos and commitments completed but after the original deadline."
+msgstr "मूल समयसीमा पछि पूरा भएका घोषणापत्र र प्रतिबद्धताहरू।"
+
+msgid "On Track"
+msgstr "सही बाटोमा"
+
+msgid "Better Late"
+msgstr "ढिलो भए पनि"
+
+#: core/templates/combined_tracking.html
+msgid "Search items..."
+msgstr "खोज्नुहोस्..."
+
+msgid "No items found"
+msgstr "कुनै वस्तु भेटिएन"
+
+msgid "No manifestos or commitments match this status."
+msgstr "यो स्थितिसँग मिल्ने कुनै घोषणापत्र वा प्रतिबद्धता छैन।"
+
+msgid "Filter"
+msgstr "फिल्टर"
