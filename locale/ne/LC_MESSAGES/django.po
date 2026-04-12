@@ -717,6 +717,8 @@ msgid ""
 "Monitor manifesto commitments, verified activities, and approaching deadlines.\n"
 "        Hold your government accountable with data-driven transparency."
 msgstr ""
+"घोषणापत्रका प्रतिबद्धताहरू, प्रमाणित गतिविधिहरू र नजिकिँदै गरेका समयसीमाहरूको निगरानी गर्नुहोस्।\n"
+"        तथ्यपरक पारदर्शितामार्फत तपाईंको सरकारलाई जवाफदेही बनाउनुहोस्।"
 
 #: core/templates/home.html:30 core/templates/home.html:301
 msgid "Deadline Passed"
