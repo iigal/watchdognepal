@@ -1465,3 +1465,21 @@ msgstr "यो स्थितिसँग मिल्ने कुनै घ�
 
 msgid "Filter"
 msgstr "फिल्टर"
+
+msgid "Deadline Partly Crossed"
+msgstr "केही समयसीमा नाघेको"
+
+msgid "Partly Delayed, Timer Running"
+msgstr "आंशिक ढिलाइ, समय चलिरहेछ"
+
+msgid "Rolling Track"
+msgstr "निरन्तर ट्र्याक"
+
+msgid "Partly Delayed"
+msgstr "आंशिक ढिलाइ"
+
+msgid "Items that have missed some sub-deadlines but have future ones remaining."
+msgstr "केही उप-समयसीमा नाघेका तर भविष्यका समयसीमा बाँकी रहेका वस्तुहरू।"
+
+msgid "Partly Crossed"
+msgstr "आंशिक नाघेको"
