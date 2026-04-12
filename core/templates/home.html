@@ -327,7 +327,10 @@
     }
 
     elements.forEach(el => {
-      const deadlineDate = new Date(el.getAttribute('data-deadline'));
+      const deadlineAttr = el.getAttribute('data-deadline');
+      const deadlineDate = new Date(deadlineAttr);
+      // Set to end of day to stay consistent with server-side "date-only" checks
+      deadlineDate.setHours(23, 59, 59, 999);
       const deadlineTime = deadlineDate.getTime();
       const distance = deadlineTime - now;
 
