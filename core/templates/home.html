@@ -318,6 +318,13 @@
   function updateCountdowns() {
     const elements = document.querySelectorAll('.deadline-countdown');
     const now = new Date().getTime();
+    const isNepali = "{{ request.LANGUAGE_CODE }}" === 'ne';
+
+    function toNepaliNumerals(num) {
+      if (!isNepali) return num;
+      const nepaliDigits = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+      return num.toString().split('').map(digit => nepaliDigits[digit] || digit).join('');
+    }
 
     elements.forEach(el => {
       const deadlineDate = new Date(el.getAttribute('data-deadline'));
@@ -336,8 +343,13 @@
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
       let display = "";
-      if (days > 0) display += days + "d ";
-      display += hours + "h " + minutes + "m " + seconds + "s";
+      if (isNepali) {
+        if (days > 0) display += toNepaliNumerals(days) + " दिन ";
+        display += toNepaliNumerals(hours) + " घण्टा " + toNepaliNumerals(minutes) + " मिनेट " + toNepaliNumerals(seconds) + " सेकेण्ड बाकी";
+      } else {
+        if (days > 0) display += days + "d ";
+        display += hours + "h " + minutes + "m " + seconds + "s";
+      }
       el.innerHTML = display;
     });
   }
