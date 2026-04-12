@@ -108,17 +108,6 @@ def home(request):
         except Exception:
             git_commit_count = "N/A"
 
-    latest_dates = []
-    latest_activity = Activity.objects.order_by('-created_at').first()
-    if latest_activity:
-        latest_dates.append(latest_activity.created_at)
-        
-    latest_commitment = Commitment.objects.order_by('-created_at').first()
-    if latest_commitment:
-        latest_dates.append(latest_commitment.created_at)
-        
-    last_updated_date = max(latest_dates) if latest_dates else None
-    
     # Reload points with prefetch for activities to calculate unified stats
     all_gov_manifestos = ManifestoPoint.objects.filter(
         models.Q(party__in_government=True) | models.Q(elected_member__party__in_government=True)
@@ -135,6 +124,11 @@ def home(request):
     
     upcoming_deadlines = []
     upcoming_commitment_deadlines = []
+    
+    # Track points that are partly crossed (some overdue, some future)
+    total_partly_crossed_count = 0
+    partly_crossed_points = []
+    partly_crossed_commitments = []
 
     for p in all_points:
         if isinstance(p, ManifestoPoint):
@@ -147,6 +141,12 @@ def home(request):
                 total_completed_on_time_count += 1
             else:
                 total_completed_late_count += 1
+        elif p.is_partly_crossed:
+            total_partly_crossed_count += 1
+            if isinstance(p, ManifestoPoint):
+                partly_crossed_points.append(p)
+            else:
+                partly_crossed_commitments.append(p)
         else:
             has_verified_activity = any(a.status == 'verified' for a in p.activities.all())
             if has_verified_activity:
@@ -176,14 +176,17 @@ def home(request):
     mixed_upcoming_deadlines.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
     mixed_upcoming_deadlines = mixed_upcoming_deadlines[:10]
 
-    # Calculate sets of IDs to exclude them from the party tabs (so we don't show duplicates)
+    # Calculate sets of IDs to exclude them from the party tabs
+    # (so we don't show duplicates of items already in specific sections)
     in_progress_ids = set(p.id for p in in_progress_points)
     deadline_ids = set(p.id for p in upcoming_deadlines[:5])
-    shown_manifesto_ids = in_progress_ids | deadline_ids
+    partly_crossed_ids = set(p.id for p in partly_crossed_points)
+    shown_manifesto_ids = in_progress_ids | deadline_ids | partly_crossed_ids
     
     in_progress_commitment_ids = set(p.id for p in in_progress_commitments)
     commitment_deadline_ids = set(p.id for p in upcoming_commitment_deadlines[:5])
-    shown_commitment_ids = in_progress_commitment_ids | commitment_deadline_ids
+    partly_crossed_commitment_ids = set(p.id for p in partly_crossed_commitments)
+    shown_commitment_ids = in_progress_commitment_ids | commitment_deadline_ids | partly_crossed_commitment_ids
     
     total_upcoming_deadline_count = total_upcoming_manifesto + total_upcoming_commitment
 
@@ -192,7 +195,10 @@ def home(request):
         'government_parties': government_parties,
         # Manifesto
         'upcoming_deadlines': upcoming_deadlines[:5],  # keeping for backwards comp or ID calculation
-        'in_progress_points': in_progress_points,
+        # Partly Crossed
+        'partly_crossed_points': partly_crossed_points,
+        'partly_crossed_commitments': partly_crossed_commitments,
+        'total_partly_crossed_count': total_partly_crossed_count,
         'shown_manifesto_ids': shown_manifesto_ids,
         # Commitment
         'upcoming_commitment_deadlines': upcoming_commitment_deadlines[:5],
@@ -209,7 +215,6 @@ def home(request):
         'total_missed_count': total_missed_count,
         'total_approaching_count': total_approaching_count,
         'git_commit_count': git_commit_count,
-        'last_updated_date': last_updated_date,
         'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }
     return render(request, 'home.html', context)
@@ -625,6 +630,9 @@ def combined_tracking(request):
         elif status_filter == 'completed_late':
             if m.is_completed is False:
                 filtered_manifestos.append(m)
+        elif status_filter == 'partly_crossed':
+            if m.is_partly_crossed:
+                filtered_manifestos.append(m)
 
     for c in all_commitments:
         if status_filter == 'in_progress':
@@ -637,6 +645,9 @@ def combined_tracking(request):
                 filtered_commitments.append(c)
         elif status_filter == 'completed_late':
             if c.is_completed is False:
+                filtered_commitments.append(c)
+        elif status_filter == 'partly_crossed':
+            if c.is_partly_crossed:
                 filtered_commitments.append(c)
 
     # Apply search filter
@@ -690,6 +701,14 @@ def combined_tracking(request):
             'accent': 'blue',
             'icon': 'assignment_turned_in',
             'badge_label': _('Better Late'),
+        },
+        'partly_crossed': {
+            'title': _('Partly Delayed'),
+            'subtitle': _('Items that have missed some sub-deadlines but have future ones remaining.'),
+            'gradient': 'from-amber-400 via-amber-500 to-amber-600',
+            'accent': 'amber',
+            'icon': 'history_toggle_off',
+            'badge_label': _('Partly Crossed'),
         },
     }
 
