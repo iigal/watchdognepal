@@ -176,7 +176,24 @@ def home(request):
 
     mixed_upcoming_deadlines = upcoming_deadlines + upcoming_commitment_deadlines
     mixed_upcoming_deadlines.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
-    mixed_upcoming_deadlines = mixed_upcoming_deadlines[:10]
+
+    # Collect overdue items (Deadline Passed)
+    overdue_items = []
+    for p in all_points:
+        if p.is_overdue:
+            p.item_type = 'manifesto' if isinstance(p, ManifestoPoint) else 'commitment'
+            overdue_items.append(p)
+    overdue_items.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
+
+    # Prepare combined In Progress and Partly Crossed lists for home page
+    all_in_progress = in_progress_points + in_progress_commitments
+    for p in in_progress_points: p.item_type = 'manifesto'
+    for c in in_progress_commitments: c.item_type = 'commitment'
+    
+    all_partly_crossed = partly_crossed_points + partly_crossed_commitments
+    for p in partly_crossed_points: p.item_type = 'manifesto'
+    for c in partly_crossed_commitments: c.item_type = 'commitment'
+
 
     # Calculate sets of IDs to exclude them from the party tabs
     # (so we don't show duplicates of items already in specific sections)
@@ -195,19 +212,16 @@ def home(request):
 
     context = {
         'government_parties': government_parties,
-        # Manifesto
-        'upcoming_deadlines': upcoming_deadlines[:5],  # keeping for backwards comp or ID calculation
-        # Partly Crossed
-        'partly_crossed_points': partly_crossed_points,
-        'partly_crossed_commitments': partly_crossed_commitments,
-        'total_partly_crossed_count': total_partly_crossed_count,
+        # Section Lists
+        'in_progress_items': all_in_progress,
+        'partly_crossed_items': all_partly_crossed,
+        'approaching_items': mixed_upcoming_deadlines,
+        'overdue_items': overdue_items,
+        
+        # ID calculation for party tabs (though we are removing some sections, keeping for stability)
         'shown_manifesto_ids': shown_manifesto_ids,
-        # Commitment
-        'upcoming_commitment_deadlines': upcoming_commitment_deadlines[:5],
-        'in_progress_commitments': in_progress_commitments,
         'shown_commitment_ids': shown_commitment_ids,
-        # Mixed Approach Array
-        'mixed_upcoming_deadlines': mixed_upcoming_deadlines,
+        
         # Counters
         'total_manifesto_count': total_manifesto_count,
         'total_commitment_count': total_commitment_count,
@@ -216,6 +230,7 @@ def home(request):
         'total_completed_late_count': total_completed_late_count,
         'total_missed_count': total_missed_count,
         'total_approaching_count': total_approaching_count,
+        'total_partly_crossed_count': total_partly_crossed_count,
         'git_commit_count': git_commit_count,
         'total_upcoming_deadline_count': total_upcoming_deadline_count,
     }
@@ -635,6 +650,12 @@ def combined_tracking(request):
         elif status_filter == 'partly_crossed':
             if m.is_partly_crossed:
                 filtered_manifestos.append(m)
+        elif status_filter == 'approaching':
+            if m.is_completed is None and not m.is_overdue and not m.is_partly_crossed:
+                deadline = m.calculated_deadline
+                if deadline and timezone.now().date() <= deadline <= (timezone.now().date() + datetime.timedelta(days=90)):
+                    filtered_manifestos.append(m)
+
 
     for c in all_commitments:
         if status_filter == 'in_progress':
@@ -651,6 +672,12 @@ def combined_tracking(request):
         elif status_filter == 'partly_crossed':
             if c.is_partly_crossed:
                 filtered_commitments.append(c)
+        elif status_filter == 'approaching':
+            if c.is_completed is None and not c.is_overdue and not c.is_partly_crossed:
+                deadline = c.calculated_deadline
+                if deadline and timezone.now().date() <= deadline <= (timezone.now().date() + datetime.timedelta(days=90)):
+                    filtered_commitments.append(c)
+
 
     # Apply search filter
     if q:
@@ -711,6 +738,14 @@ def combined_tracking(request):
             'accent': 'amber',
             'icon': 'history_toggle_off',
             'badge_label': _('Partly Crossed'),
+        },
+        'approaching': {
+            'title': _('Deadline Approaching'),
+            'subtitle': _('Manifestos and commitments with deadlines in the next 90 days.'),
+            'gradient': 'from-amber-400 via-amber-500 to-amber-600',
+            'accent': 'amber',
+            'icon': 'event',
+            'badge_label': _('Upcoming'),
         },
     }
 
