@@ -81,18 +81,37 @@
 </section>
 
 <!-- Reusable Overlay Modal -->
-<div id="wn-overlay-modal" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeOverlayModal()"></div>
-  <div class="absolute inset-4 md:inset-8 lg:inset-12 bg-surface-container-lowest rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-      <h3 id="wn-overlay-title" class="text-xl font-black font-headline"></h3>
-      <button onclick="closeOverlayModal()" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors">
-        <span class="material-symbols-outlined text-slate-600">close</span>
+<div id="wn-overlay-modal"
+  class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+  style="opacity:0; transition: opacity 0.25s ease;"
+  aria-modal="true" role="dialog" aria-labelledby="wn-overlay-title">
+  <!-- Backdrop -->
+  <div id="wn-overlay-backdrop"
+    class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+    onclick="closeOverlayModal()"
+    style="opacity:0; transition: opacity 0.25s ease;"></div>
+  <!-- Modal Panel -->
+  <div id="wn-overlay-panel"
+    class="relative w-[calc(100%-2rem)] md:w-[calc(100%-4rem)] lg:w-[calc(100%-6rem)] max-w-5xl
+           max-h-[90vh] bg-white dark:bg-[#1c1f26] rounded-2xl shadow-2xl flex flex-col overflow-hidden mx-auto"
+    style="transform: scale(0.95) translateY(8px); transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease; opacity:0;">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 md:px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+      <h3 id="wn-overlay-title" class="text-lg md:text-xl font-black font-headline text-on-surface"></h3>
+      <button onclick="closeOverlayModal()"
+        class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-700 hover:bg-rose-100 dark:hover:bg-rose-900/40
+               flex items-center justify-center transition-all duration-150 hover:scale-110 group"
+        aria-label="Close">
+        <span class="material-symbols-outlined text-slate-500 dark:text-slate-300 group-hover:text-rose-600 dark:group-hover:text-rose-400 text-[20px]">close</span>
       </button>
     </div>
-    <div id="wn-overlay-body" class="flex-1 overflow-y-auto p-6">
-      <div id="wn-overlay-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    <!-- Scrollable body -->
+    <div id="wn-overlay-body" class="flex-1 overflow-y-auto p-5 md:p-6">
+      <div id="wn-overlay-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"></div>
     </div>
+    <!-- Footer count hint -->
+    <div id="wn-overlay-footer" class="px-5 md:px-6 py-3 border-t border-slate-100 dark:border-slate-700
+         text-xs text-slate-400 dark:text-slate-500 font-medium text-right"></div>
   </div>
 </div>
 
@@ -276,24 +295,62 @@
     in_progress: '{% trans "In Progress" %}'
   };
 
+  let _overlayCloseTimer = null;
+
   function openOverlayModal(sectionKey) {
-    const modal = document.getElementById('wn-overlay-modal');
-    const title = document.getElementById('wn-overlay-title');
-    const grid = document.getElementById('wn-overlay-grid');
+    const modal   = document.getElementById('wn-overlay-modal');
+    const backdrop = document.getElementById('wn-overlay-backdrop');
+    const panel   = document.getElementById('wn-overlay-panel');
+    const title   = document.getElementById('wn-overlay-title');
+    const grid    = document.getElementById('wn-overlay-grid');
+    const footer  = document.getElementById('wn-overlay-footer');
     const dataContainer = document.getElementById('overlay-data-' + sectionKey);
 
     if (!dataContainer) return;
 
+    // Cancel any in-flight close animation
+    if (_overlayCloseTimer) { clearTimeout(_overlayCloseTimer); _overlayCloseTimer = null; }
+
+    // Populate content
+    const cards = dataContainer.querySelectorAll(':scope > div');
     title.textContent = OVERLAY_TITLES[sectionKey] || sectionKey;
     grid.innerHTML = dataContainer.innerHTML;
-    modal.classList.remove('hidden');
+    footer.textContent = cards.length + ' {% trans "items" %}';
+
+    // Re-init countdowns inside the modal
+    if (typeof updateCountdowns === 'function') updateCountdowns();
+
+    // Show — enable pointer events, then animate in
+    modal.style.pointerEvents = 'auto';
+    // Use rAF so the browser registers the display before transitioning
+    requestAnimationFrame(() => {
+      modal.style.opacity = '1';
+      backdrop.style.opacity = '1';
+      panel.style.opacity = '1';
+      panel.style.transform = 'scale(1) translateY(0)';
+    });
+
     document.body.style.overflow = 'hidden';
   }
 
   function closeOverlayModal() {
-    const modal = document.getElementById('wn-overlay-modal');
-    modal.classList.add('hidden');
+    const modal    = document.getElementById('wn-overlay-modal');
+    const backdrop  = document.getElementById('wn-overlay-backdrop');
+    const panel    = document.getElementById('wn-overlay-panel');
+
+    // Animate out
+    modal.style.opacity = '0';
+    backdrop.style.opacity = '0';
+    panel.style.opacity = '0';
+    panel.style.transform = 'scale(0.95) translateY(8px)';
+    modal.style.pointerEvents = 'none';
     document.body.style.overflow = '';
+
+    // Clear grid after animation so it doesn't flash on next open
+    _overlayCloseTimer = setTimeout(() => {
+      document.getElementById('wn-overlay-grid').innerHTML = '';
+      _overlayCloseTimer = null;
+    }, 280);
   }
 
   document.addEventListener('keydown', function (e) {
