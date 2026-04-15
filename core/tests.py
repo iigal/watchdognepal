@@ -21,7 +21,7 @@ class WatchdogTests(TestCase):
     def test_home_view(self):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(self.manifesto_point, response.context['upcoming_deadlines'])
+        self.assertIn(self.manifesto_point, response.context['approaching_items'])
 
     def test_party_list_view(self):
         response = self.client.get(reverse('party_list'))
