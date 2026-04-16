@@ -597,11 +597,6 @@ def overdue_list(request):
     combined = overdue_manifestos + overdue_commitments
     combined.sort(key=lambda item: item.calculated_deadline if item.calculated_deadline else datetime.date.max)
     today = timezone.now().date()
-    for item in combined:
-        if item.calculated_deadline:
-            item.overdue_days = max((today - item.calculated_deadline).days, 0)
-        else:
-            item.overdue_days = None
 
     manifesto_count = len(overdue_manifestos)
     commitment_count = len(overdue_commitments)

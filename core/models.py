@@ -147,6 +147,16 @@ class ManifestoPoint(models.Model):
         return False
 
     @property
+    def overdue_days(self):
+        if not self.is_overdue:
+            return None
+        deadline = self.calculated_deadline
+        if deadline:
+            from django.utils import timezone
+            return max((timezone.now().date() - deadline).days, 0)
+        return None
+
+    @property
     def progress_fraction(self):
         total = self.sub_manifestos.count()
         if total == 0:
@@ -198,6 +208,16 @@ class SubManifesto(models.Model):
             from django.utils import timezone
             return deadline < timezone.now().date()
         return False
+
+    @property
+    def overdue_days(self):
+        if not self.is_overdue:
+            return None
+        deadline = self.effective_deadline
+        if deadline:
+            from django.utils import timezone
+            return max((timezone.now().date() - deadline).days, 0)
+        return None
 
     def __str__(self):
         return f"{self.parent.title} - {self.title}"

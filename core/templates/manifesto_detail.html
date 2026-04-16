@@ -84,7 +84,13 @@
           <p class="text-sm font-medium {% if manifesto.is_overdue %}text-rose-600{% elif manifesto.is_partly_crossed %}text-amber-600{% else %}text-on-surface{% endif %}">
             {{ manifesto.calculated_deadline }}
             {% if manifesto.is_partly_crossed %}<span class="text-amber-500 text-xs ml-1">({% trans "Partly Delayed, Timer Running" %})</span>
-            {% elif manifesto.is_overdue %}<span class="text-rose-500 text-xs ml-1">({% trans "Overdue" %})</span>{% endif %}
+            {% elif manifesto.is_overdue %}
+              <span class="text-rose-500 text-xs ml-1">
+                ({% trans "Overdue" %}{% if manifesto.overdue_days is not None %}: 
+                  {% blocktrans with days=manifesto.overdue_days %}{{ days }} days{% endblocktrans %}
+                {% endif %})
+              </span>
+            {% endif %}
           </p>
         </div>
       </div>
@@ -107,7 +113,13 @@
           <span class="text-[10px] text-slate-500 flex items-center gap-1">
             <span class="material-symbols-outlined text-[10px]">calendar_month</span>
             {{ sub.effective_deadline|default:"No deadline" }}
-            {% if sub.is_overdue %}<span class="text-rose-500 font-bold ml-1">{% trans "Overdue" %}</span>{% endif %}
+            {% if sub.is_overdue %}
+              <span class="text-rose-500 font-bold ml-1">
+                {% trans "Overdue" %}{% if sub.overdue_days is not None %}: 
+                  {% blocktrans with days=sub.overdue_days %}{{ days }} days{% endblocktrans %}
+                {% endif %}
+              </span>
+            {% endif %}
           </span>
         </div>
         <button class="status-toggle p-1 rounded-full hover:bg-slate-200 transition-colors"

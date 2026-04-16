@@ -132,7 +132,7 @@
             </div>
             {% if item.overdue_days is not None %}
             <div class="text-[11px] font-bold text-rose-700">
-              {% blocktrans with days=item.overdue_days %}{{ days }} days late{% endblocktrans %}
+              {% blocktrans with days=item.overdue_days %}{{ days }} days overdue{% endblocktrans %}
             </div>
             {% endif %}
           </div>
