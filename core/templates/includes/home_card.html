@@ -73,7 +73,7 @@
     </div>
 
     <div class="w-[25%] flex justify-center pl-2">
-      <a href="{% url detail_url_name item.id %}" style="text-decoration: none;"
+      <a href="{% url detail_url_name item.id %}" data-layer-popup="true" data-layer-title="{{ item.title }}" style="text-decoration: none;"
         class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors no-underline">
         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
       </a>

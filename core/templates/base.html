@@ -122,46 +122,10 @@
         </button>
 
         {% if user.is_authenticated %}
-        <div class="hidden md:block nav-dropdown">
-          <button class="flex items-center gap-1 py-1 text-slate-600 hover:text-red-700 transition-colors font-medium">
-            <span class="material-symbols-outlined text-[20px]">account_circle</span>
-            <span class="dark:text-slate-300">{{ user.username }}</span>
-            <span class="material-symbols-outlined text-[16px]">expand_more</span>
-          </button>
-          <div class="nav-dropdown-menu" style="right: 0; left: auto; min-width: 220px;">
-            <a href="{% url 'dashboard' %}">
-              <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
-            </a>
-            <a href="{% url 'user_profile' %}">
-              <span class="material-symbols-outlined">person</span> {% trans "My Profile" %}
-            </a>
-            <a href="{% url 'user_logs' %}">
-              <span class="material-symbols-outlined">history</span> {% trans "Activity Logs" %}
-            </a>
-            {% if user.is_superuser %}
-            <a href="{% url 'admin_user_logs' %}">
-              <span class="material-symbols-outlined">admin_panel_settings</span> {% trans "Admin Logs" %}
-            </a>
-            {% endif %}
-            <div class="border-t border-slate-100 my-1"></div>
-            <a href="{% url 'social:dashboard' %}">
-              <span class="material-symbols-outlined">campaign</span> {% trans "Social Studio" %}
-            </a>
-            <a href="{% url 'social:create_image' %}">
-              <span class="material-symbols-outlined">image</span> {% trans "Create Image Post" %}
-            </a>
-            <a href="{% url 'social:create_reel' %}">
-              <span class="material-symbols-outlined">movie</span> {% trans "Create Reel" %}
-            </a>
-            <a href="{% url 'social:post_list' %}">
-              <span class="material-symbols-outlined">grid_view</span> {% trans "Social Posts" %}
-            </a>
-            <div class="border-t border-slate-100 my-1"></div>
-            <a href="{% url 'logout' %}" class="text-rose-600 hover:text-rose-700">
-              <span class="material-symbols-outlined">logout</span> {% trans "Logout" %}
-            </a>
-          </div>
-        </div>
+        <span class="hidden md:inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 font-semibold text-sm">
+          <span class="material-symbols-outlined text-[18px]">account_circle</span>
+          {{ user.username }}
+        </span>
 
         <a href="{% url 'submit_activity' %}" class="hidden md:inline-flex bg-primary px-6 py-2 rounded-xl text-white font-headline font-bold hover:opacity-90 active:scale-95 transition-all text-decoration-none" style="text-decoration:none;">
           {% trans "Submit" %}
@@ -213,44 +177,12 @@
         </a>
         <div class="border-t border-slate-100 my-2"></div>
         {% if user.is_authenticated %}
-        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Account" %}</p>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'dashboard' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">dashboard</span>{% trans "Dashboard" %}
-        </a>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'user_profile' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">person</span>{% trans "My Profile" %}
-        </a>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'user_logs' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">history</span>{% trans "Activity Logs" %}
-        </a>
-        {% if user.is_superuser %}
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'admin_user_logs' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">admin_panel_settings</span>{% trans "Admin Logs" %}
-        </a>
-        {% endif %}
-
-        <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold px-4 pt-3 pb-1 m-0">{% trans "Social Media Studio" %}</p>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:dashboard' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">campaign</span>{% trans "Social Studio Home" %}
-        </a>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:create_image' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">image</span>{% trans "Create Image Post" %}
-        </a>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:create_reel' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">movie</span>{% trans "Create Reel" %}
-        </a>
-        <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'social:post_list' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">grid_view</span>{% trans "All Posts" %}
-        </a>
-
-        <div class="border-t border-slate-100 my-2"></div>
-
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'submit_activity' %}">
           <span class="material-symbols-outlined text-[18px] align-middle mr-2">add_circle</span>{% trans "Submit Activity" %}
         </a>
-        <a class="py-3 px-4 rounded-lg text-rose-600 hover:bg-rose-50 transition-colors" style="text-decoration:none;" href="{% url 'logout' %}">
-          <span class="material-symbols-outlined text-[18px] align-middle mr-2">logout</span>{% trans "Logout" %}
-        </a>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400 px-4 pt-1 pb-1 m-0 font-semibold">
+          {% blocktrans %}Account options are available in the side panel.{% endblocktrans %}
+        </p>
         {% else %}
         <a class="py-3 px-4 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" style="text-decoration:none;" href="{% url 'login' %}">
           <span class="material-symbols-outlined text-[18px] align-middle mr-2">login</span>{% trans "Login" %}
@@ -341,7 +273,7 @@
 
   <!-- Mobile Bottom Sheet Sidebar -->
   <div id="sidebar-overlay" class="lg:hidden fixed inset-0 bg-black/40 z-[60] hidden transition-opacity" onclick="closeSidebarSheet()"></div>
-  <div id="sidebar-sheet" class="lg:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white dark:bg-[#1c1f26] rounded-t-2xl shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[75vh] overflow-y-auto">
+  <div id="sidebar-sheet" class="lg:hidden fixed bottom-0 left-0 right-0 z-[70] bg-white dark:bg-[#1c1f26] rounded-t-2xl shadow-2xl transform translate-y-full transition-transform duration-300 max-h-[82vh] overflow-y-auto pb-[max(env(safe-area-inset-bottom),0.9rem)]">
     <div class="flex items-center justify-center pt-3 pb-1">
       <div class="w-10 h-1 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
     </div>
@@ -351,12 +283,27 @@
   </div>
 
   <!-- Mobile Sidebar FAB -->
-  <button id="sidebar-fab" class="lg:hidden fixed bottom-5 right-5 z-50 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 active:scale-95 transition-all"
+  <button id="sidebar-fab" class="lg:hidden fixed right-4 z-50 w-12 h-12 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary/90 active:scale-95 transition-all"
           onclick="openSidebarSheet()" aria-label="Quick links">
     <span class="material-symbols-outlined text-[22px]">menu_open</span>
   </button>
+  {% if user.is_authenticated %}
+  <a href="{% url 'submit_activity' %}" class="lg:hidden fixed left-4 z-50 h-12 px-4 bg-emerald-600 text-white rounded-full shadow-lg inline-flex items-center justify-center gap-1.5 font-bold text-sm hover:bg-emerald-700 active:scale-95 transition-all"
+     aria-label="Submit Activity">
+    <span class="material-symbols-outlined text-[20px]">add_circle</span>
+    {% trans "Submit" %}
+  </a>
+  {% endif %}
 
   <script>
+    (function() {
+      var safeBottom = 'calc(max(env(safe-area-inset-bottom), 0px) + 16px)';
+      var menuFab = document.getElementById('sidebar-fab');
+      var submitFab = document.querySelector('a[aria-label="Submit Activity"]');
+      if (menuFab) menuFab.style.bottom = safeBottom;
+      if (submitFab) submitFab.style.bottom = safeBottom;
+    })();
+
     function openSidebarSheet() {
       document.getElementById('sidebar-overlay').classList.remove('hidden');
       document.getElementById('sidebar-sheet').style.transform = 'translateY(0)';
@@ -422,6 +369,478 @@
   <noscript><img height="1" width="1" style="display:none"
   src="https://www.facebook.com/tr?id=1423097619854831&ev=PageView&noscript=1"
   /></noscript>
+
+  <!-- ═══ Global Overlay Modal ═══ -->
+  <style>
+    #wn-overlay-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #wn-overlay-modal.is-open {
+      display: flex;
+    }
+    #wn-overlay-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    #wn-overlay-panel {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: min(88vh, calc(100vh - 32px));
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      border-radius: 16px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.94) translateY(16px);
+      transition: opacity 0.28s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
+      /* Light theme */
+      background: #ffffff;
+      color: #1a1a2e;
+    }
+    .dark #wn-overlay-panel {
+      background: #1c1f26;
+      color: #e8eaed;
+    }
+    #wn-overlay-panel-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      background: inherit;
+    }
+    .dark #wn-overlay-panel-header {
+      border-bottom-color: rgba(255,255,255,0.1);
+    }
+    #wn-overlay-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      font-family: var(--font-headline, sans-serif);
+      margin: 0;
+    }
+    #wn-overlay-close-btn {
+      flex-shrink: 0;
+      margin-left: 16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(0,0,0,0.07);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+      color: inherit;
+    }
+    .dark #wn-overlay-close-btn {
+      background: rgba(255,255,255,0.1);
+    }
+    #wn-overlay-close-btn:hover {
+      background: rgba(239,68,68,0.12);
+      color: #dc2626;
+      transform: scale(1.1);
+    }
+    #wn-overlay-close-btn:active { transform: scale(0.92); }
+    #wn-overlay-body {
+      flex: 1 1 0;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 20px 24px 24px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      background: linear-gradient(180deg, rgba(15,23,42,0.03) 0%, rgba(15,23,42,0.01) 100%);
+    }
+    #wn-overlay-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    #wn-overlay-grid > * {
+      border: 1px solid rgba(15,23,42,0.1);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+      padding: 2px;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    #wn-overlay-grid > *:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(15,23,42,0.14);
+    }
+    @media (min-width: 640px) {
+      #wn-overlay-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      #wn-overlay-modal { padding: 10px; }
+      #wn-overlay-panel { height: min(92vh, calc(100vh - 20px)); border-radius: 14px; }
+      #wn-overlay-panel-header { padding: 14px 16px; }
+      #wn-overlay-body { padding: 14px 16px 16px; }
+      #wn-overlay-footer { padding: 8px 16px; }
+      #wn-overlay-grid { gap: 12px; }
+    }
+    #wn-overlay-footer {
+      flex-shrink: 0;
+      padding: 10px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-align: right;
+      opacity: 0.5;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .dark #wn-overlay-footer {
+      border-top-color: rgba(255,255,255,0.08);
+    }
+    .dark #wn-overlay-body {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%);
+    }
+    .dark #wn-overlay-grid > * {
+      border-color: rgba(255,255,255,0.14);
+      background: rgba(17,24,39,0.88);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+    }
+    .dark #wn-overlay-grid > *:hover {
+      box-shadow: 0 16px 36px rgba(0,0,0,0.45);
+    }
+    #wn-detail-layer-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10010;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    #wn-detail-layer-modal.is-open {
+      display: flex;
+    }
+    #wn-detail-layer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    #wn-detail-layer-panel {
+      position: relative;
+      width: 100%;
+      max-width: 1100px;
+      height: min(92vh, calc(100vh - 32px));
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+      opacity: 0;
+      transform: scale(0.94) translateY(16px);
+      transition: opacity 0.28s ease, transform 0.3s cubic-bezier(0.34,1.4,0.64,1);
+      background: #ffffff;
+      color: #1a1a2e;
+    }
+    .dark #wn-detail-layer-panel {
+      background: #1c1f26;
+      color: #e8eaed;
+    }
+    #wn-detail-layer-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .dark #wn-detail-layer-header {
+      border-bottom-color: rgba(255,255,255,0.1);
+    }
+    #wn-detail-layer-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 52px);
+    }
+    #wn-detail-layer-close-btn {
+      border: none;
+      border-radius: 9999px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0,0,0,0.07);
+      color: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .dark #wn-detail-layer-close-btn {
+      background: rgba(255,255,255,0.1);
+    }
+    #wn-detail-layer-close-btn:hover {
+      background: rgba(239,68,68,0.12);
+      color: #dc2626;
+      transform: scale(1.06);
+    }
+    #wn-detail-layer-body {
+      width: 100%;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 18px;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+    }
+    #wn-detail-layer-body .wn-layer-loading,
+    #wn-detail-layer-body .wn-layer-error {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 240px;
+      font-weight: 700;
+      opacity: 0.75;
+    }
+    #wn-detail-layer-content {
+      min-height: 100%;
+    }
+    #wn-detail-layer-content .max-w-screen-xl {
+      max-width: 100%;
+      padding-left: 0;
+      padding-right: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    #wn-detail-layer-content main {
+      width: 100%;
+      max-width: 100%;
+    }
+    #wn-detail-layer-content aside,
+    #wn-detail-layer-content nav,
+    #wn-detail-layer-content footer,
+    #wn-detail-layer-content #sidebar-fab,
+    #wn-detail-layer-content #sidebar-overlay,
+    #wn-detail-layer-content #sidebar-sheet,
+    #wn-detail-layer-content .wn-cultural-bg {
+      display: none !important;
+    }
+    #wn-detail-layer-content .flex.gap-8 {
+      display: block;
+    }
+    #wn-detail-layer-content .mb-6,
+    #wn-detail-layer-content [id="mobile-menu"],
+    #wn-detail-layer-content [id="sidebar-overlay"],
+    #wn-detail-layer-content [id="sidebar-sheet"] {
+      display: none !important;
+    }
+    @media (max-width: 640px) {
+      #wn-detail-layer-modal { padding: 8px; }
+      #wn-detail-layer-panel {
+        height: min(96vh, calc(100vh - 16px));
+        border-radius: 12px;
+      }
+      #wn-detail-layer-header { padding: 11px 12px; }
+      #wn-detail-layer-body { padding: 12px; }
+      #wn-detail-layer-title { font-size: 0.95rem; }
+    }
+  </style>
+
+  <div id="wn-overlay-modal" role="dialog" aria-modal="true" aria-labelledby="wn-overlay-title">
+    <div id="wn-overlay-backdrop" onclick="closeOverlayModal()"></div>
+    <div id="wn-overlay-panel">
+      <div id="wn-overlay-panel-header">
+        <h3 id="wn-overlay-title"></h3>
+        <button id="wn-overlay-close-btn" type="button" onclick="closeOverlayModal()" aria-label="Close">
+          <span class="material-symbols-outlined" style="font-size:22px;">close</span>
+        </button>
+      </div>
+      <div id="wn-overlay-body">
+        <div id="wn-overlay-grid"></div>
+      </div>
+      <div id="wn-overlay-footer"></div>
+    </div>
+  </div>
+
+  <div id="wn-detail-layer-modal" role="dialog" aria-modal="true" aria-labelledby="wn-detail-layer-title">
+    <div id="wn-detail-layer-backdrop" onclick="closeDetailLayerModal()"></div>
+    <div id="wn-detail-layer-panel">
+      <div id="wn-detail-layer-header">
+        <h4 id="wn-detail-layer-title">{% trans "Details" %}</h4>
+        <button id="wn-detail-layer-close-btn" type="button" onclick="closeDetailLayerModal()" aria-label="Close detail layer">
+          <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+        </button>
+      </div>
+      <div id="wn-detail-layer-body">
+        <div id="wn-detail-layer-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var _overlayCloseTimer = null;
+    var _detailLayerCloseTimer = null;
+    var _overlayTitles = {};
+    function syncOverlayBodyLock() {
+      var rootOpen = document.getElementById('wn-overlay-modal')?.classList.contains('is-open');
+      var detailOpen = document.getElementById('wn-detail-layer-modal')?.classList.contains('is-open');
+      document.body.style.overflow = (rootOpen || detailOpen) ? 'hidden' : '';
+    }
+
+    function openOverlayModal(sectionKey) {
+      var modal = document.getElementById('wn-overlay-modal');
+      var backdrop = document.getElementById('wn-overlay-backdrop');
+      var panel = document.getElementById('wn-overlay-panel');
+      var titleEl = document.getElementById('wn-overlay-title');
+      var grid = document.getElementById('wn-overlay-grid');
+      var footer = document.getElementById('wn-overlay-footer');
+      var dataContainer = document.getElementById('overlay-data-' + sectionKey);
+
+      if (!dataContainer) { console.warn('No overlay data for', sectionKey); return; }
+
+      if (_overlayCloseTimer) { clearTimeout(_overlayCloseTimer); _overlayCloseTimer = null; }
+
+      // Populate
+      titleEl.textContent = (_overlayTitles && _overlayTitles[sectionKey]) || sectionKey;
+      grid.innerHTML = dataContainer.innerHTML;
+      footer.textContent = dataContainer.children.length + ' items';
+
+      // Re-run countdown if available
+      if (typeof updateCountdowns === 'function') updateCountdowns();
+
+      // Show
+      modal.classList.add('is-open');
+      syncOverlayBodyLock();
+
+      // Animate in (needs a frame after display:flex kick in)
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          backdrop.style.opacity = '1';
+          panel.style.opacity = '1';
+          panel.style.transform = 'scale(1) translateY(0)';
+        });
+      });
+    }
+
+    function closeOverlayModal() {
+      if (document.getElementById('wn-detail-layer-modal')?.classList.contains('is-open')) {
+        closeDetailLayerModal();
+      }
+      var modal = document.getElementById('wn-overlay-modal');
+      var backdrop = document.getElementById('wn-overlay-backdrop');
+      var panel = document.getElementById('wn-overlay-panel');
+
+      backdrop.style.opacity = '0';
+      panel.style.opacity = '0';
+      panel.style.transform = 'scale(0.94) translateY(16px)';
+
+      _overlayCloseTimer = setTimeout(function() {
+        modal.classList.remove('is-open');
+        document.getElementById('wn-overlay-grid').innerHTML = '';
+        syncOverlayBodyLock();
+        _overlayCloseTimer = null;
+      }, 300);
+    }
+
+    function openDetailLayerModal(url, title) {
+      var modal = document.getElementById('wn-detail-layer-modal');
+      var backdrop = document.getElementById('wn-detail-layer-backdrop');
+      var panel = document.getElementById('wn-detail-layer-panel');
+      var content = document.getElementById('wn-detail-layer-content');
+      var titleEl = document.getElementById('wn-detail-layer-title');
+      if (!url) return;
+
+      if (_detailLayerCloseTimer) { clearTimeout(_detailLayerCloseTimer); _detailLayerCloseTimer = null; }
+
+      titleEl.textContent = title || '{% trans "Details" %}';
+      content.innerHTML = '<div class="wn-layer-loading">{% trans "Loading details..." %}</div>';
+      modal.classList.add('is-open');
+      syncOverlayBodyLock();
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          backdrop.style.opacity = '1';
+          panel.style.opacity = '1';
+          panel.style.transform = 'scale(1) translateY(0)';
+        });
+      });
+
+      fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(function(response) {
+          if (!response.ok) throw new Error('HTTP ' + response.status);
+          return response.text();
+        })
+        .then(function(html) {
+          var parser = new DOMParser();
+          var doc = parser.parseFromString(html, 'text/html');
+          var mainEl = doc.querySelector('main');
+          var contentSource = mainEl || doc.querySelector('body');
+          if (!contentSource) throw new Error('No content');
+
+          content.innerHTML = contentSource.innerHTML;
+          if (typeof updateCountdowns === 'function') updateCountdowns();
+        })
+        .catch(function() {
+          content.innerHTML = '<div class="wn-layer-error">{% trans "Could not load details." %}</div>';
+        });
+    }
+
+    function closeDetailLayerModal() {
+      var modal = document.getElementById('wn-detail-layer-modal');
+      if (!modal.classList.contains('is-open')) return;
+
+      var backdrop = document.getElementById('wn-detail-layer-backdrop');
+      var panel = document.getElementById('wn-detail-layer-panel');
+      var content = document.getElementById('wn-detail-layer-content');
+
+      backdrop.style.opacity = '0';
+      panel.style.opacity = '0';
+      panel.style.transform = 'scale(0.94) translateY(16px)';
+
+      _detailLayerCloseTimer = setTimeout(function() {
+        modal.classList.remove('is-open');
+        content.innerHTML = '';
+        syncOverlayBodyLock();
+        _detailLayerCloseTimer = null;
+      }, 300);
+    }
+
+    document.addEventListener('click', function(e) {
+      var trigger = e.target.closest('a[data-layer-popup="true"]');
+      if (!trigger) return;
+
+      e.preventDefault();
+      openDetailLayerModal(trigger.getAttribute('href'), trigger.getAttribute('data-layer-title'));
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Escape') return;
+      if (document.getElementById('wn-detail-layer-modal')?.classList.contains('is-open')) {
+        closeDetailLayerModal();
+        return;
+      }
+      if (document.getElementById('wn-overlay-modal')?.classList.contains('is-open')) {
+        closeOverlayModal();
+      }
+    });
+  </script>
 
 </body>
 

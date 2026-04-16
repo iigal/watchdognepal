@@ -3,6 +3,10 @@
 
 <!-- Quick Links -->
 <div class="wn-card rounded-xl p-4 space-y-1">
+  <a href="{% url 'submit_activity' %}" class="mb-3 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-black text-white hover:opacity-90 active:scale-[0.99] transition-all">
+    <span class="material-symbols-outlined text-[18px]">add_circle</span>
+    {% trans "Submit Activity" %}
+  </a>
   <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-3">{% trans "Quick Links" %}</h3>
   <a href="{% url 'manifesto_list' %}" class="wn-sidebar-link {% if 'manifesto' in request.resolver_match.url_name %}active{% endif %}">
     <span class="material-symbols-outlined">description</span> {% trans "Manifestos" %}
@@ -25,6 +29,44 @@
   </a>
 </div>
 
+{% if user.is_authenticated %}
+<div class="wn-card rounded-xl p-4 space-y-1">
+  <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-3">{% trans "My Account" %}</h3>
+  <a href="{% url 'dashboard' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+    <span class="material-symbols-outlined">dashboard</span> {% trans "Dashboard" %}
+  </a>
+  <a href="{% url 'user_profile' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}">
+    <span class="material-symbols-outlined">person</span> {% trans "My Profile" %}
+  </a>
+  <a href="{% url 'user_logs' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'user_logs' %}active{% endif %}">
+    <span class="material-symbols-outlined">history</span> {% trans "Activity Logs" %}
+  </a>
+  {% if user.is_superuser %}
+  <a href="{% url 'admin_user_logs' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'admin_user_logs' %}active{% endif %}">
+    <span class="material-symbols-outlined">admin_panel_settings</span> {% trans "Admin Logs" %}
+  </a>
+  {% endif %}
+  <div class="border-t border-slate-100 my-1"></div>
+  <a href="{% url 'social:dashboard' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'dashboard' and request.resolver_match.namespace == 'social' %}active{% endif %}">
+    <span class="material-symbols-outlined">campaign</span> {% trans "Social Studio" %}
+  </a>
+  <a href="{% url 'social:create_image' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'create_image' and request.resolver_match.namespace == 'social' %}active{% endif %}">
+    <span class="material-symbols-outlined">image</span> {% trans "Create Image Post" %}
+  </a>
+  <a href="{% url 'social:create_reel' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'create_reel' and request.resolver_match.namespace == 'social' %}active{% endif %}">
+    <span class="material-symbols-outlined">movie</span> {% trans "Create Reel" %}
+  </a>
+  <a href="{% url 'social:post_list' %}" class="wn-sidebar-link {% if request.resolver_match.url_name == 'post_list' and request.resolver_match.namespace == 'social' %}active{% endif %}">
+    <span class="material-symbols-outlined">grid_view</span> {% trans "Social Posts" %}
+  </a>
+  <div class="border-t border-slate-100 my-1"></div>
+  <a href="{% url 'logout' %}" class="wn-sidebar-link text-rose-600 hover:text-rose-700">
+    <span class="material-symbols-outlined">logout</span> {% trans "Logout" %}
+  </a>
+</div>
+{% endif %}
+
+{% if request.resolver_match.url_name != 'home' %}
 <!-- At a Glance -->
 <div class="wn-card rounded-xl p-4">
   <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 px-1">{% trans "At a Glance" %}</h3>
@@ -51,6 +93,7 @@
     </div>
   </div>
 </div>
+{% endif %}
 
 <!-- Announcements -->
 <div class="wn-card rounded-xl p-4">
