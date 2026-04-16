@@ -17,14 +17,6 @@
         Hold your government accountable with data-driven transparency.{% endblocktrans %}
       </p>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-        <a href="{% url 'manifesto_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
-          <span class="block text-primary font-black text-xl md:text-2xl">{{ total_manifesto_count }}</span>
-          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Manifestos" %}</span>
-        </a>
-        <a href="{% url 'commitment_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
-          <span class="block text-secondary font-black text-xl md:text-2xl">{{ total_commitment_count }}</span>
-          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Commitments" %}</span>
-        </a>
         <a href="{% url 'overdue_list' %}" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-rose-500 font-black text-xl md:text-2xl">{{ total_missed_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Passed" %}</span>
@@ -41,11 +33,7 @@
           <span class="block text-blue-500 font-black text-xl md:text-2xl">{{ total_completed_late_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Complete after deadline" %}</span>
         </a>
-        <a href="https://github.com/iigal/watchdognepal" target="_blank" rel="noopener noreferrer" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
-          <span class="block text-slate-700 font-black text-xl md:text-2xl">{{ git_commit_count }}</span>
-          <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Git Commits" %}</span>
-        </a>
-        <a href="{% url 'combined_tracking' %}?status=partly_crossed" class="bg-surface-container-low p-3 md:p-3 rounded-xl text-center md:text-left shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
+        <a href="{% url 'combined_tracking' %}?status=partly_crossed" class="col-span-2 md:col-span-4 bg-surface-container-low p-3 md:p-3 rounded-xl text-center shadow-sm flex flex-col justify-center hover:bg-surface-container-high transition-colors">
           <span class="block text-amber-600 font-black text-xl md:text-2xl">{{ total_partly_crossed_count }}</span>
           <span class="text-xs uppercase tracking-widest font-bold opacity-60 leading-tight">{% trans "Deadline Partly Crossed" %}</span>
         </a>
@@ -333,7 +321,12 @@
       const distance = deadlineTime - now;
 
       if (distance < 0) {
-        el.innerHTML = "{% trans 'Deadline Passed' %}";
+        const daysPast = Math.floor(Math.abs(distance) / (1000 * 60 * 60 * 24));
+        if (isNepali) {
+          el.innerHTML = "{% trans 'Deadline Passed' %} <span class='text-rose-400 text-[11px] font-semibold'>(" + toNepaliNumerals(daysPast) + " दिन अघि)</span>";
+        } else {
+          el.innerHTML = "{% trans 'Deadline Passed' %} <span class='text-rose-400 text-[11px] font-semibold'>(" + daysPast + " day" + (daysPast !== 1 ? "s" : "") + " ago)</span>";
+        }
         el.classList.add('text-rose-500');
         return;
       }

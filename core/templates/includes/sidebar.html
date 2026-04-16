@@ -71,13 +71,11 @@
 <div class="wn-card rounded-xl p-4">
   <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 px-1">{% trans "At a Glance" %}</h3>
   <div class="space-y-3">
-    <div class="flex items-center justify-between px-1">
-      <span class="text-xs text-slate-600 font-medium">{% trans "Manifestos" %}</span>
-      <span class="text-sm font-black text-primary">{{ sidebar_manifesto_count }}</span>
+    <div class="px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Manifestos" %} <span class="font-bold text-primary">({{ sidebar_manifesto_count }})</span></span>
     </div>
-    <div class="flex items-center justify-between px-1">
-      <span class="text-xs text-slate-600 font-medium">{% trans "Commitments" %}</span>
-      <span class="text-sm font-black text-secondary">{{ sidebar_commitment_count }}</span>
+    <div class="px-1">
+      <span class="text-xs text-slate-600 font-medium">{% trans "Commitments" %} <span class="font-bold text-secondary">({{ sidebar_commitment_count }})</span></span>
     </div>
     <div class="flex items-center justify-between px-1">
       <span class="text-xs text-slate-600 font-medium">{% trans "Active Petitions" %}</span>
