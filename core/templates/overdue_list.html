@@ -123,11 +123,18 @@
           </div>
         </div>
 
-        <!-- Footer: deadline + view link -->
+        <!-- Footer: deadline + days late + view link -->
         <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-          <div class="flex items-center gap-2 text-xs text-rose-500 font-semibold">
-            <span class="material-symbols-outlined text-[14px]">event_busy</span>
-            <span>{{ item.calculated_deadline|default:"No deadline set" }}</span>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-2 text-xs text-rose-500 font-semibold">
+              <span class="material-symbols-outlined text-[14px]">event_busy</span>
+              <span>{{ item.calculated_deadline|default:"No deadline set" }}</span>
+            </div>
+            {% if item.overdue_days is not None %}
+            <div class="text-[11px] font-bold text-rose-700">
+              {% blocktrans with days=item.overdue_days %}{{ days }} days late{% endblocktrans %}
+            </div>
+            {% endif %}
           </div>
           {% if item.item_type == 'manifesto' %}
           <a href="{% url 'manifesto_detail' item.id %}" class="flex items-center gap-1 text-primary text-xs font-bold uppercase tracking-widest hover:opacity-80 transition-opacity" style="text-decoration:none;">
