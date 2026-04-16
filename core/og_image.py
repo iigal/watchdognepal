@@ -1,13 +1,12 @@
 import os
-import textwrap
-from io import BytesIO
+from datetime import timedelta
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 
 # Define paths
 STATIC_DIR = os.path.join(settings.BASE_DIR, 'static')
-FONT_REGULAR_PATH = os.path.join(STATIC_DIR, 'fonts', 'NotoSansDevanagari-Regular.ttf')
-FONT_BOLD_PATH = os.path.join(STATIC_DIR, 'fonts', 'NotoSansDevanagari-Bold.ttf')
+FONT_REGULAR_PATH = os.path.join(STATIC_DIR, 'fonts', 'Mukta-Regular.ttf')
+FONT_BOLD_PATH = os.path.join(STATIC_DIR, 'fonts', 'Mukta-Bold.ttf')
 LOGO_PATH = os.path.join(STATIC_DIR, 'logo.jpg')
 
 def get_font(path, size, fallback="Arial"):
@@ -76,134 +75,68 @@ def draw_text_wrapped(draw, text, font, draw_x, draw_y, max_width, fill="white",
     
     return y_text
 
-def generate_manifesto_og_image(point):
-    """
-    Generates a 1200x630 OG image for a ManifestoPoint.
-    Returns a Pillow Image object.
-    """
-    # 1. Base setup
+
+def _get_status_ne(item):
+    """Return (label, bg_color, text_color) for OG status badge."""
+    from django.utils import timezone
+
+    if item.is_completed is not None or item.completion_percentage == 100:
+        return ("सम्पन्न", (220, 252, 231), (6, 95, 70))
+    if item.is_partly_crossed:
+        return ("आंशिक रूपमा समयसीमा नाघेको", (255, 237, 213), (146, 64, 14))
+    if item.is_overdue:
+        return ("समयसीमा बितिसक्यो", (254, 226, 226), (153, 27, 27))
+
+    deadline = item.calculated_deadline
+    if deadline:
+        days_left = (deadline - timezone.now().date()).days
+        if 0 <= days_left <= 30:
+            return ("समयसीमा नजिकिँदै", (254, 243, 199), (146, 64, 14))
+
+    if item.is_in_progress:
+        return ("कार्य प्रगतिमा", (219, 234, 254), (30, 64, 175))
+    return ("सुरु हुन बाँकी", (226, 232, 240), (51, 65, 85))
+
+
+def _draw_badge(draw, x, y, text, font, bg, fg):
+    pad_x, pad_y = 16, 10
+    bbox = draw.textbbox((0, 0), text, font=font)
+    w = bbox[2] - bbox[0]
+    h = bbox[3] - bbox[1]
+    draw.rounded_rectangle(
+        [(x, y), (x + w + pad_x * 2, y + h + pad_y * 2)],
+        radius=22,
+        fill=bg,
+    )
+    draw.text((x + pad_x, y + pad_y - 2), text, font=font, fill=fg)
+
+
+def _generate_og_image(item, subtitle):
+    """Shared OG image generator for manifesto/commitment."""
     width, height = 1200, 630
-    # Background color (dark slate/navy gradient feel)
-    bg_color = (15, 23, 42) # Tailwind slate-900
-    img = Image.new('RGB', (width, height), color=bg_color)
+    img = Image.new('RGB', (width, height), color=(248, 250, 252))
     draw = ImageDraw.Draw(img)
 
-    # Decorative gradient accent at bottom
-    for i in range(10):
-        # A simple gradient accent line (blue to purple)
-        draw.line([(0, height - 10 + i), (width, height - 10 + i)], fill=(59, 130 + i*10, 246 - i*5))
+    # Soft light gradient bands
+    for i in range(height):
+        tint = 255 - int(i * 0.03)
+        draw.line([(0, i), (width, i)], fill=(max(240, tint), max(244, tint), 255))
+    draw.rounded_rectangle([(20, 20), (width - 20, height - 20)], radius=26, outline=(226, 232, 240), width=2)
 
-    padding = 60
-
-    # 2. Fonts
-    font_brand_latin = get_latin_font(32)
-    font_title = get_font(FONT_BOLD_PATH, 55)
-    font_desc = get_font(FONT_REGULAR_PATH, 36)
-    font_meta = get_font(FONT_REGULAR_PATH, 28)
-    font_latin_meta = get_latin_font(28)
-
-    # 3. Draw Logo & Brand
-    logo_size = 80
+    padding = 56
     current_y = padding
-    if os.path.exists(LOGO_PATH):
-        try:
-            logo = Image.open(LOGO_PATH).convert("RGBA")
-            logo = logo.resize((logo_size, logo_size), Image.Resampling.LANCZOS)
-            
-            # Make logo circular
-            mask = Image.new('L', (logo_size, logo_size), 0)
-            mask_draw = ImageDraw.Draw(mask)
-            mask_draw.ellipse((0, 0, logo_size, logo_size), fill=255)
-            
-            # Composite
-            img.paste(logo, (padding, current_y), mask)
-        except Exception:
-            pass # Ignore logo errors
-    
-    # Brand Text
-    draw.text((padding + logo_size + 20, current_y + 20), "Watchdog Nepal", font=font_brand_latin, fill=(148, 163, 184))
-    
-    current_y += logo_size + 40
 
-    # 4. Title
-    title = str(point.title)
-    current_y = draw_text_wrapped(draw, title, font_title, padding, current_y, 
-                                  max_width=width - (padding * 2), fill="white", max_lines=3, line_spacing=15)
-    current_y += 20
-
-    # 5. Description
-    if point.description:
-        desc = str(point.description)
-        current_y = draw_text_wrapped(draw, desc, font_desc, padding, current_y, 
-                                      max_width=width - (padding * 2), fill=(148, 163, 184), max_lines=2, line_spacing=10)
-        current_y += 40
-
-    # 6. Metadata (Party, Deadline, Verified Activities)
-    meta_items = []
-    
-    owner = point.party.name if point.party else (point.elected_member.name if point.elected_member else "Government")
-    # Store tuples of (text, font_to_use)
-    meta_items.append((str(owner), font_meta))
-    
-    if point.calculated_deadline:
-        meta_items.append((f"Deadline: {point.calculated_deadline.strftime('%Y-%m-%d')}", font_latin_meta))
-        
-    activities_count = point.verified_activities.count() if hasattr(point, 'verified_activities') else 0
-    if activities_count > 0:
-        meta_items.append((f"{activities_count} Verified Activities", font_latin_meta))
-
-    meta_x = padding
-    for text, font_to_use in meta_items:
-        draw.text((meta_x, current_y), text, font=font_to_use, fill=(203, 213, 225))
-        # Add spacing horizontally
-        meta_x += draw.textlength(text, font=font_to_use) + 40
-
-    # 7. Progress Bar at bottom area
-    current_y = height - 120
-    draw.text((padding, current_y - 40), f"Implementation Progress: {point.completion_percentage}%", font=font_latin_meta, fill="white")
-    
-    bar_width = width - (padding * 2)
-    bar_height = 24
-    
-    # Background bar
-    draw.rounded_rectangle([(padding, current_y), (padding + bar_width, current_y + bar_height)], 
-                           radius=bar_height//2, fill=(30, 41, 59))
-    
-    # Foreground bar (Progress)
-    progress_width = max(int(bar_width * (point.completion_percentage / 100.0)), bar_height)
-    if point.completion_percentage > 0:
-        draw.rounded_rectangle([(padding, current_y), (padding + progress_width, current_y + bar_height)], 
-                               radius=bar_height//2, fill=(16, 185, 129)) # Emerald-500
-
-    return img
-
-
-def generate_commitment_og_image(commitment):
-    """
-    Generates a 1200x630 OG image for a Commitment.
-    Uses a violet/indigo color scheme to distinguish from manifesto images.
-    Returns a Pillow Image object.
-    """
-    width, height = 1200, 630
-    bg_color = (15, 12, 41)  # Deep violet-navy
-    img = Image.new('RGB', (width, height), color=bg_color)
-    draw = ImageDraw.Draw(img)
-
-    # Decorative gradient accent at bottom (violet to indigo)
-    for i in range(10):
-        draw.line([(0, height - 10 + i), (width, height - 10 + i)], fill=(139, 92 + i*5, 246 - i*3))
-
-    padding = 60
-
-    font_brand_latin = get_latin_font(32)
-    font_title = get_font(FONT_BOLD_PATH, 55)
+    # Fonts
+    font_brand = get_font(FONT_BOLD_PATH, 38)
+    font_subtitle = get_font(FONT_REGULAR_PATH, 28)
+    font_title = get_font(FONT_BOLD_PATH, 62)
     font_desc = get_font(FONT_REGULAR_PATH, 36)
-    font_meta = get_font(FONT_REGULAR_PATH, 28)
-    font_latin_meta = get_latin_font(28)
+    font_status = get_font(FONT_BOLD_PATH, 30)
+    font_meta = get_font(FONT_BOLD_PATH, 34)
+    font_meta_label = get_font(FONT_REGULAR_PATH, 27)
 
-    # Logo & Brand
-    logo_size = 80
-    current_y = padding
+    # Logo
+    logo_size = 88
     if os.path.exists(LOGO_PATH):
         try:
             logo = Image.open(LOGO_PATH).convert("RGBA")
@@ -215,52 +148,82 @@ def generate_commitment_og_image(commitment):
         except Exception:
             pass
 
-    draw.text((padding + logo_size + 20, current_y + 20), "Watchdog Nepal — Commitment", font=font_brand_latin, fill=(167, 139, 250))
-    current_y += logo_size + 40
+    # Top brand text (bigger and clearer)
+    draw.text((padding + logo_size + 20, current_y + 8), "Watchdog Nepal", font=font_brand, fill=(15, 23, 42))
+    draw.text((padding + logo_size + 22, current_y + 48), subtitle, font=font_subtitle, fill=(71, 85, 105))
+
+    # Status badge (highlighted part in Nepali)
+    status_text, status_bg, status_fg = _get_status_ne(item)
+    _draw_badge(draw, width - 460, current_y + 22, status_text, font_status, status_bg, status_fg)
+    current_y += logo_size + 34
 
     # Title
-    title = str(commitment.title)
-    current_y = draw_text_wrapped(draw, title, font_title, padding, current_y,
-                                  max_width=width - (padding * 2), fill="white", max_lines=3, line_spacing=15)
-    current_y += 20
+    current_y = draw_text_wrapped(
+        draw,
+        str(item.title),
+        font_title,
+        padding,
+        current_y,
+        max_width=width - (padding * 2),
+        fill=(17, 24, 39),
+        max_lines=3,
+        line_spacing=14,
+    )
+    current_y += 10
 
     # Description
-    if commitment.description:
-        desc = str(commitment.description)
-        current_y = draw_text_wrapped(draw, desc, font_desc, padding, current_y,
-                                      max_width=width - (padding * 2), fill=(167, 139, 250), max_lines=2, line_spacing=10)
-        current_y += 40
+    if item.description:
+        current_y = draw_text_wrapped(
+            draw,
+            str(item.description),
+            font_desc,
+            padding,
+            current_y,
+            max_width=width - (padding * 2),
+            fill=(51, 65, 85),
+            max_lines=2,
+            line_spacing=10,
+        )
 
-    # Metadata
-    meta_items = []
-    owner = commitment.party.name if commitment.party else (commitment.elected_member.name if commitment.elected_member else "Government")
-    meta_items.append((str(owner), font_meta))
+    # Bottom information area (no progress bar)
+    line_y = height - 170
+    draw.line([(padding, line_y - 18), (width - padding, line_y - 18)], fill=(203, 213, 225), width=2)
 
-    if commitment.calculated_deadline:
-        meta_items.append((f"Deadline: {commitment.calculated_deadline.strftime('%Y-%m-%d')}", font_latin_meta))
+    # Bigger deadline text
+    deadline_label = "समयसीमा"
+    deadline_text = "उल्लेख छैन"
+    if item.calculated_deadline:
+        deadline_text = item.calculated_deadline.strftime('%Y-%m-%d')
+    draw.text((padding, line_y), f"{deadline_label}: {deadline_text}", font=font_meta, fill=(30, 41, 59))
 
-    activities_count = commitment.activities.filter(status='verified').count()
-    if activities_count > 0:
-        meta_items.append((f"{activities_count} Verified Activities", font_latin_meta))
+    # Bigger implementation progress text
+    progress_text = f"कार्यान्वयन प्रगति: {item.completion_percentage}%"
+    progress_x = padding
+    progress_y = line_y + 52
+    draw.text((progress_x, progress_y), progress_text, font=font_meta, fill=(30, 41, 59))
+    draw.text((progress_x, progress_y + 38), f"प्रगति अंश: {item.progress_fraction}", font=font_meta_label, fill=(71, 85, 105))
 
-    meta_x = padding
-    for text, font_to_use in meta_items:
-        draw.text((meta_x, current_y), text, font=font_to_use, fill=(203, 213, 225))
-        meta_x += draw.textlength(text, font=font_to_use) + 40
-
-    # Progress Bar (violet theme)
-    current_y = height - 120
-    draw.text((padding, current_y - 40), f"Implementation Progress: {commitment.completion_percentage}%", font=font_latin_meta, fill="white")
-
-    bar_width = width - (padding * 2)
-    bar_height = 24
-
-    draw.rounded_rectangle([(padding, current_y), (padding + bar_width, current_y + bar_height)],
-                           radius=bar_height//2, fill=(30, 20, 59))
-
-    progress_width = max(int(bar_width * (commitment.completion_percentage / 100.0)), bar_height)
-    if commitment.completion_percentage > 0:
-        draw.rounded_rectangle([(padding, current_y), (padding + progress_width, current_y + bar_height)],
-                               radius=bar_height//2, fill=(139, 92, 246))  # Violet-500
+    # Owner text on the right
+    owner = item.party.name if item.party else (item.elected_member.name if item.elected_member else "Government")
+    owner_label = f"जिम्मेवार: {owner}"
+    owner_bbox = draw.textbbox((0, 0), owner_label, font=font_meta_label)
+    owner_w = owner_bbox[2] - owner_bbox[0]
+    draw.text((width - padding - owner_w, progress_y + 38), owner_label, font=font_meta_label, fill=(71, 85, 105))
 
     return img
+
+def generate_manifesto_og_image(point):
+    """
+    Generates a 1200x630 OG image for a ManifestoPoint.
+    Returns a Pillow Image object.
+    """
+    return _generate_og_image(point, "Manifesto")
+
+
+def generate_commitment_og_image(commitment):
+    """
+    Generates a 1200x630 OG image for a Commitment.
+    Uses a violet/indigo color scheme to distinguish from manifesto images.
+    Returns a Pillow Image object.
+    """
+    return _generate_og_image(commitment, "Commitment")
