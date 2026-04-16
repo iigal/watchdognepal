@@ -95,11 +95,69 @@
 </div>
 {% endif %}
 
-<!-- Announcements -->
+<!-- Recent Activities -->
 <div class="wn-card rounded-xl p-4">
-  <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3 px-1">{% trans "Announcements" %}</h3>
-  <div class="text-xs text-slate-400 px-1 italic">{% trans "No announcements at this time." %}</div>
+  <div class="flex items-center justify-between mb-3 px-1">
+    <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{% trans "Recent Activity" %}</h3>
+    {% if all_recent_activities %}
+    <button onclick="openOverlayModal('recent-activities')" class="text-[10px] font-bold text-primary hover:underline">
+      {% trans "View All" %}
+    </button>
+    {% endif %}
+  </div>
+
+  <div class="space-y-4">
+    {% for activity in recent_activities %}
+    <div class="flex gap-3">
+      <div class="flex-shrink-0 h-8 w-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
+        <span class="material-symbols-outlined text-[18px] text-slate-400">trending_up</span>
+      </div>
+      <div class="min-w-0">
+        <a href="{{ activity.source_link }}" target="_blank" class="block text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-primary transition-colors truncate">
+          {{ activity.title }}
+        </a>
+        <div class="flex items-center gap-1.5 mt-0.5 text-[10px] text-slate-400">
+          <span class="truncate">{{ activity.created_by.username }}</span>
+          <span>•</span>
+          <span>{{ activity.created_at|timesince }} {% trans "ago" %}</span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="text-xs text-slate-400 px-1 italic">{% trans "No recent activities." %}</div>
+    {% endfor %}
+  </div>
 </div>
+
+<!-- Hidden data for "See more" popup -->
+{% if all_recent_activities %}
+<div id="overlay-data-recent-activities" class="hidden">
+  {% for activity in all_recent_activities %}
+  <div class="p-4 flex gap-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl">
+     <div class="flex-shrink-0 h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary">trending_up</span>
+      </div>
+      <div class="min-w-0 flex-1">
+        <a href="{{ activity.source_link }}" target="_blank" class="block text-sm font-black text-slate-800 dark:text-slate-100 hover:text-primary transition-colors">
+          {{ activity.title }}
+        </a>
+        <p class="text-xs text-slate-500 mt-1 line-clamp-2">{{ activity.description }}</p>
+        <div class="flex items-center gap-2 mt-2 text-[11px] font-bold text-slate-400">
+          <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 uppercase tracking-tighter">{{ activity.get_level_display }}</span>
+          <span>•</span>
+          <span class="text-slate-500">{{ activity.created_by.username }}</span>
+          <span>•</span>
+          <span>{{ activity.created_at|timesince }} {% trans "ago" %}</span>
+        </div>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  window._overlayTitles = window._overlayTitles || {};
+  window._overlayTitles['recent-activities'] = "{% trans 'Recent Activity' %}";
+</script>
+{% endif %}
 
 <!-- Cultural accent: small Nepal flag -->
 <div class="flex justify-center opacity-30 mt-4">

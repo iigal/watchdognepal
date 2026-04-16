@@ -1,12 +1,12 @@
 {% load i18n %}
 <div
-  class="bg-surface-container-lowest p-4 md:p-5 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+  class="bg-surface-container-lowest p-5 md:p-6 rounded-xl overflow-hidden group shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
   {% if id_attr %}id="{{ id_attr }}" {% endif %}>
 
   <!-- Row 1: Deadline & Logo -->
-  <div class="flex justify-between items-start mb-3">
+  <div class="flex justify-between items-start mb-4">
     <!-- Top Left: Logo & Badge -->
-    <div class="w-1/2">
+    <div class="w-1/2 pr-2">
       {% if item.party and item.party.logo %}
       <img src="{{ item.party.logo.url }}" alt="{{ item.party.name }}"
         class="w-10 h-10 object-contain rounded-md border border-slate-100 bg-white">
@@ -18,18 +18,18 @@
     </div>
     <div class="w-1/2">
       {% if item_type == 'manifesto' %}
-      <span class="bg-primary/10 text-primary text-[12px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+      <span class="bg-primary/10 text-primary text-[12px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
         {% trans "Manifesto" %}</span>
       {% else %}
       <span
-        class="bg-secondary-container text-on-secondary-container text-[12px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+        class="bg-secondary-container text-on-secondary-container text-[12px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
         {% trans "Commitment" %}</span>
       {% endif %}
     </div>
 
 
 
-    <div class="w-1/2 flex flex-col items-end gap-1.5">
+    <div class="w-1/2 flex flex-col items-end gap-2">
       {% if item.completion_percentage == 100 %}
       <div class="text-[10px] md:text-xs">
         <div class="text-emerald-600 font-bold flex items-center justify-end gap-1">
@@ -41,7 +41,7 @@
         <p class="text-slate-400 font-medium flex items-center justify-end gap-1 w-full text-right">
           <span class="material-symbols-outlined text-[14px]">timer</span> {% trans "Deadline" %}
         </p>
-        <p class="text-on-surface font-bold deadline-countdown mt-0.5 text-right w-full"
+        <p class="text-on-surface font-bold deadline-countdown mt-1 text-right w-full leading-relaxed"
           data-deadline="{{ item.calculated_deadline|date:'c' }}">{% trans "Loading..." %}</p>
       </div>
       {% endif %}
@@ -51,7 +51,7 @@
   </div>
 
   <!-- Row 2: Title -->
-  <h3 class="text-sm md:text-base font-black font-headline mb-4 leading-snug line-clamp-3">
+  <h3 class="text-base md:text-lg font-black font-headline mb-5 leading-relaxed line-clamp-3">
     <a href="{% url detail_url_name item.id %}" class="text-on-surface hover:underline" style="text-decoration:none;">
       {{ item.title }}</a>
   </h3>
@@ -59,14 +59,14 @@
   <div class="flex-grow"></div>
 
   <!-- Row 3: Progress & Arrow -->
-  <div class="flex items-end border-t border-slate-100 pt-3">
+  <div class="flex items-end border-t border-slate-100 pt-4">
     <div class="w-[75%] pr-4 border-r border-slate-100">
-      <div class="flex justify-between text-[10px] font-semibold mb-1.5">
+      <div class="flex justify-between text-[11px] font-semibold mb-2">
         <span class="text-slate-500">{% trans "Progress" %} ({{ item.progress_fraction }})</span>
         <span class="{% if item_type == 'manifesto' %}text-primary{% else %}text-secondary{% endif %}">
           {{ item.completion_percentage }}%</span>
       </div>
-      <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+      <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
         <div class="{% if item_type == 'manifesto' %}bg-primary{% else %}bg-secondary{% endif %} h-full rounded-full"
           style="width: {{ item.completion_percentage }}%"></div>
       </div>
@@ -74,8 +74,8 @@
 
     <div class="w-[25%] flex justify-center pl-2">
       <a href="{% url detail_url_name item.id %}" data-layer-popup="true" data-layer-title="{{ item.title }}" style="text-decoration: none;"
-        class="w-8 h-8 flex items-center justify-center bg-slate-50 text-slate-400 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors no-underline">
-        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        class="w-9 h-9 flex items-center justify-center bg-slate-50 text-slate-400 rounded-full group-hover:bg-slate-900 group-hover:text-white transition-colors no-underline">
+        <span class="material-symbols-outlined text-[17px]">arrow_forward</span>
       </a>
     </div>
   </div>
